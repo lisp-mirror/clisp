@@ -146,6 +146,11 @@ local maygc void newinsert (object sym, uintL size) {
   TheSvector(STACK_1)->data[index] = sym; /* enter new entry in newtable */
 }
 
+/* Work around GCC bug <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=119959>. */
+#if __GNUC__ == 15
+#pragma GCC optimize ("-O0")
+#endif
+
 local maygc object rehash_symtab (object symtab) {
   pushSTACK(symtab); /* save symbol-table */
   var uintL oldsize = posfixnum_to_V(Symtab_size(symtab)); /* old size */
@@ -241,6 +246,10 @@ local maygc object rehash_symtab (object symtab) {
   /* here, breaks could be allowed again. */
   return symtab;
 }
+
+#if __GNUC__ == 15
+#pragma GCC reset_options
+#endif
 
 /* UP: Searches a symbol of given printname in the list.
  > string: string
