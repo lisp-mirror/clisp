@@ -1138,7 +1138,7 @@ static inline void line_emit (void)
 static inline void line_repeat_else ()
 {
   if (ifdef_line_repeat == StackVectorString_length(ifdef_stack)) {
-    char buf[20];
+    char buf[6+20+1];
     sprintf(buf,"#line %ld",input_line);
     out_line(buf);
   }
@@ -1147,7 +1147,7 @@ static inline void line_repeat_else ()
 static inline void line_repeat_endif ()
 {
   if (ifdef_line_repeat > StackVectorString_length(ifdef_stack)) {
-    char buf[20];
+    char buf[6+20+1];
     sprintf(buf,"#line %ld",input_line);
     out_line(buf);
     ifdef_line_repeat--;

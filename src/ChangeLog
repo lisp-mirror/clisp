@@ -1,5 +1,11 @@
 2025-04-27  Bruno Haible  <bruno@clisp.org>
 
+	Fix a gcc -Wformat-overflow warning.
+	* utils/varbrace.c (line_repeat_else, line_repeat_endif): Make buf
+	larger.
+
+2025-04-27  Bruno Haible  <bruno@clisp.org>
+
 	Fix a gcc warning "macro ‘__DATE__’ might prevent reproducible builds".
 	* genclisph.d (main): Don't store a time stamp in clisp-test.c; its
 	time stamp on disk is sufficient.
