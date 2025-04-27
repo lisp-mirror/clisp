@@ -1,3 +1,9 @@
+2025-04-27  Bruno Haible  <bruno@clisp.org>
+
+	Fix a gcc warning "macro ‘__DATE__’ might prevent reproducible builds".
+	* genclisph.d (main): Don't store a time stamp in clisp-test.c; its
+	time stamp on disk is sufficient.
+
 2025-04-26  Bruno Haible  <bruno@clisp.org>
 
 	Work around a gcc 15.1.0 bug on x86_64.
