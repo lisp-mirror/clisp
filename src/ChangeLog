@@ -1,5 +1,16 @@
 2025-04-27  Bruno Haible  <bruno@clisp.org>
 
+	Find a better way to make things work with gcc 15.1.0.
+	Suggested by Jerry James in
+	<https://gitlab.com/gnu-clisp/clisp/-/merge_requests/12>.
+	According to ISO C 99/11/17 § 6.5.6.(8), ISO C 23 § 6.5.7.(9),
+	computing (T*)0 + constant is undefined behaviour.
+	* package.d (rehash_symtab): Change 'offset' to be of integral type.
+	Re-enable gcc optimizations.
+	(map_symtab, map_symtab_c): Change 'offset' to be of integral type.
+
+2025-04-27  Bruno Haible  <bruno@clisp.org>
+
 	Fix most gcc -Wimplicit-fallthrough warnings.
 	* Makefile.devel (GNULIB_CORE): Add 'attribute'.
 	* lispbibl.d: Include attribute.h.
