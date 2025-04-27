@@ -1,6 +1,6 @@
 /*
  * (SPVW = Speicherverwaltung): Memory Management for CLISP
- * Bruno Haible 1990-2011, 2016-2024
+ * Bruno Haible 1990-2011, 2016-2025
  * Sam Steingold 1998-2013, 2016-2017
  * German comments translated into English: Stefan Kain 2002-03-24
 
@@ -2390,7 +2390,7 @@ local maygc void install_global_handlers (on_error_t on_error)
       pushSTACK(S(serious_condition));
       pushSTACK(Symbol_function(S(abortonerror)));
       funcall(S(set_global_handler),2);
-    } /*FALLTHROUGH*/
+    } FALLTHROUGH;
     case ON_ERROR_APPEASE: appease: {
       pushSTACK(S(error)); pushSTACK(Symbol_function(S(appease_cerror)));
       funcall(S(set_global_handler),2); return;
@@ -2522,7 +2522,7 @@ local inline int size_arg (const char *arg, const char *docstring, uintM *ret,
   }
   switch (*arg) {
     case 'w': case 'W':            /* in words */
-      val *= sizeof(gcv_object_t); /*FALLTHROUGH*/
+      val *= sizeof(gcv_object_t); FALLTHROUGH;
     case 'b': case 'B':            /* in bytes */
       arg++; break;
   }

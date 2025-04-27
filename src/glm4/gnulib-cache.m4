@@ -42,6 +42,7 @@
 #  accept \
 #  alloca-opt \
 #  arpa_inet-h \
+#  attribute \
 #  bind \
 #  bool \
 #  c-strtod \
@@ -120,6 +121,7 @@ gl_MODULES([
   accept
   alloca-opt
   arpa_inet-h
+  attribute
   bind
   bool
   c-strtod

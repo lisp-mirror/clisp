@@ -188,6 +188,7 @@ modexp uint32 I_to_UL (object obj)
     IF_LENGTH(5, get_uint4D_Dptr(&bn->data[1]))
     #undef IF_LENGTH
    }
+    FALLTHROUGH;
    default:
    bad: /* unsuitable object */
      pushSTACK(obj); /* TYPE-ERROR slot DATUM */
@@ -333,6 +334,7 @@ modexp uint64 I_to_UQ (object obj)
      #endif
       #undef IF_LENGTH
     }
+      FALLTHROUGH;
     default:
     bad: /* unsuitable object */
       pushSTACK(obj); /* TYPE-ERROR slot DATUM */

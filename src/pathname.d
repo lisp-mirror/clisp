@@ -1,6 +1,6 @@
 /*
  * Pathnames for CLISP
- * Bruno Haible 1990-2024
+ * Bruno Haible 1990-2025
  * Logical Pathnames: Marcus Daniels 16.9.1994
  * ANSI compliance, bugs: Sam Steingold 1998-2013, 2016-2017
  * German comments translated into English: Stefan Kain 2002-01-03
@@ -5853,7 +5853,7 @@ LISPFUN(probe_pathname,seclass_rd_sig,1,0,norest,key,1,(kw(error)))
     case FILE_KIND_BAD:
       if (errorp)
         OS_file_error(STACK_0);
-      /*FALLTHROUGH*/
+      FALLTHROUGH;
     case FILE_KIND_NONE:        /* does not exist */
       VALUES1(NIL); skipSTACK(3); return;
     case FILE_KIND_DIR: {       /* directory */
@@ -6617,7 +6617,7 @@ local maygc object open_file (object filename, direction_t direction,
       }
       handle = allocate_handle(handl);
     } break;
-    case DIRECTION_OUTPUT: wronly_flag = true; /*FALLTHROUGH*/
+    case DIRECTION_OUTPUT: wronly_flag = true; FALLTHROUGH;
     case DIRECTION_IO:
       /* default for if_not_exists depends on if_exists: */
       if (if_not_exists==IF_DOES_NOT_EXIST_UNBOUND) {

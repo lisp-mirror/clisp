@@ -1,6 +1,6 @@
 /* Foreign language interface for CLISP
  * Marcus Daniels 8.4.1994
- * Bruno Haible 1995-2005, 2016-2018, 2024
+ * Bruno Haible 1995-2005, 2016-2018, 2024-2025
  * Sam Steingold 2000-2011, 2017
  */
 
@@ -331,6 +331,7 @@ local object foreign_pointer (object obj)
         goto foreign_address;
       case Rectype_Ffunction:
         obj = TheFfunction(obj)->ff_address;
+        FALLTHROUGH;
       case Rectype_Faddress: foreign_address:
         return TheFaddress(obj)->fa_base;
     }

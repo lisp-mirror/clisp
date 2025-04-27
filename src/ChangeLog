@@ -1,5 +1,22 @@
 2025-04-27  Bruno Haible  <bruno@clisp.org>
 
+	Fix most gcc -Wimplicit-fallthrough warnings.
+	* Makefile.devel (GNULIB_CORE): Add 'attribute'.
+	* lispbibl.d: Include attribute.h.
+	* eval.d: Silence -Wimplicit-fallthrough warnings.
+	* foreign.d (foreign_pointer): Add 'FALLTHROUGH;' statement.
+	* stream.d (interactive_stream_p, READ-BYTE-NO-HANG): Likewise.
+	* lisparit.d (read_float): Likewise.
+	* intelem.d (I_to_UL, I_to_UQ): Likewise.
+	* io.d (GET-MACRO-CHARACTER, test_number_syntax, PARSE-INTEGER,
+	pr_real_number): Likewise.
+	* charstrg.d: Use 'FALLTHROUGH;' statements.
+	* hashtabl.d: Likewise.
+	* pathname.d: Likewise.
+	* spvw.d: Likewise.
+
+2025-04-27  Bruno Haible  <bruno@clisp.org>
+
 	Fix a gcc -Wformat-overflow warning.
 	* utils/varbrace.c (line_repeat_else, line_repeat_endif): Make buf
 	larger.

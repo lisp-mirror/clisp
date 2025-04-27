@@ -379,7 +379,7 @@ update-gnulib:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Regenerate all files created from gnulib.
 
-GNULIB_CORE = no-c++ stdint-h bool havelib gettext localcharset stdlib-h \
+GNULIB_CORE = no-c++ stdint-h bool attribute havelib gettext localcharset stdlib-h \
 	unistd-h alloca-opt environ lstat stat readlink sys_uio-h sys_select-h \
 	mkfifo mknod mkstemp mkdtemp getloadavg bind accept listen recv send \
 	getsockopt shutdown connect socket setsockopt getsockname getpeername \

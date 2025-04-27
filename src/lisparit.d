@@ -1,6 +1,6 @@
 /*
  * Arithmetics for CLISP
- * Bruno Haible 1990-2005, 2016-2017
+ * Bruno Haible 1990-2005, 2016-2017, 2025
  * Sam Steingold 1998-2011
  * German comments translated into English: Stefan Kain 2002-12-23
  */
@@ -176,7 +176,9 @@ global maygc object read_float (uintWL base, signean sign, object string,
     var signean exp_sign = 0; /* exponent-sign */
     switch (as_cint(*ptr)) {
       case '-': exp_sign = ~exp_sign; /* sign := negative */
+        FALLTHROUGH;
       case '+': ptr++; exp_len--; /* skip exponent-sign */
+        FALLTHROUGH;
       default: ;
     }
     /* convert exponent into integer: */

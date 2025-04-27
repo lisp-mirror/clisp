@@ -1,6 +1,6 @@
 /*
  * Main include-file for CLISP
- * Bruno Haible 1990-2011, 2016-2018, 2020-2024
+ * Bruno Haible 1990-2011, 2016-2018, 2020-2025
  * Marcus Daniels 11.11.1994
  * Sam Steingold 1998-2012, 2016-2018
  * Vladimir Tzankov 2008-2012, 2017
@@ -1117,6 +1117,7 @@
 #include <errno.h>
 #include <string.h> /* declares strlen() et al */
 #include <noreturn.h>      /* defines _GL_NORETURN_FUNC, _GL_NORETURN_FUNCPTR */
+#include "attribute.h"     /* defines FALLTHROUGH */
 
 /* Storage-Class-Specifier for identifiers only visible in the file. */
 /* Can't define this earlier, because <sys/types.h> on Haiku uses the

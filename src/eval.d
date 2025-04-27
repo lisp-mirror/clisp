@@ -1,10 +1,16 @@
 /*
  * EVAL, APPLY and bytecode interpreter for CLISP
- * Bruno Haible 1990-2008, 2016-2024
+ * Bruno Haible 1990-2008, 2016-2025
  * Sam Steingold 1998-2012, 2016-2017
  * German comments translated into English: Stefan Kain 2001-08-13
  */
 #include "lispbibl.c"
+
+/* The optimized 'switch' statements in this compilation unit are intentional.
+   Silence the GCC warnings. */
+#if (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 4)
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
 
 /* function-table:
  In this table only SUBRS are listed, which may be inlined by the compiler.

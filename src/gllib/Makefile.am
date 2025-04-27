@@ -37,6 +37,7 @@
 #  accept \
 #  alloca-opt \
 #  arpa_inet-h \
+#  attribute \
 #  bind \
 #  bool \
 #  c-strtod \

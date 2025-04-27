@@ -1,6 +1,6 @@
 /*
  * Streams for CLISP
- * Bruno Haible 1990-2008, 2016-2024
+ * Bruno Haible 1990-2008, 2016-2025
  * Sam Steingold 1998-2011, 2016-2017
  * Generic Streams: Marcus Daniels 8.4.1994
  * SCREEN package for Win32: Arseny Slobodjuck 2001-02-14
@@ -764,7 +764,7 @@ global maygc void unread_char (const gcv_object_t* stream_, object ch) {
           unread_char(&STACK_0,ch);
           skipSTACK(1);
           stream = *stream_;
-          /*FALLTHROUGH*/
+          FALLTHROUGH;
         default:
           TheStream(stream)->strmflags |= strmflags_unread_B; /* set Flagbit */
       }
@@ -13841,7 +13841,7 @@ local object test_socket_stream (object obj, bool check_open) {
     switch (TheStream(obj)->strmtype) {
       case strmtype_twoway_socket:
         obj = TheStream(obj)->strm_twoway_socket_input;
-        /*FALLTHROUGH*/
+        FALLTHROUGH;
       case strmtype_socket:
         if (check_open
             && ((TheStream(obj)->strmflags & strmflags_open_B) == 0)) {
@@ -14719,7 +14719,7 @@ LISPFUNN(socket_stream_shutdown,2) {
             TheStream(STACK_0)->strmflags &= ~strmflags_wr_B;
             get_handle_and_mark(TheStream(STACK_0)->strm_twoway_socket_output,
                                 strmflags_wr_B,strm_ochannel_position);
-            /*FALLTHROUGH*/
+            FALLTHROUGH;
           case DIRECTION_INPUT: case DIRECTION_INPUT_IMMUTABLE:
             TheStream(STACK_0)->strmflags &= ~strmflags_rd_B;
             handle =
@@ -15725,7 +15725,9 @@ LISPFUNNR(stream_external_format,1)
         if (streamp(stream)) {
           pushSTACK(stream); funcall(L(stream_external_format),1);
           return;
-        } /* empty => FALLTHROUGH*/
+        }
+        /* empty */
+        FALLTHROUGH;
       default:
         VALUES1(S(Kdefault)); break;
     }
@@ -15958,6 +15960,7 @@ global bool interactive_stream_p (object stream) {
         /* regular files are for sure not interactive. */
         if (regular_handle_p(TheHandle(TheStream(stream)->strm_ichannel)))
           return false;
+      FALLTHROUGH;
     #ifdef KEYBOARD
     case strmtype_keyboard:
     #endif
@@ -17088,6 +17091,7 @@ LISPFUN(read_byte_no_hang,seclass_default,1,2,norest,nokey,0,NIL) {
         return;
       }
     }
+      FALLTHROUGH;
     case LISTEN_ERROR: OS_filestream_error(STACK_2);
   }
 }

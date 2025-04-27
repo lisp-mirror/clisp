@@ -1,6 +1,6 @@
 /*
  * Input/Output for CLISP
- * Bruno Haible 1990-2009, 2016-2023
+ * Bruno Haible 1990-2009, 2016-2025
  * Marcus Daniels 11.3.1997
  * Sam Steingold 1998-2011, 2017
  * German comments translated into English: Stefan Kain 2001-06-12
@@ -691,6 +691,7 @@ LISPFUN(get_macro_character,seclass_read,1,1,norest,nokey,0,NIL)
   var object nontermp = NIL; /* non-terminating-p Flag */
   switch (syntax_readtable_get(readtable,c)) {
     case syntax_nt_macro: { nontermp = T; }
+      FALLTHROUGH;
     case syntax_t_macro: { /* nontermp = NIL; */
       /* c is a macro-character. */
       var object entry =
@@ -1510,6 +1511,7 @@ local uintWL test_number_syntax (uintWL* base_, object* string_,
   info->sign = 0;               /* sign:=positiv */
   switch (*attrptr0) {
     case a_minus: info->sign = -1; /* sign:=negativ */
+      FALLTHROUGH;
     case a_plus:                   /* read over sign: */
       charptr0++; attrptr0++; index0++;
     default:
@@ -4764,6 +4766,7 @@ LISPFUN(parse_integer,seclass_rd_sig,1,0,norest,key,4,
     sign = 0;                   /* sign := positive */
     switch (as_cint(c)) {
       case '-': sign = -1;           /* sign := negative */
+        FALLTHROUGH;
       case '+':                      /* sign found */
         charptr++; index++; count--; /* skip */
         if (count==0)                /* the string has already ended? */
@@ -7637,6 +7640,7 @@ local maygc void pr_real_number (const gcv_object_t* stream_, object number) {
             write_ascii_char(stream_,'.');
             return;
           }
+          FALLTHROUGH;
         default: {              /* print base in #nR-notation: */
           write_ascii_char(stream_,'#');
           pr_uint(stream_,base);
@@ -8189,7 +8193,7 @@ local maygc void pr_array (const gcv_object_t* stream_, object obj) {
         switch (atype) {
           case Atype_NIL: locals.pr_one_elt = NULL; break;
           case Atype_T: readable = false; /* automatically rereadable */
-            /*FALLTHROUGH*/
+            FALLTHROUGH;
           default: locals.pr_one_elt = &pr_array_elt_simple;
         }
       routine_ok:
@@ -9952,7 +9956,7 @@ local maygc void pr_stream (const gcv_object_t* stream_, object obj) {
    #ifdef SOCKET_STREAMS
     case strmtype_twoway_socket:
       *obj_ = TheStream(*obj_)->strm_twoway_socket_input;
-      /*FALLTHROUGH*/
+      FALLTHROUGH;
     case strmtype_socket: {     /* Socket-Stream */
       JUSTIFY_SPACE;
       JUSTIFY_LAST(false);
@@ -10117,11 +10121,11 @@ LISPFUN(pprint_newline,seclass_default,1,1,norest,nokey,0,NIL) {
         if (nullpSv(prin_miserp)) /* miser style */
           break;
         STACK_1 = S(Klinear);
-      } /*FALLTHROUGH*/
+      } FALLTHROUGH;
       case PPRINT_NEWLINE_LINEAR: {
         if (eq(TheStream(STACK_0)->strm_pphelp_modus,mehrzeiler))
           goto mandatory;
-      } /*FALLTHROUGH*/
+      } FALLTHROUGH;
       case PPRINT_NEWLINE_FILL: {
         cons_ssstring(&STACK_0,STACK_1);
       } break;

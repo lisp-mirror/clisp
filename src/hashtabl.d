@@ -1,6 +1,6 @@
 /*
  * Hash-Tables in CLISP
- * Bruno Haible 1990-2005, 2016-2018
+ * Bruno Haible 1990-2005, 2016-2019, 2025
  * Sam Steingold 1998-2011
  * German comments translated into English: Stefan Kain 2002-01-29
  */
@@ -941,7 +941,7 @@ local uint32 hashcode4_vector (object dv, uintL index,
     case Array_type_snilvector: /* (VECTOR NIL) */
       if (count > 0)
         return 0x2116ECD0 + bish_code;
-      /*FALLTHROUGH*/
+      FALLTHROUGH;
     case Array_type_sstring:    /* simple-string */
       return hashcode4_vector_Char(dv,index,count,bish_code);
     default: NOTREACHED;
