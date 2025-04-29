@@ -2763,6 +2763,17 @@ typedef enum {
     #define MAPPABLE_ADDRESS_RANGE_START 0x0000018000000000UL
     #define MAPPABLE_ADDRESS_RANGE_END   0x000007FDFFFFFFFFUL
   #endif
+  #if defined(UNIX_HURD) && defined(AMD64)
+    /* On Hurd/x86_64:
+       MMAP_FIXED_ADDRESS_HIGHEST_BIT = 46
+       CODE_ADDRESS_RANGE   = 0x0000000100000000UL
+       MALLOC_ADDRESS_RANGE = 0x0000200000000000UL
+       SHLIB_ADDRESS_RANGE  = 0x0000000101000000UL
+       STACK_ADDRESS_RANGE  = 0x0000000101000000UL
+       There is room from 0x0000000200000000UL to 0x00001FFF00000000UL. */
+    #define MAPPABLE_ADDRESS_RANGE_START 0x000200000000UL
+    #define MAPPABLE_ADDRESS_RANGE_END   0x1FFEFFFFFFFFUL
+  #endif
   #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64)
     /* On FreeBSD/x86_64:
        MMAP_FIXED_ADDRESS_HIGHEST_BIT = 46
@@ -3508,6 +3519,12 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #define IGNORE_MAPPABLE_ADDRESS_RANGE
     #define SINGLEMAP_WORKS 1
   #endif
+  #if defined(UNIX_HURD) && defined(AMD64) /* Hurd/x86_64 */
+    #define SINGLEMAP_ADDRESS_BASE 0x0000001000000000UL
+    #define SINGLEMAP_TYPE_MASK    0x00001FE000000000UL
+    #define SINGLEMAP_oint_type_shift 37
+    #define SINGLEMAP_WORKS 1
+  #endif
   #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64) /* FreeBSD/x86_64, GNU/kFreeBSD/x86_64 */
     #define SINGLEMAP_ADDRESS_BASE 0UL
     #define SINGLEMAP_TYPE_MASK    0x7F0000000000UL
@@ -4226,6 +4243,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         #endif
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
       #endif
+      #if defined(UNIX_HURD) && defined(AMD64) /* Hurd/x86_64 */
+        #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 1
+        #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
+      #endif
       #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64) /* FreeBSD/x86_64, GNU/kFreeBSD/x86_64 */
         #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 1
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
@@ -4569,6 +4590,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #if defined(UNIX_LINUX) && defined(SPARC64) /* Linux/sparc64 */
       #define GENERIC64C_HEAPCODES_WORKS 1
     #endif
+    #if defined(UNIX_HURD) && defined(AMD64) /* Hurd/x86_64 */
+      #define GENERIC64C_HEAPCODES_WORKS 1
+    #endif
     #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64) /* FreeBSD/x86_64, GNU/kFreeBSD/x86_64 */
       #define GENERIC64C_HEAPCODES_WORKS 1
     #endif
@@ -4861,6 +4885,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
             #endif
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 0 /* 0 on an older machine (gcc-4.6.3), 1 on newer machines (gcc-6.4, gcc-7.2) */
           #endif
+          #if defined(UNIX_HURD) && defined(AMD64) /* Hurd/x86_64 */
+            #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
+          #endif
           #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64) /* FreeBSD/x86_64, GNU/kFreeBSD/x86_64 */
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
           #endif
@@ -4971,6 +4998,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
               #define oint_addr_mask 0xFFFFF907FFFFFFFFUL
             #endif
             #define TYPECODES_WITH_MALLOC_WORKS 0 /* 0 on an older machine (gcc-4.6.3), 1 on newer machines (gcc-6.4, gcc-7.2), but with unexpected "No more room for LISP objects" */
+          #endif
+          #if defined(UNIX_HURD) && defined(AMD64) /* Hurd/x86_64 */
+            #define TYPECODES_WITH_MALLOC_WORKS 1
           #endif
           #if (defined(UNIX_FREEBSD) || defined(UNIX_GNU_FREEBSD)) && defined(AMD64) /* FreeBSD/x86_64, GNU/kFreeBSD/x86_64 */
             #define TYPECODES_WITH_MALLOC_WORKS 1

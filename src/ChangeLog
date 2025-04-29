@@ -1,5 +1,15 @@
 2025-04-28  Bruno Haible  <bruno@clisp.org>
 
+	Enable most optimizations on Hurd/x86_64.
+	* lispbibl.d (MAPPABLE_ADDRESS_RANGE_START, MAPPABLE_ADDRESS_RANGE_END,
+	SINGLEMAP_*, *_WORKS): Define for Hurd/x86_64.
+	* Makefile.devel (multibuild-hurd-x86_64): Enable all build variants
+	that work.
+	* makemake.in (Z_XCFLAGS): For Hurd/x86_64, enable all optimizations
+	except ASM.
+
+2025-04-28  Bruno Haible  <bruno@clisp.org>
+
 	Recommend libsigsegv 2.15.
 	* configure (libsigsegv_url): Update to 2.15.
 
