@@ -1,3 +1,11 @@
+2025-05-04  Bruno Haible  <bruno@clisp.org>
+
+	Fix expansion of CL_FFCALL in src/configure.
+	Reported by Adam Sampson <ats@offog.org> at
+	<https://gitlab.com/gnu-clisp/clisp/-/issues/60>.
+	* glm4/lib-link.m4 (AC_LIB_FROMPACKAGE): Import bug fix from gnulib.
+	* src/configure: Regenerated.
+
 2025-04-28  Bruno Haible  <bruno@clisp.org>
 
 	Enable most optimizations on Hurd/x86_64.

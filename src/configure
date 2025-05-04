@@ -3577,7 +3577,8 @@ Optional Packages:
   --with-ffcall           use GNU libffcall (default is YES, if present)
   --with-libffcall-prefix[=DIR]  search for libffcall in DIR/include and DIR/lib
   --without-libffcall-prefix     don't search for libffcall in includedir and libdir
-  --with-libffcall-prefix[=DIR]  search for libavcall
+  --with-libffcall-prefix[=DIR]  search for libavcall, libcallback in DIR/include and DIR/lib
+  --without-libffcall-prefix     don't search for libavcall, libcallback in includedir and libdir
   --with-lightning-prefix additional place to look for the lightning headers
   --with-x                use the X Window System
   --with-libtermcap-prefix[=DIR]
@@ -25482,8 +25483,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:25485: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:25486: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:25486: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:25487: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -25509,7 +25510,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:25512: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:25513: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -25743,7 +25744,7 @@ fi
 
         fi
       fi
-      echo "$as_me:25746: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:25747: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -32374,8 +32375,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:32377: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:32378: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:32378: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:32379: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -32401,7 +32402,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:32404: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:32405: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -32635,7 +32636,7 @@ fi
 
         fi
       fi
-      echo "$as_me:32638: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:32639: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -32884,8 +32885,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:32887: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:32888: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:32888: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:32889: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -32911,7 +32912,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:32914: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:32915: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -33145,7 +33146,7 @@ fi
 
         fi
       fi
-      echo "$as_me:33148: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:33149: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -59797,11 +59798,33 @@ else case e in #(
 # Check whether --with-libffcall-prefix was given.
 if test ${with_libffcall_prefix+y}
 then :
-  withval=$with_libffcall_prefix; libcallback in DIR/include and DIR/lib
-  --without-libffcall-prefix     don't search for libavcall
-else case e in #(
-  e) libcallback in includedir and libdir ;;
-esac
+  withval=$with_libffcall_prefix;
+    if test "X$withval" = "Xno"; then
+      use_additional=no
+    else
+      if test "X$withval" = "X"; then
+
+  acl_saved_prefix="$prefix"
+  prefix="$acl_final_prefix"
+  acl_saved_exec_prefix="$exec_prefix"
+  exec_prefix="$acl_final_exec_prefix"
+
+          eval additional_includedir=\"$includedir\"
+          eval additional_libdir=\"$libdir\"
+          eval additional_libdir2=\"$exec_prefix/$acl_libdirstem2\"
+          eval additional_libdir3=\"$exec_prefix/$acl_libdirstem3\"
+
+  exec_prefix="$acl_saved_exec_prefix"
+  prefix="$acl_saved_prefix"
+
+      else
+        additional_includedir="$withval/include"
+        additional_libdir="$withval/$acl_libdirstem"
+        additional_libdir2="$withval/$acl_libdirstem2"
+        additional_libdir3="$withval/$acl_libdirstem3"
+      fi
+    fi
+
 fi
 
   if test "X$additional_libdir2" = "X$additional_libdir"; then
@@ -60321,11 +60344,33 @@ else case e in #(
 # Check whether --with-libffcall-prefix was given.
 if test ${with_libffcall_prefix+y}
 then :
-  withval=$with_libffcall_prefix; libcallback in DIR/include and DIR/lib
-  --without-libffcall-prefix     don't search for libavcall
-else case e in #(
-  e) libcallback in includedir and libdir ;;
-esac
+  withval=$with_libffcall_prefix;
+    if test "X$withval" = "Xno"; then
+      use_additional=no
+    else
+      if test "X$withval" = "X"; then
+
+  acl_saved_prefix="$prefix"
+  prefix="$acl_final_prefix"
+  acl_saved_exec_prefix="$exec_prefix"
+  exec_prefix="$acl_final_exec_prefix"
+
+          eval additional_includedir=\"$includedir\"
+          eval additional_libdir=\"$libdir\"
+          eval additional_libdir2=\"$exec_prefix/$acl_libdirstem2\"
+          eval additional_libdir3=\"$exec_prefix/$acl_libdirstem3\"
+
+  exec_prefix="$acl_saved_exec_prefix"
+  prefix="$acl_saved_prefix"
+
+      else
+        additional_includedir="$withval/include"
+        additional_libdir="$withval/$acl_libdirstem"
+        additional_libdir2="$withval/$acl_libdirstem2"
+        additional_libdir3="$withval/$acl_libdirstem3"
+      fi
+    fi
+
 fi
 
   if test "X$additional_libdir2" = "X$additional_libdir"; then
