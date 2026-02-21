@@ -383,7 +383,7 @@ GNULIB_CORE = no-c++ stdint-h bool attribute havelib gettext localcharset stdlib
 	unistd-h alloca-opt environ lstat stat readlink sys_uio-h sys_select-h \
 	mkfifo mknod mkstemp mkdtemp getloadavg bind accept listen recv send \
 	getsockopt shutdown connect socket setsockopt getsockname getpeername \
-	uniwidth/width streq uniname/uniname unitypes-h link-follow close select \
+	uniwidth/width streq-opt uniname/uniname unitypes-h link-follow close select \
 	host-cpu-c-abi socklen sockets fd-hook setenv unsetenv errno-h ioctl \
 	arpa_inet-h netinet_in-h inet_ntop inet_pton socketlib strerror_r-posix \
 	nocrash libsigsegv gnu-make gettimeofday getpagesize sys_time-h sys_wait-h \
