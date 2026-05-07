@@ -1,6 +1,6 @@
 /*
  * (SPVW = Speicherverwaltung): Memory Management for CLISP
- * Bruno Haible 1990-2011, 2016-2025
+ * Bruno Haible 1990-2011, 2016-2026
  * Sam Steingold 1998-2013, 2016-2017
  * German comments translated into English: Stefan Kain 2002-03-24
 
@@ -3367,11 +3367,12 @@ local inline int init_memory (struct argv_initparams *p) {
        return -1;
      }
      #ifdef TRIVIALMAP_MEMORY_STACK
-      /* Allocate at most 1/8, but at most 100000 words, for the STACK. */
+      /* Allocate at most 1/8, but at most 200000 words, for the STACK.
+         McCLIM reportedly uses more than 100000 words of STACK.  */
       {
         var uintP size_for_STACK = (end - start) / 8;
-        if (size_for_STACK > 100000*sizeof(gcv_object_t)) {
-          size_for_STACK = 100000*sizeof(gcv_object_t);
+        if (size_for_STACK > 200000*sizeof(gcv_object_t)) {
+          size_for_STACK = 200000*sizeof(gcv_object_t);
         }
         size_for_STACK &= ~(uintP)0xFFFF; /* start must remain a multiple of physpagesize */
         var aint low = start;

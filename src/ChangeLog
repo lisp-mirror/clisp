@@ -1,3 +1,11 @@
+2026-05-07  Bruno Haible  <bruno@clisp.org>
+
+	Increase the maximum STACK size.
+	Reported by Robert Brown in
+	<https://gitlab.com/gnu-clisp/clisp/-/merge_requests/15>.
+	* spvw.d (init_memory) [TRIVIALMAP_MEMORY_STACK]: Limit the STACK size
+	to 200000 words, not 100000 words.
+
 2026-02-21  Bruno Haible  <bruno@clisp.org>
 
 	Update after gnulib changed.
