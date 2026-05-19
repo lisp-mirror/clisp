@@ -9324,11 +9324,11 @@ typedef struct {
   /* To pass a type of the value Values: return_Values(...); */
   #define return_Values  return_void
   /* A Lisp-function is a pointer to a C-function without returned value. */
-  typedef Values (*lisp_function_t)();
+  typedef Values (*lisp_function_t)(...);
 /* If this is changed, every call of a C-function with the result type
  'Values' (especially 'funcall', 'apply', 'eval') is to be checked. */
 %% puts("typedef void Values;"); /* emit_typedef useless: no sizeof(void) */
-%% emit_typedef_f("Values (*%s)()","lisp_function_t");
+%% emit_typedef_f("Values (*%s)(...)","lisp_function_t");
 
 /* FSUBRs
  As C-functions: of type fsubr_function_t (no arguments, no value): */

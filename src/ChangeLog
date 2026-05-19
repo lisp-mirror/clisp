@@ -1,5 +1,10 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	build: Support strict ISO C23 compilers better.
+	* lispbibl.d (lisp_function_t): Use '(...)' parameter list.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	Fix a "warning: 'siginterrupt' is deprecated".
 	* unix.d (USE_SIGACTION): Ignore SIGNAL_NEED_UNBLOCK_OTHERS.
 	* configure.in: Don't invoke CL_SIGNAL_BLOCK_OTHERS.
