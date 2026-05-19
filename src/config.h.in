@@ -1945,10 +1945,6 @@
    signal handlers are left */
 #undef SIGNAL_NEED_UNBLOCK
 
-/* SIGNALBLOCK_BSD is defined above and other signals need to be unblocked
-   when signal handlers are left */
-#undef SIGNAL_NEED_UNBLOCK_OTHERS
-
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'sig_atomic_t'. */
 #undef SIG_ATOMIC_T_SUFFIX

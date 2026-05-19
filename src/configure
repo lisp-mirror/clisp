@@ -62757,7 +62757,6 @@ rm -rf conftest*
 
 
 
-
   { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether signal handlers need to be reinstalled" >&5
 printf %s "checking whether signal handlers need to be reinstalled... " >&6; }
 if test ${cl_cv_func_signal_reinstall+y}
@@ -62889,81 +62888,6 @@ printf '%s\n' "$cl_cv_func_signal_blocked" >&6; }
     *yes)
 
 printf '%s\n' "#define SIGNAL_NEED_UNBLOCK /**/" >>confdefs.h
-
-      ;;
-    *no) ;;
-  esac
-
-
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether other signals are blocked when signal handlers are entered" >&5
-printf %s "checking whether other signals are blocked when signal handlers are entered... " >&6; }
-if test ${cl_cv_func_signal_blocked_others+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) if test "$cross_compiling" = yes
-then :
-          cl_cv_func_signal_blocked_others="guessing yes"
-
-else case e in #(
-  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-          #include <stdlib.h>
-          #ifdef HAVE_UNISTD_H
-           #include <unistd.h>
-          #endif
-          #include <signal.h>
-          volatile int gotsig = 0;
-          volatile int somewereblocked = 0;
-          typedef void (*signal_handler_t) (int);
-          void sigalrm_handler (void)
-          {
-            gotsig = 1;
-            #ifdef SIGNAL_NEED_REINSTALL
-              signal(SIGALRM,(signal_handler_t)sigalrm_handler);
-            #endif
-            {
-              sigset_t blocked;
-              int i;
-              sigprocmask(SIG_BLOCK, (sigset_t *) 0, &blocked);
-              for (i=1; i<32; i++)
-                if (i!=SIGALRM && sigismember(&blocked,i))
-                  somewereblocked = 1;
-            }
-          }
-          int got_sig (void) { return gotsig; }
-          int main() /* returns 0 if they need not to be unblocked */
-          {
-            signal(SIGALRM,(signal_handler_t)sigalrm_handler);
-            alarm(1);
-            while (!got_sig())
-              ;
-            exit(somewereblocked);
-          }
-
-_ACEOF
-if ac_fn_c_try_run "$LINENO"
-then :
-  cl_cv_func_signal_blocked_others=no
-else case e in #(
-  e) cl_cv_func_signal_blocked_others=yes ;;
-esac
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
-esac
-fi
-
-     ;;
-esac
-fi
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_func_signal_blocked_others" >&5
-printf '%s\n' "$cl_cv_func_signal_blocked_others" >&6; }
-  case "$cl_cv_func_signal_blocked_others" in
-    *yes)
-
-printf '%s\n' "#define SIGNAL_NEED_UNBLOCK_OTHERS /**/" >>confdefs.h
 
       ;;
     *no) ;;

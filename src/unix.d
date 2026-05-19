@@ -1,6 +1,6 @@
 /*
  * The include file for the UNIX version of CLISP
- * Bruno Haible 1990-2008, 2016-2024
+ * Bruno Haible 1990-2008, 2016-2026
  * Sam Steingold 1998-2009, 2011, 2017
  */
 
@@ -83,10 +83,9 @@ extern_C _Noreturn void exit (int status); /* EXIT(2V) */
 typedef void (*signal_handler_t) (int);
 /* install a signal cleanly: */
 extern_C signal_handler_t signal (int sig, signal_handler_t handler); /* SIGNAL(3V) */
-#if defined(SIGNAL_NEED_UNBLOCK_OTHERS) && defined(HAVE_SIGACTION)
-/* On some BSD systems, the call of a signal handler
-   is different when the current signal is blocked.
-   We therefore use sigaction() instead of signal(). */
+#ifdef HAVE_SIGACTION
+/* Generally prefer sigaction() over signal(), since signal() has different
+   semantics on SysV descendents (Solaris and AIX) than on other platforms. */
   #define USE_SIGACTION
 #endif
 extern signal_handler_t install_signal_handler (int sig, signal_handler_t handler);

@@ -1,5 +1,13 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	Fix a "warning: 'siginterrupt' is deprecated".
+	* unix.d (USE_SIGACTION): Ignore SIGNAL_NEED_UNBLOCK_OTHERS.
+	* configure.in: Don't invoke CL_SIGNAL_BLOCK_OTHERS.
+	* m4/signal.m4 (CL_SIGNAL_BLOCK_OTHERS): Remove macro.
+	* src/configure, src/config.h.in: Regenerated.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	build: Switch to automake 1.18.1 and autoconf 2.73.
 	* aclocal.m4, src/configure, src/config.h.in: Regenerated.
 	* modules/*/configure, modules/*/config.h.in: Regenerated.
