@@ -1,5 +1,11 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	Fix a gcc -Wmissing-declarations warning.
+	* lispbibl.d (error_pseudocode_alignment): Declare also when the
+	make_machine_code macro does not need it.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	Fix a gcc -Wformat warning.
 	* spvw-language.d (init_language): Don't pass NULL as a string to
 	fprintf.

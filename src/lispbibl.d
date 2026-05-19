@@ -9609,12 +9609,14 @@ typedef struct {
 #if (SAFETY < 2) || (PSEUDOCODE_ALIGNMENT == 1)
   #define make_machine_code(ptr)  make_machine_code_unchecked(ptr)
 #else
-  extern _Noreturn void error_pseudocode_alignment (uintP address, const char* prefix, const char* name);
   #define make_machine_code(ptr)  \
     (((((uintP)(void*)(ptr)-C_FUNCTION_POINTER_BIAS) & (PSEUDOCODE_ALIGNMENT-1)) \
       ? (error_pseudocode_alignment((uintP)(void*)(ptr),"",#ptr), 0) \
       : 0),                                                          \
      make_machine_code_unchecked(ptr))
+#endif
+#if !(PSEUDOCODE_ALIGNMENT == 1)
+  extern _Noreturn void error_pseudocode_alignment (uintP address, const char* prefix, const char* name);
 #endif
 
 /* System-Pointer */
