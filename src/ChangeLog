@@ -1,5 +1,11 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	Fix a gcc -Wformat warning.
+	* spvw-language.d (init_language): Don't pass NULL as a string to
+	fprintf.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	build: Support strict ISO C23 compilers better.
 	* lispbibl.d (lisp_function_t): Use '(...)' parameter list.
 

@@ -171,10 +171,10 @@ global void init_language
     }
     { /* Invalidate the gettext internal caches. */
       char *td = textdomain(NULL);
-      if (NULL == td) {
-        ANSIC_ERROR("textdomain",NULL);
+      if (td == NULL) {
+        ANSIC_ERROR("textdomain","NULL");
       }
-      if (NULL == textdomain(td)) {
+      if (textdomain(td) == NULL) {
         ANSIC_ERROR("textdomain",td);
       }
     }
