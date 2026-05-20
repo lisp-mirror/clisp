@@ -1,6 +1,6 @@
 /*
  * Arithmetics for CLISP
- * Bruno Haible 1990-2005, 2016-2017, 2025
+ * Bruno Haible 1990-2005, 2016-2026
  * Sam Steingold 1998-2011
  * German comments translated into English: Stefan Kain 2002-12-23
  */
@@ -1547,7 +1547,6 @@ LISPFUNNF(logorc2,2)
 
 LISPFUNNF(boole,3)
 { /* (BOOLE op integer integer), CLTL p. 222 */
-  var object op = STACK_2; /* operator, not a typetest */
   STACK_0 = check_integer(STACK_0); STACK_1 = check_integer(STACK_1);
   VALUES1(OP_I_I_boole_I(STACK_2,STACK_1,STACK_0)); skipSTACK(3);
 }

@@ -4602,7 +4602,6 @@ global maygc void dynload_modules (const char * library, uintC modcount,
         do {
           var const char * modname = *modnameptr;
           var uintL len = asciz_length(modname);
-          var const char * err;
           /* Copy modname into modnamebuf: */
           module->name = modnamebuf;
           {

@@ -1,6 +1,6 @@
 /*
  * Array functions
- * Bruno Haible 1990-2005
+ * Bruno Haible 1990-2005, 2016, 2026
  * Sam Steingold 1998-2012
  * German comments translated into English: Stefan Kain 2002-09-23
  */
@@ -5156,7 +5156,6 @@ LISPFUNN(vector_fe_init_end,2)
 
 LISPFUNN(make_bit_vector,1)
 { /* (SYS::MAKE-BIT-VECTOR size) returns a Bit-Vector with size bits. */
-  var uintL size;
   if (!posfixnump(STACK_0)) {
    bad_size:
     /* STACK_0 = size, TYPE-ERROR slot DATUM */

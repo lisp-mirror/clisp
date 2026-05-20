@@ -1,5 +1,15 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	Fix a couple of -Wunused-variable warnings.
+	* spvw.d (dynload_modules): Remove an unused variable.
+	* encoding.d (base64_to_chars): Likewise.
+	* io.d (interpret_feature): Likewise.
+	* array.d (SYS::MAKE-BIT-VECTOR): Likewise.
+	* sequence.d (MISMATCH, SEARCH): Likewise.
+	* lisparit.d (BOOLE): Likewise.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	Fix a gcc -Wmissing-declarations warning.
 	* lispbibl.d (error_pseudocode_alignment): Declare also when the
 	make_machine_code macro does not need it.

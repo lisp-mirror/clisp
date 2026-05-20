@@ -1,6 +1,6 @@
 /*
  * Sequences for CLISP
- * Bruno Haible 1987-2005
+ * Bruno Haible 1987-2005, 2026
  * Sam Steingold 1998-2009, 2011-2012
  * German comments and names translated into English: Reini Urban 2008-01
  */
@@ -3877,7 +3877,6 @@ LISPFUN(mismatch,seclass_default,2,0,norest,key,8,
  CLTL p. 257 */
   /* Stack layout: seq1, seq2, start1, end1, start2, end2, from-end,
                    key, test, test-not. */
-  var gcv_object_t* stackptr = &STACK_6;
   /* key check: */
   check_key_arg(&STACK_2);
   /* test, test-not check: */
@@ -4065,7 +4064,6 @@ LISPFUN(search,seclass_default,2,0,norest,key,8,
        function, which according to CLTL p. 247 is not always guaranteed.
   Stack layout: seq1, seq2, start1, end1, start2, end2, from-end,
                 key, test, test-not. */
-  var gcv_object_t* stackptr = &STACK_6;
   /* key check: */
   check_key_arg(&STACK_2);
   /* test, test-not check: */

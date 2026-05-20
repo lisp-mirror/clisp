@@ -1,6 +1,6 @@
 /*
  * Input/Output for CLISP
- * Bruno Haible 1990-2009, 2016-2025
+ * Bruno Haible 1990-2009, 2016-2026
  * Marcus Daniels 11.3.1997
  * Sam Steingold 1998-2011, 2017
  * German comments translated into English: Stefan Kain 2001-06-12
@@ -3761,7 +3761,6 @@ local uintWL interpret_feature (object expr) {
     else return 0; /* yes */
   } else if (consp(expr) && symbolp(Car(expr))) {
     var object opname = Symbol_name(Car(expr));
-    var uintWL and_or_flag;
     if (string_eq(opname,Symbol_name(S(and)))) /* expr = (AND ...) */
       return interpret_features(0,expr);
     if (string_eq(opname,Symbol_name(S(or)))) /* expr = (OR ...) */

@@ -1,6 +1,6 @@
 /*
  * Encodings (character sets and conversions) for CLISP
- * Bruno Haible 1998-2008, 2017-2018
+ * Bruno Haible 1998-2008, 2017-2026
  * Sam Steingold 1998-2009, 2011, 2017
  */
 
@@ -84,7 +84,6 @@ local line_end_t enc_eol_to_le (object enc_eol) {
 
 local uintL base64_to_chars (line_end_t le, const uintB* src,
                              const uintB* srcend, chart *dest) {
-  var uintL pos = 0;
   var uintL counter = 0;
   var uintL num_chars = 0;
   while (src < srcend) {
