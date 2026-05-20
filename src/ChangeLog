@@ -1,5 +1,14 @@
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
+	Silence a couple of warnings that are either useless or too noisy.
+	* makemake.in (Z_XCFLAGS): Add -Wno-address -Wno-cast-function-type
+	-Wno-type-limits -Wno-tautological-compare -Wno-unused-function
+	-Wno-unused-label -Wno-unused-parameter -Wno-unused-variable
+	-Wno-unused-but-set-variable -Wno-unused-local-typedefs
+	-Wno-xor-used-as-pow, in gcc versions that support it.
+
+2026-05-19  Bruno Haible  <bruno@clisp.org>
+
 	Fix a couple of -Wunused-variable warnings.
 	* spvw.d (dynload_modules): Remove an unused variable.
 	* encoding.d (base64_to_chars): Likewise.

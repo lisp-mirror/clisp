@@ -1314,6 +1314,72 @@ if [ $XCC_GCC = true ] ; then
         ;;
     esac
   fi
+  # Disable "warning: the comparison will always evaluate as 'true' for the address of 'prompt' will never be NULL".
+  if [ $CROSS = false ] ; then
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.[0-1]*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-address'
+        ;;
+    esac
+  fi
+  # Disable "warning: cast between incompatible function types" that occur
+  # related to lisp_function_t.
+  if [ $CROSS = false ] ; then
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.* | 5.* | 6.* | 7.*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-cast-function-type'
+        ;;
+    esac
+  fi
+  # Disable warnings that occur because we write code for several platforms at
+  # once, with different integer type bounds and widths.
+  if [ $CROSS = false ] ; then
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.[0-2]*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-type-limits'
+        ;;
+    esac
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.* | 5.*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-tautological-compare'
+        ;;
+    esac
+  fi
+  # Disable warnings about variables, functions, etc. that ended up being unused
+  # (possibly due to #ifs meant for different platforms).
+  if [ $CROSS = false ] ; then
+    case "$XCC_GCC_VERSION" in
+      2.*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable'
+        ;;
+    esac
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.[0-5]*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-unused-but-set-variable'
+        ;;
+    esac
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.[0-6]*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-unused-local-typedefs'
+        ;;
+    esac
+  fi
+  # Disable warnings that assume that the programmer is an idiot.
+  if [ $CROSS = false ] ; then
+    case "$XCC_GCC_VERSION" in
+      2.* | 3.* | 4.* | 5.* | 6.* | 7.* | 8.* | 9.* | 10.* | 11.* | 12.*) ;;
+      *)
+        Z_XCFLAGS=$Z_XCFLAGS' -Wno-xor-used-as-pow'
+        ;;
+    esac
+  fi
   if [ $CROSS = false -a $CC_CPLUSPLUS = true ] ; then
     # g++ 3.4 introduced an annoying warning, but has a workaround:
     case "$XCC_GCC_VERSION" in
