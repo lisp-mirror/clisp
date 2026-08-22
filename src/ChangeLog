@@ -1,3 +1,11 @@
+2026-08-22  Bruno Haible  <bruno@clisp.org>
+
+	Fix compilation with clang 22 (regression 2025-04-27).
+	clang 22 produces an
+	"error: fallthrough annotation does not directly precede switch label".
+	* charstrg.d: Revert 'FALLTHROUGH;' statements to comments. Silence
+	-Wimplicit-fallthrough warnings.
+
 2026-05-19  Bruno Haible  <bruno@clisp.org>
 
 	Silence a couple of warnings that are either useless or too noisy.

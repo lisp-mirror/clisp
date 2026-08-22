@@ -1,11 +1,17 @@
 /*
  * Functions for characters and strings for CLISP
- * Bruno Haible 1990-2008, 2016-2017, 2025
+ * Bruno Haible 1990-2008, 2016-2017, 2025-2026
  * Sam Steingold 1998-2009, 2012
  * German comments translated into English: Stefan Kain 2002-09-20
  */
 
 #include "lispbibl.c"
+
+/* The optimized 'switch' statements in this compilation unit are intentional.
+   Silence the GCC warnings. */
+#if (defined __GNUC__ && __GNUC__ >= 7) || (defined __clang__ && __clang_major__ >= 4)
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif
 
 /* character conversion tables: */
 #if defined(ENABLE_UNICODE)
@@ -602,7 +608,7 @@ global maygc object sstring_store (object string, uintL index, chart element) {
       inner_string = reallocate_small_string(inner_string,Sstringtype_32Bit);
       string = popSTACK();
       inner_string = TheSistring(inner_string)->data;
-      FALLTHROUGH;
+      /*FALLTHROUGH*/
    #endif
     case Sstringtype_32Bit: /* mutable Simple-String */
       TheS32string(inner_string)->data[index] = as_cint(element);
@@ -710,7 +716,7 @@ global maygc object sstring_store_array (object string, uintL offset,
         string = popSTACK();
         inner_string = TheSistring(inner_string)->data;
       }
-        FALLTHROUGH;
+        /*FALLTHROUGH*/
      #endif
       case Sstringtype_32Bit: { /* mutable Simple-String */
         var const chart* p = charptr;
@@ -935,7 +941,7 @@ global maygc object coerce_imm_ss (object obj)
         if (sstring_immutable(TheSstring(obj)))
           /* already immutable, return unchanged */
           return obj;
-        FALLTHROUGH;
+        /*FALLTHROUGH*/
       case_ostring:
         { /* other string, copy it */
           var uintL len;
@@ -1076,7 +1082,7 @@ global maygc object coerce_normal_ss (object obj)
         if (sstring_eltype(TheSstring(obj)) == Sstringtype_32Bit)
           /* already a Normal-Simple-String, return unchanged */
           return obj;
-        FALLTHROUGH;
+        /*FALLTHROUGH*/
       case_ostring:
         /* other string, copy it */
         return copy_string_normal(obj);
@@ -1114,7 +1120,7 @@ global maygc object coerce_imm_normal_ss (object obj)
             && sstring_eltype(TheSstring(obj)) == Sstringtype_32Bit)
           /* immutable Normal-Simple-String, return unchanged */
           return obj;
-        FALLTHROUGH;
+        /*FALLTHROUGH*/
       case_ostring:
         { /* other string, copy it */
           var uintL len;
