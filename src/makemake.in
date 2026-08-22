@@ -3064,6 +3064,11 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
           # gcc-4.9.2 on Linux/s390x miscompiles lisparit.d when -O2 is used.
           flags2=$flags2' -O1'
         fi
+        if [ $f = lisparit -a "$XCC_BRAND" = clang ] ; then
+          # clang 21, 22 on Linux/x86_64 and on macOS/arm64 miscompiles lisparit.d
+          # (function I_I_logbitp and other functions) when -O is used.
+          flags2=$flags2' -O0'
+        fi
         ;;
     esac
   else

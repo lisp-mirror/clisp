@@ -1,5 +1,12 @@
 2026-08-22  Bruno Haible  <bruno@clisp.org>
 
+	Fix build with with clang 21, 22.
+	Reported by Pascal J. Bourguignon
+	in <https://gitlab.com/gnu-clisp/clisp/-/work_items/63>.
+	* makemake.in: Turn off clang's optimizations for lisparit.d.
+
+2026-08-22  Bruno Haible  <bruno@clisp.org>
+
 	Fix makemake message "cd: null directory".
 	* makemake.in (top_srcdir): Rely on ${srcdir}, not ${SRCDIR}.
 
