@@ -2699,7 +2699,7 @@ echol 'SUBDIR_CFLAGS = $(A_CFLAGS) $(CFLAGS) $(Z_CFLAGS) '"${XCC_PICFLAG} @NO_CX
 echol 'gllib/libgnu.a: config.status build-aux'
 echotab 'mkdir -p gllib'
 echotab 'test -f gllib/Makefile || sh config.status gllib/Makefile depfiles'
-top_srcdir=`cd "${SRCDIR}"; pwd`
+top_srcdir=`cd "${srcdir}"; pwd`
 echotab 'cd gllib && $(MAKE) CFLAGS="$(SUBDIR_CFLAGS)" top_srcdir="'"${top_srcdir}"'"'
 echol
 echol "${GLLIB_A}: gllib/libgnu.a"

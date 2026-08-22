@@ -1,5 +1,10 @@
 2026-08-22  Bruno Haible  <bruno@clisp.org>
 
+	Fix makemake message "cd: null directory".
+	* makemake.in (top_srcdir): Rely on ${srcdir}, not ${SRCDIR}.
+
+2026-08-22  Bruno Haible  <bruno@clisp.org>
+
 	Fix compilation with clang 22 (regression 2025-04-27).
 	clang 22 produces an
 	"error: fallthrough annotation does not directly precede switch label".
