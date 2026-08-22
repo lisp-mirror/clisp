@@ -1279,7 +1279,10 @@ if [ $XCC_GCC = true ] ; then
   if LC_ALL=C $XCC --version | grep 'Apple LLVM' > /dev/null; then
     XCC_BRAND=clang
   else
-    XCC_BRAND=`LC_ALL=C $XCC --version | sed -e '2,$d' -e 's/ .*//'` # either gcc or clang
+    case `LC_ALL=C $XCC --version | sed -e '2,$d'` in
+      *clang*) XCC_BRAND=clang ;;
+      *)       XCC_BRAND=gcc ;;
+    esac
   fi
   XCC_GCC_VERSION=`LC_ALL=C $XCC -v 2>&1 | grep version | sed -n -e '$p' | sed -e 's/.*version //g' -e 's/gcc //'`
   # Assume gcc 2.95 or newer.

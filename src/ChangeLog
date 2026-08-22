@@ -1,5 +1,11 @@
 2026-08-22  Bruno Haible  <bruno@clisp.org>
 
+	Fix build with with clang on Ubuntu Linux.
+	* makemake.in (XCC_BRAND): Set to "clang", not "Ubuntu", for clang
+	on Ubuntu Linux.
+
+2026-08-22  Bruno Haible  <bruno@clisp.org>
+
 	Fix compilation with gcc < 13 or clang < 18 (regression 2026-05-19).
 	Reported by Don Cohen
 	in <https://sourceforge.net/p/clisp/mailman/message/59336826/>.
