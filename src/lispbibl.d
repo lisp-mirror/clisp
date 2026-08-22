@@ -1,6 +1,6 @@
 /*
  * Main include-file for CLISP
- * Bruno Haible 1990-2011, 2016-2018, 2020-2025
+ * Bruno Haible 1990-2011, 2016-2018, 2020-2026
  * Marcus Daniels 11.11.1994
  * Sam Steingold 1998-2012, 2016-2018
  * Vladimir Tzankov 2008-2012, 2017
@@ -9323,12 +9323,14 @@ typedef struct {
   #endif
   /* To pass a type of the value Values: return_Values(...); */
   #define return_Values  return_void
-  /* A Lisp-function is a pointer to a C-function without returned value. */
-  typedef Values (*lisp_function_t)(...);
+  /* A Lisp-function is a pointer to a C-function without returned value.
+     Note: The parameter list here is irrelevant; we cast the function pointer
+     anyway before invoking it.  */
+  typedef Values (*lisp_function_t)();
 /* If this is changed, every call of a C-function with the result type
  'Values' (especially 'funcall', 'apply', 'eval') is to be checked. */
 %% puts("typedef void Values;"); /* emit_typedef useless: no sizeof(void) */
-%% emit_typedef_f("Values (*%s)(...)","lisp_function_t");
+%% emit_typedef_f("Values (*%s)()","lisp_function_t");
 
 /* FSUBRs
  As C-functions: of type fsubr_function_t (no arguments, no value): */

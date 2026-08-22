@@ -1,5 +1,13 @@
 2026-08-22  Bruno Haible  <bruno@clisp.org>
 
+	Fix compilation with gcc < 13 or clang < 18 (regression 2026-05-19).
+	Reported by Don Cohen
+	in <https://sourceforge.net/p/clisp/mailman/message/59336826/>.
+	* lispbibl.d (lisp_function_t): Revert last change. '(...)' is not valid
+	in ISO C versions before C 23.
+
+2026-08-22  Bruno Haible  <bruno@clisp.org>
+
 	Fix build with with clang 21, 22.
 	Reported by Pascal J. Bourguignon
 	in <https://gitlab.com/gnu-clisp/clisp/-/work_items/63>.
