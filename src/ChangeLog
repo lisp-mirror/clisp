@@ -1,5 +1,10 @@
 2026-08-23  Bruno Haible  <bruno@clisp.org>
 
+	Fix some builds with Apple clang on macOS/arm64.
+	* makemake.in (FALIGNFLAGS): Set to non-empty also with clang.
+
+2026-08-23  Bruno Haible  <bruno@clisp.org>
+
 	Improve SunPRO C support in modules.
 	* utils/modprep.lisp (print-tables-2): Align subr-tab correctly also
 	when using the SunPRO C compiler.

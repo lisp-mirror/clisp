@@ -1511,8 +1511,9 @@ fi
 # - with Apple's gcc 4 on MacOS X,
 # - with gcc >= 4 when "gcc -Os" is used,
 # - with clang when "clang -Os" is used.
-# gcc has an option to fix this. clang 3.9 doesn't.
-if [ $XCC_GCC = true ] && [ "$XCC_BRAND" != clang ] ; then
+# gcc has an option to fix this.
+# clang >= 7 as well; older clang versions merely warn about an unsupported option.
+if [ $XCC_GCC = true ] ; then
   if $WIDE_HARD; then
     # GENERIC64C_HEAPCODES requires an 8-byte alignment of all C functions
     # that are used as relocatable machine pointers.
