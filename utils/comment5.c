@@ -96,7 +96,7 @@ int main (int argc, char* argv[]) {
     { fputc('/',outfile); fputc('*',outfile); fputc(' ',outfile); }
 #define fput_endcomment(outfile)                                        \
     { fputc(' ',outfile); fputc('*',outfile); fputc('/',outfile); }
-  { register int c;
+  { int c;
     L1:  /* innerhalb einer Zeile, vor Kommentar */
          c = fgetc(infile) ;
     L1a: if (c==EOF){ goto L3; }

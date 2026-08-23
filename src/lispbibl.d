@@ -1090,7 +1090,7 @@
 /* Ignore C++ keyword. */
 #define export export_sym
 
-/* Swap the contents of two variables:  swap(register int, x1, x2); */
+/* Swap the contents of two variables:  swap(int, x1, x2); */
 #define swap(swap_type,swap_var1,swap_var2)  \
   do { var swap_type swap_temp;                                          \
     swap_temp = swap_var1; swap_var1 = swap_var2; swap_var2 = swap_temp; \
@@ -3957,8 +3957,8 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
   #elif defined(OBJECT_STRUCT)
     #define as_object(o)  ((object){designated_init(one_o,(o))INIT_ALLOCSTAMP})
   #else
-    extern __inline__ object as_object (register oint o)
-      { register object obj; obj.one_o = o; return obj; }
+    extern __inline__ object as_object (oint o)
+      { object obj; obj.one_o = o; return obj; }
   #endif
 #else
   #define as_oint(expr)  (oint)(expr)
@@ -7752,8 +7752,8 @@ typedef unsigned_int_with_n_bits(char_int_len)  cint;
       #define as_chart(c)  ((chart){designated_init(one_c,(c))})
     #endif
   #else
-    extern __inline__ chart as_chart (register cint c)
-      { register chart ch; ch.one_c = c; return ch; }
+    extern __inline__ chart as_chart (cint c)
+      { chart ch; ch.one_c = c; return ch; }
   #endif
 #else
   #define as_cint(ch)  (ch)
@@ -11788,19 +11788,19 @@ typedef uintP  SPint;
 #define _SP_(n)  (((SPint*)SP()) + SPoffset SPop (uintP)(n))
 #if !(defined(GNU) && defined(M68K) && !defined(NO_ASM)) /* generally */
   #define SP_(n)  (((SPint*)SP())[SPoffset SPop (uintP)(n)])
-  #define skipSP(n)                             \
-    do { var register SPint* sp = (SPint*)SP(); \
-         sp skipSPop (uintP)(n);                \
-         setSP(sp);                             \
+  #define skipSP(n)                    \
+    do { var SPint* sp = (SPint*)SP(); \
+         sp skipSPop (uintP)(n);       \
+         setSP(sp);                    \
     } while(0)
   #define pushSP(item)                                                     \
-    do { var register SPint* sp = (SPint*)SP();                            \
+    do { var SPint* sp = (SPint*)SP();                                     \
          sp skipSPop -1;                                                   \
          setSP(sp); /* First decrease SP (because of a possible interrupt!)  */\
          sp[SPoffset] = (item); /* then insert item as top-of-SP */        \
     } while(0)
   #define popSP(item_assignment)                                        \
-    do { var register SPint* sp = (SPint*)SP();                         \
+    do { var SPint* sp = (SPint*)SP();                                  \
          item_assignment sp[SPoffset]; /* First fetch top-of-SP           */\
          sp skipSPop 1;                                                 \
          setSP(sp); /* then (danger of interrupt!) increase SP            */\
@@ -11811,23 +11811,23 @@ typedef uintP  SPint;
    modification of SP are a unit that cannot be interrupted.
    And SP_DOWN as well as SPoffset=0 hold. */
   #define SP_(n)  \
-    ({var register uintL __n = sizeof(SPint) * (n); \
-      var register SPint __item;                    \
+    ({var uintL __n = sizeof(SPint) * (n); \
+      var SPint __item;                    \
       __asm__ __volatile__ ("movel "REGISTER_PREFIX"sp@(%1:l),%0" : "=g" (__item) : "r" (__n) ); \
-      __item;                                       \
+      __item;                              \
      })
   #define skipSP(n)  \
-    do { var register uintL __n = sizeof(SPint) * (n);  \
+    do { var uintL __n = sizeof(SPint) * (n);  \
      __asm__ __volatile__ ("addl %0,"REGISTER_PREFIX"sp" : : "g" (__n) : "sp" ); \
     } while(0)
   #define pushSP(item)  \
-    do { var register SPint __item = (item); \
+    do { var SPint __item = (item); \
      __asm__ __volatile__ ("movel %0,"REGISTER_PREFIX"sp@-" : : "g" (__item) : "sp" ); \
     } while(0)
   #define popSP(item_assignment)  \
-    do {  var register SPint __item; \
+    do {  var SPint __item;  \
      __asm__ __volatile__ ("movel "REGISTER_PREFIX"sp@+,%0" : "=r" (__item) : : "sp" ); \
-     item_assignment __item;                                                 \
+     item_assignment __item; \
     } while(0)
 #endif
 /* An sp_jmp_buf is exactly the same as a jmp_buf,

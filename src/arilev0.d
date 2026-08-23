@@ -107,7 +107,7 @@
          })
     #elif defined(SPARC64) && !defined(NO_ASM)
       #define mulu16(arg1,arg2)  \
-        ({ var register uint64 _result;                                         \
+        ({ var uint64 _result;                                                  \
            __asm__("umul %1,%2,%0"                                              \
                    : "=&r" (_result)                                            \
                    : "r" ((uint32)(uint16)(arg1)), "r" ((uint32)(uint16)(arg2)) \
@@ -116,8 +116,8 @@
          })
     #elif defined(I80386) && !defined(NO_ASM)
       #define mulu16(arg1,arg2)  \
-        ({ var register uint16 _hi;                                         \
-           var register uint16 _lo;                                         \
+        ({ var uint16 _hi;                                                  \
+           var uint16 _lo;                                                  \
            __asm__("mulw %2"                                                \
                    : "=d" /* %dx */ (_hi), "=a" /* %ax */ (_lo)             \
                    : "rm" ((uint16)(arg1)), "1" /* %eax */ ((uint16)(arg2)) \
@@ -182,8 +182,8 @@
          })
     #elif defined(I80386) && !defined(NO_ASM)
       #define mulu32(x,y,hi_assignment,lo_assignment)  \
-        ({ var register uint32 _hi;                                   \
-           var register uint32 _lo;                                   \
+        ({ var uint32 _hi;                                            \
+           var uint32 _lo;                                            \
            __asm__("mull %2"                                          \
                    : "=d" /* %edx */ (_hi), "=a" /* %eax */ (_lo)     \
                    : "rm" ((uint32)(x)), "1" /* %eax */ ((uint32)(y)) \
@@ -192,8 +192,8 @@
          })
     #elif defined(SPARC64) && !defined(NO_ASM)
       #define mulu32(x,y,hi_assignment,lo_assignment)  \
-        ({ var register uint64 _hi;                            \
-           var register uint64 _lo;                            \
+        ({ var uint64 _hi;                                     \
+           var uint64 _lo;                                     \
            __asm__("umul %2,%3,%0\n\trd %%y,%1"                \
                    : "=&r" (_lo), "=r" (_hi)                   \
                    : "r" ((uint32)(x)), "r" ((uint32)(y))      \
@@ -202,33 +202,33 @@
          })
     #elif defined(MIPS) && !defined(NO_ASM)
       #define mulu32(x,y,hi_assignment,lo_assignment)  \
-        ({ var register uint32 _hi;                       \
-           var register uint32 _lo;                       \
+        ({ var uint32 _hi;                                \
+           var uint32 _lo;                                \
            __asm__("multu %3,%2 ; mfhi %0 ; mflo %1"      \
                    : "=r" (_hi), "=r" (_lo)               \
                    : "r" ((uint32)(x)), "r" ((uint32)(y)) \
                   );                                      \
-           hi_assignment _hi; lo_assignment _lo;            \
+           hi_assignment _hi; lo_assignment _lo;          \
          })
     #elif (defined(SPARC) || defined(SPARC64)) && !defined(NO_ARI_ASM)
       extern_C uint64 asm_mulu32_64 (uint32 arg1, uint32 arg2); # extern in Assembler
-      #define mulu32(x,y,hi_assignment,lo_assignment)      \
-        ({ var register uint64 _prod = asm_mulu32_64(x,y); \
-           hi_assignment (uint32)(_prod>>32);              \
-           lo_assignment (uint32)(_prod);                  \
+      #define mulu32(x,y,hi_assignment,lo_assignment) \
+        ({ var uint64 _prod = asm_mulu32_64(x,y);     \
+           hi_assignment (uint32)(_prod>>32);         \
+           lo_assignment (uint32)(_prod);             \
          })
     #elif defined(ARM) && !defined(NO_ARI_ASM)
       extern_C uint64 asm_mulu32_64 (uint32 arg1, uint32 arg2); # extern in Assembler
-      #define mulu32(x,y,hi_assignment,lo_assignment)      \
-        ({ var register uint64 _prod = asm_mulu32_64(x,y); \
-           hi_assignment retval64_r1(_prod);               \
-           lo_assignment retval64_r0(_prod);               \
+      #define mulu32(x,y,hi_assignment,lo_assignment) \
+        ({ var uint64 _prod = asm_mulu32_64(x,y);     \
+           hi_assignment retval64_r1(_prod);          \
+           lo_assignment retval64_r0(_prod);          \
          })
     #else
       #define mulu32(x,y,hi_assignment,lo_assignment)  \
-        ({ var register uint64 _prod = (uint64)(x) * (uint64)(y); \
-           hi_assignment (uint32)(_prod>>32);                      \
-           lo_assignment (uint32)(_prod);                          \
+        ({ var uint64 _prod = (uint64)(x) * (uint64)(y); \
+           hi_assignment (uint32)(_prod>>32);            \
+           lo_assignment (uint32)(_prod);                \
          })
     #endif
   #endif
@@ -295,7 +295,7 @@
 # Es wird vorausgesetzt, dass arg1*arg2 < 2^32.
   #if defined(GNU) && defined(SPARC64) && !defined(NO_ASM)
     #define mulu32_unchecked(arg1,arg2)  \
-      ({ var register uint64 _result;                         \
+      ({ var uint64 _result;                                  \
          __asm__("umul %1,%2,%0"                              \
                  : "=&r" (_result)                            \
                  : "r" ((uint32)(arg1)), "r" ((uint32)(arg2)) \
@@ -320,8 +320,8 @@
   #if defined(GNU) || defined(INTEL)
     #if defined(I80386) && !defined(NO_ASM)
       #define mulu32_64(x,y)  \
-        ({ var register uint32 _hi;                                   \
-           var register uint32 _lo;                                   \
+        ({ var uint32 _hi;                                            \
+           var uint32 _lo;                                            \
            __asm__("mull %2"                                          \
                    : "=d" /* %edx */ (_hi), "=a" /* %eax */ (_lo)     \
                    : "rm" ((uint32)(x)), "1" /* %eax */ ((uint32)(y)) \
@@ -330,18 +330,18 @@
          })
     #elif defined(SPARC64) && !defined(NO_ASM)
       #define mulu32_64(x,y)  \
-        ({ var register uint64 _hi;                            \
-           var register uint64 _lo;                            \
-           __asm__("umul %2,%3,%0\n\trd %%y,%1"                \
-                   : "=&r" (_lo), "=r" (_hi)                   \
-                   : "r" ((uint32)(x)), "r" ((uint32)(y))      \
-                  );                                           \
-           highlow64((uint32)_hi,(uint32)_lo);                 \
+        ({ var uint64 _hi;                                \
+           var uint64 _lo;                                \
+           __asm__("umul %2,%3,%0\n\trd %%y,%1"           \
+                   : "=&r" (_lo), "=r" (_hi)              \
+                   : "r" ((uint32)(x)), "r" ((uint32)(y)) \
+                  );                                      \
+           highlow64((uint32)_hi,(uint32)_lo);            \
          })
     #elif defined(MIPS) && !defined(NO_ASM)
       #define mulu32_64(x,y)  \
-        ({ var register uint32 _hi;                       \
-           var register uint32 _lo;                       \
+        ({ var uint32 _hi;                                \
+           var uint32 _lo;                                \
            __asm__("multu %3,%2 ; mfhi %0 ; mflo %1"      \
                    : "=r" (_hi), "=r" (_lo)               \
                    : "r" ((uint32)(x)), "r" ((uint32)(y)) \

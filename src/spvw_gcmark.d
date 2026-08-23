@@ -4,7 +4,7 @@ local void gc_mark (object obj)
 {
   var object curr = obj; /* current object */
   var object pred = nullobj; /* predecessor-object */
-  IF_DEBUG_GC_MARK(fprintf(stderr,"gc_mark obj = 0x%"PRIoint"x\n", as_oint(obj)));
+  IF_DEBUG_GC_MARK(fprintf(stderr,"gc_mark obj = 0x%" PRIoint"x\n", as_oint(obj)));
 
 #define down_pair()                                                     \
   if (in_old_generation(curr,typecode(curr),1))                         \
@@ -208,7 +208,7 @@ local void gc_mark (object obj)
  down: /* entry for further descent.
           curr = object to be marked (engl. this),
           pred = its predecessor */
-  IF_DEBUG_GC_MARK(fprintf(stderr,"down: pred = 0x%"PRIoint"x, curr = 0x%"PRIoint"x\n",
+  IF_DEBUG_GC_MARK(fprintf(stderr,"down: pred = 0x%" PRIoint"x, curr = 0x%" PRIoint"x\n",
                            as_oint(pred), as_oint(curr)));
  #ifdef TYPECODES
   switch (typecode(curr)) {
@@ -338,7 +338,7 @@ local void gc_mark (object obj)
  #endif
  up: /* entry for ascent.
         curr = currently marked object, pred = its predecessor */
-  IF_DEBUG_GC_MARK(fprintf(stderr,"up:   pred = 0x%"PRIoint"x, curr = 0x%"PRIoint"x\n",
+  IF_DEBUG_GC_MARK(fprintf(stderr,"up:   pred = 0x%" PRIoint"x, curr = 0x%" PRIoint"x\n",
                            as_oint(pred), as_oint(curr)));
   if (eq(pred,nullobj)) /* ending flag reached? */
     return; /* yes -> finished */

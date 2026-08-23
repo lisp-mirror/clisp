@@ -1,3 +1,17 @@
+2026-08-23  Bruno Haible  <bruno@clisp.org>
+
+	Fix DEBUG_GCSAFETY build with clang on Linux, part 1.
+	* utils/comment5.c (main): Don't use the 'register' keyword on local
+	variables.
+	* lispbibl.d (as_object, as_chart, SP_, skipSP, pushSP, popSP):
+	Likewise.
+	* unix.d (SETSTD): Likewise.
+	* arilev0.d: Likewise.
+	* sfloat.d (SF_uexp): Likewise.
+	* modules/rawsock/rawsock.c: Likewise.
+	* spvw_gcmark.d (gc_mark): Add a space between literal strings and
+	PRIoint.
+
 2026-08-22  Bruno Haible  <bruno@clisp.org>
 
 	Fix build with with clang on Ubuntu Linux.

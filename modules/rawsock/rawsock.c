@@ -1164,7 +1164,7 @@ static void configdev (rawsock_t sock, char* ifname, int ipaddress, int flags) {
     if (ioctl(sock, SIOCGIFADDR, &ifrequest) < 0)
       OS_file_error(STACK_1);
     else {
-      register int j;
+      int j;
       for (j=2;j<6;j++) ifrequest.ifr_addr.sa_data[j] = 0;
       if (ioctl(sock, SIOCSIFADDR, &ifrequest) < 0)
         OS_file_error(STACK_1);
@@ -1453,7 +1453,7 @@ DEFUN(RAWSOCK::SET-SOCKET-OPTION, value sock name &key :LEVEL)
    - 2 bytes specifying the next level protocol (e.g., 0800 for IP)
    followed by an IP datagram, so the first 14 bytes are ignored. */
 static unsigned short ipcsum (unsigned char* buffer, size_t length) {
-  register long sum=0;          /* assumes long == 32 bits */
+  long sum=0;                   /* assumes long == 32 bits */
   unsigned short result;
   unsigned char *ptr=&(buffer[14]);
   unsigned int nbytes;
@@ -1475,7 +1475,7 @@ DEFUN(RAWSOCK:IPCSUM, buffer &key :START :END) { /* IP checksum */
 }
 
 static unsigned short icmpcsum (unsigned char* buffer, size_t length) {
-  register long sum=0;          /* assumes long == 32 bits */
+  long sum=0;                   /* assumes long == 32 bits */
   unsigned short result;
   unsigned char *ptr;
   unsigned int nbytes, off, offset;
@@ -1500,7 +1500,7 @@ DEFUN(RAWSOCK:ICMPCSUM, buffer &key :START :END) { /* ICMP checksum */
 }
 
 static unsigned short tcpcsum (unsigned char* buffer, size_t length) {
-  register unsigned long sum;  /* assumes long == 32 bits */
+  unsigned long sum;            /* assumes long == 32 bits */
   unsigned short result;
   unsigned char *ptr;
   unsigned int nbytes, packsize, offset;
@@ -1531,7 +1531,7 @@ DEFUN(RAWSOCK:TCPCSUM, buffer &key :START :END) { /* TCP checksum */
 }
 
 static unsigned short udpcsum (unsigned char* buffer, size_t length) {
-  register unsigned long sum = 0;  /* assumes long == 32 bits */
+  unsigned long sum = 0;        /* assumes long == 32 bits */
   unsigned short result;
   unsigned char *ptr;
   unsigned int nbytes, packsize, offset;

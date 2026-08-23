@@ -435,7 +435,7 @@ extern_C int dup2 (int oldfd, int newfd); /* DUP(2V) */
 #elif defined(HAVE_SETPGID)
   extern_C pid_t getpid (void); /* GETPID(2V) */
   extern_C int setpgid (pid_t pid, pid_t pgid); /* SETPGID(2V), SETSID(2V), TERMIO(4) */
-  #define SETSID()  { register pid_t pid = getpid(); setpgid(pid,pid); }
+  #define SETSID()  { pid_t pid = getpid(); setpgid(pid,pid); }
 #else
   #define SETSID()
 #endif
