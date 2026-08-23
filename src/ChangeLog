@@ -1,5 +1,9 @@
 2026-08-23  Bruno Haible  <bruno@clisp.org>
 
+	Fix DEBUG_GCSAFETY build with clang on Linux, part 3.
+	* tests/alltest.tst: Treat clang++ built binaries like g++ built
+	binaries.
+
 	Fix DEBUG_GCSAFETY build with clang on Linux, part 2.
 	* lispbibl.d (struct_init, designated_struct_member_init, union_init,
 	designated_union_member_init): New macros.

@@ -606,7 +606,7 @@ NIL
 
 (let* ((n (min (1- lambda-parameters-limit)
                (case (read-from-string (software-type))
-                 ((g++ i686-pc-mingw32-g++) 256)
+                 ((g++ clang++ i686-pc-mingw32-g++) 256)
                  (i686-pc-mingw32-gcc 512)
                  (t 1024))))
        (vars (loop repeat n collect (gensym))))
