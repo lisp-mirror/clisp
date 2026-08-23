@@ -1,5 +1,11 @@
 2026-08-23  Bruno Haible  <bruno@clisp.org>
 
+	Fix DEBUG_GCSAFETY build with clang on Linux, part 2.
+	* lispbibl.d (struct_init, designated_struct_member_init, union_init,
+	designated_union_member_init): New macros.
+	(as_object, INIT_ALLOCSTAMP, type_untype_object, type_data_object,
+	gcv_object_t::operator object): Use them.
+
 	Fix DEBUG_GCSAFETY build with clang on Linux, part 1.
 	* utils/comment5.c (main): Don't use the 'register' keyword on local
 	variables.

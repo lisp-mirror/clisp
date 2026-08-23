@@ -492,7 +492,8 @@
   #error An ANSI C or C++ compiler is required to compile CLISP!
 #endif
 
-/* Choose the appropriate designated field initializer syntax.
+/* Choose the appropriate designated field initializer syntax
+ for initializing structs and unions.
  The standard syntax nowadays is   .field = value
  but it not supported in GNU g++ < 4.7.
  The older GNU syntax              field : value
@@ -504,6 +505,26 @@
   #define designated_init(field,value) .field=value
 #endif
 %% export_def(designated_init(field,value));
+
+/* Choose the appropriate syntax for initializing a struct.
+ In C++11 or newer we have a standard syntax TYPE{value,...} that also
+ works with clang, whereas the  .field = value  syntax does not work
+ in clang when the value is not a constant. */
+#if defined __cplusplus && __cplusplus >= 201103
+  #define struct_init(type)  type
+  #define designated_struct_member_init(field,value)  value
+#else
+  #define struct_init(type)  (type)
+  #define designated_struct_member_init(field,value)  designated_init(field,value)
+#endif
+%% export_def(struct_init(type));
+%% export_def(designated_struct_member_init(field,value));
+
+/* Choose the appropriate syntax for initializing a union.
+ In C+++ mode, with clang, this requires that the value is a constant. */
+#define union_init(type)  (type)
+#define designated_union_member_init(field,value)  designated_init(field,value)
+%% export_def(designated_union_member_init(field,value));
 
 /* A property of the compiler:
    Whether it supports aligning variables on 8-byte boundaries. */
@@ -3953,9 +3974,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
 #if defined(WIDE_STRUCT) || defined(OBJECT_STRUCT)
   #define as_oint(expr)  ((expr).one_o)
   #if defined(WIDE_STRUCT)
-    #define as_object(o)  ((object){designated_init(u,{designated_init(one_u,(o))})INIT_ALLOCSTAMP})
+    #define as_object(o)  (struct_init(object){designated_struct_member_init(u,{designated_union_member_init(one_u,(o))})INIT_ALLOCSTAMP})
   #elif defined(OBJECT_STRUCT)
-    #define as_object(o)  ((object){designated_init(one_o,(o))INIT_ALLOCSTAMP})
+    #define as_object(o)  (struct_init(object){designated_struct_member_init(one_o,(o))INIT_ALLOCSTAMP})
   #else
     extern __inline__ object as_object (oint o)
       { object obj; obj.one_o = o; return obj; }
@@ -5287,7 +5308,7 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
     uintL allocstamp;
   };
   /* Always initialize allocstamp with the current(!) value of alloccount. */
-  #define INIT_ALLOCSTAMP  , designated_init(allocstamp,alloccount)
+  #define INIT_ALLOCSTAMP  , designated_struct_member_init(allocstamp,alloccount)
 #else
   typedef gcv_object_t object;
   #define INIT_ALLOCSTAMP
@@ -5488,9 +5509,9 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
    type_untype_object(type,address) */
   #if defined(WIDE) && defined(WIDE_STRUCT)
     #if BIG_ENDIAN_P==WIDE_ENDIANNESS
-      #define type_untype_object(type,address)  ((object){{(tint)(type),(aint)(address)}INIT_ALLOCSTAMP})
+      #define type_untype_object(type,address)  (struct_init(object){{(tint)(type),(aint)(address)}INIT_ALLOCSTAMP})
     #else
-      #define type_untype_object(type,address)  ((object){{(aint)(address),(tint)(type)}INIT_ALLOCSTAMP})
+      #define type_untype_object(type,address)  (struct_init(object){{(aint)(address),(tint)(type)}INIT_ALLOCSTAMP})
     #endif
   #elif !(oint_addr_shift==0)
     #define type_untype_object(type,address)  \
@@ -5517,9 +5538,9 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
    type_data_object(type,data) */
   #if defined(WIDE) && defined(WIDE_STRUCT)
     #if BIG_ENDIAN_P==WIDE_ENDIANNESS
-      #define type_data_object(type,data)  ((object){{(tint)(type),(aint)(data)}INIT_ALLOCSTAMP})
+      #define type_data_object(type,data)  (struct_init(object){{(tint)(type),(aint)(data)}INIT_ALLOCSTAMP})
     #else
-      #define type_data_object(type,data)  ((object){{(aint)(data),(tint)(type)}INIT_ALLOCSTAMP})
+      #define type_data_object(type,data)  (struct_init(object){{(aint)(data),(tint)(type)}INIT_ALLOCSTAMP})
     #endif
   #elif !(oint_addr_shift==0)
     #define type_data_object(type,data)  \
@@ -6748,7 +6769,7 @@ extern bool inside_gc;
    on the STACK) we can assume that GC has updated it. */
   inline gcv_object_t::operator object () const {
     nonimmprobe(one_o);
-    return (object){ designated_init(one_o,one_o) INIT_ALLOCSTAMP };
+    return struct_init(object){ designated_struct_member_init(one_o,one_o) INIT_ALLOCSTAMP };
   }
 
   /* When an object is put into a GC visible location (in the heap or
@@ -6790,7 +6811,7 @@ extern bool inside_gc;
 %%     emit_define("nonimmsubrp(obj)","false");
 %%   #endif
 %%   export_def(nonimmprobe(obj_o));
-%%   puts("inline gcv_object_t::operator object () const { nonimmprobe(one_o); return (object){ designated_init(one_o,one_o), designated_init(allocstamp,alloccount) }; }");
+%%   puts("inline gcv_object_t::operator object () const { nonimmprobe(one_o); return struct_init(object){ designated_struct_member_init(one_o,one_o), designated_struct_member_init(allocstamp,alloccount) }; }");
 %%   puts("inline gcv_object_t::gcv_object_t (object obj) { if (!(gcinvariant_object_p(obj) || gcinvariant_symbol_p(obj) || obj.allocstamp == alloccount || nonimmsubrp(obj))) abort(); one_o = as_oint(obj); nonimmprobe(one_o); }");
 %%   puts("inline gcv_object_t::gcv_object_t () {}");
 %% #endif
