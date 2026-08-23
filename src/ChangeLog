@@ -1,5 +1,11 @@
 2026-08-23  Bruno Haible  <bruno@clisp.org>
 
+	Improve SunPRO C support in modules.
+	* utils/modprep.lisp (print-tables-2): Align subr-tab correctly also
+	when using the SunPRO C compiler.
+
+2026-08-23  Bruno Haible  <bruno@clisp.org>
+
 	Fix DEBUG_GCSAFETY build with clang on Linux, part 3.
 	* tests/alltest.tst: Treat clang++ built binaries like g++ built
 	binaries.
