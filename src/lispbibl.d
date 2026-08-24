@@ -2913,8 +2913,14 @@ typedef enum {
        MALLOC_ADDRESS_RANGE = 0x0000000134000000UL
        SHLIB_ADDRESS_RANGE  = 0x0000000136000000UL
        STACK_ADDRESS_RANGE  = 0x000000016B000000UL
-       There is room from 0x000300000000UL to 0x000F00000000UL
-       and from           0x008000000000UL to 0x400000000000UL. */
+       On macOS 26.5 (Darwin 25.5.0)/arm64:
+       MMAP_FIXED_ADDRESS_HIGHEST_BIT = 46
+       CODE_ADDRESS_RANGE   = 0x0000000102000000UL
+       MALLOC_ADDRESS_RANGE = 0x0000000C6D000000UL
+       SHLIB_ADDRESS_RANGE  = 0x0000000100000000UL
+       STACK_ADDRESS_RANGE  = 0x000000016F000000UL
+       There is room from 0x000300000000UL to 0x000B00000000UL
+       and from           0x008000000000UL to 0x400000000000UL.
     #define MAPPABLE_ADDRESS_RANGE_START 0x010000000000UL
     #define MAPPABLE_ADDRESS_RANGE_END   0x01FFFFFFFFFFUL
   #endif
@@ -4927,7 +4933,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
           #if defined(UNIX_MACOSX) && defined(AMD64) /* Mac OS X/x86_64 */
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 0
           #endif
-          #if defined(UNIX_MACOSX) && defined(AMD64) /* macOS 11/arm64 */
+          #if defined(UNIX_MACOSX) && defined(ARM64) /* macOS 11/arm64 */
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
           #endif
           #if defined(UNIX_AIX) && defined(POWERPC64) /* AIX/POWER with 64-bit ABI */
