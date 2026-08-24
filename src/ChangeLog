@@ -1,5 +1,13 @@
 2026-08-24  Bruno Haible  <bruno@clisp.org>
 
+	Improve support for "gcc -std=gnu2x" and "clang -std=gnu2x".
+	Reported by Pascal J. Bourguignon
+	in <https://gitlab.com/gnu-clisp/clisp/-/merge_requests/17>.
+	* m4/select.m4 (CL_SELECT): Adjust test of __STDC_VERSION__.
+	* src/configure: Regenerated.
+
+2026-08-24  Bruno Haible  <bruno@clisp.org>
+
 	Avoid a crash on platforms without a select() function.
 	Reported by Pascal J. Bourguignon
 	in <https://gitlab.com/gnu-clisp/clisp/-/merge_requests/17>.

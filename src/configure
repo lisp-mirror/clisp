@@ -64004,7 +64004,10 @@ else case e in #(
 "C"
 #endif
 
-            #if defined __cplusplus || __STDC_VERSION__ >= 202311L
+            /* Here we test for __STDC_VERSION__ >= 202311L or the value set by
+               "gcc -std=gnu2x" (gcc version >= 13) or
+               "clang -std=gnu2x" (clang version >= 15). */
+            #if defined __cplusplus || __STDC_VERSION__ >= 202000L
             int select(int, fd_set*, fd_set*, fd_set*, struct timeval *);
             #else
             int select();
