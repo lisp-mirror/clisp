@@ -1,6 +1,6 @@
 /*
  * Auxiliary functions for CLISP on UNIX
- * Bruno Haible 1990-2005, 2008, 2017, 2024
+ * Bruno Haible 1990-2005, 2008, 2017, 2024, 2026
  * Sam Steingold 1998-2009, 2011, 2017
  */
 
@@ -53,7 +53,9 @@ global int select (int width, fd_set* readfds, fd_set* writefds,
       }
     }
   }
-  var int poll_timeout = timeout->tv_sec * 1000 + timeout->tv_usec / (1000000/1000);
+  var int poll_timeout =
+    (timeout == NULL ? -1 :
+     timeout->tv_sec * 1000 + timeout->tv_usec / (1000000/1000));
   var int result = poll(&pollfd_bag[0],pollfd_count,poll_timeout);
   if (result>=0) {
     pollfd_ptr = &pollfd_bag[0];

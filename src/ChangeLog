@@ -1,5 +1,12 @@
 2026-08-24  Bruno Haible  <bruno@clisp.org>
 
+	Avoid a crash on platforms without a select() function.
+	Reported by Pascal J. Bourguignon
+	in <https://gitlab.com/gnu-clisp/clisp/-/merge_requests/17>.
+	* unixaux.d (select): Handle the case that timeout==NULL.
+
+2026-08-24  Bruno Haible  <bruno@clisp.org>
+
 	Improve comments about memory allocation model on macOS/arm64.
 	Tiny patch by Pascal J. Bourguignon.
 	* lispbibl.d (TYPECODES_WITH_TRIVIALMAP_WORKS): Fix typo in #if
