@@ -8914,10 +8914,15 @@ typedef struct {
 #ifndef MAXHOSTNAMELEN
   #define MAXHOSTNAMELEN 64
 #endif
+/* Maximum length of the peer host names that we accept.
+   Should be >= MAXHOSTNAMELEN.
+   Also consider that a fully qualified domain name in the DNS can be up to 255
+   bytes long. */
+#define MAXPEERNAMELEN 1024
 typedef struct host_data_t {
   char hostname[45+1];   /* IP address in presentable, printable format
                         (IPv4 max. 15 characters, IPv6 max. 45 characters) */
-  char truename[MAXHOSTNAMELEN+1]; /* hostname, with or without domain name */
+  char truename[MAXPEERNAMELEN+1]; /* hostname, with or without domain name */
   unsigned int port;
 } host_data_t;
 #endif

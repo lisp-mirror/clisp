@@ -1,3 +1,13 @@
+2026-09-03  Bruno Haible  <bruno@clisp.org>
+
+	Avoid assertion failure in SOCKET-STREAM-PEER.
+	Reported by Don Cohen.
+	* lispbibl.d (MAXPEERNAMELEN): New macro.
+	(host_data_t): Use it instead of MAXHOSTNAMELEN.
+	* socket.d (socket_getlocalname): Likewise.
+	(socket_getpeername): Likewise. If hp->h_name is too long, treat it
+	like a failure.
+
 2026-08-24  Bruno Haible  <bruno@clisp.org>
 
 	Improve support for "gcc -std=gnu2x" and "clang -std=gnu2x".
