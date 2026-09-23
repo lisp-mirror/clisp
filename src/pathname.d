@@ -5805,9 +5805,11 @@ global /*maygc*/ file_kind_t classify_namestring
         return FILE_KIND_DIR;
       else return FILE_KIND_FILE;
     } else {
-      /* you get ERROR_INVALID_NAME on GetFileAttributes("foo/")
-         when file "foo" exists */
-      if (!(WIN32_ERROR_NOT_FOUND || GetLastError() == ERROR_INVALID_NAME))
+      /* GetFileAttributes("foo/") when file "foo" exists produces
+         an ERROR_INVALID_NAME (earlier Windows) or ERROR_DIRECTORY
+         (since Windows 11). */
+      if (!(WIN32_ERROR_NOT_FOUND || GetLastError() == ERROR_INVALID_NAME
+            || GetLastError() == ERROR_DIRECTORY))
         return FILE_KIND_BAD;
       return FILE_KIND_NONE;    /* does not exist */
     }

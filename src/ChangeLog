@@ -1,3 +1,12 @@
+2026-09-23  Bruno Haible  <bruno@clisp.org>
+
+	Fix pathname handling on Windows 11.
+	Reported and patch by Gabe Jones at
+	<https://gitlab.com/gnu-clisp/clisp/-/merge_requests/14>.
+	Tested by Qian Yun.
+	* pathname.d (classify_namestring): Treat ERROR_DIRECTORY like
+	ERROR_INVALID_NAME.
+
 2026-09-03  Bruno Haible  <bruno@clisp.org>
 
 	Avoid assertion failure in SOCKET-STREAM-PEER.
