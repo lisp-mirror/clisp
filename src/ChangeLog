@@ -1,5 +1,10 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
+	Fix a few gcc warnings.
+	* utils/comment5.c (main): Remove two unused labels.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
 	Fix macOS/arm64 support (regression 2026-08-24).
 	* lispbibl.d: Terminate a comment.
 
