@@ -2753,6 +2753,7 @@ AM_V
 CSCOPE
 ETAGS
 CTAGS
+am__tar_ignore_stderr
 am__untar
 am__tar
 AMTAR
@@ -5343,7 +5344,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-am__api_version='1.18'
+am__api_version='1.19'
 
 
 
@@ -6074,10 +6075,15 @@ mkdir_p='$(MKDIR_P)'
 
 # We need awk for the "check" target (and possibly the TAP driver).  The
 # system "awk" is bad on some platforms.
-# Always define AMTAR for backward compatibility.  Yes, it's still used
-# in the wild :-(  We should find a proper way to deprecate it ...
+# Always define AMTAR for backward compatibility.  It's still used
+# in the wild, let's not break things.
 AMTAR='$${TAR-tar}'
 
+
+# The dist rules treat anything $(am__tar) writes to standard error as
+# a failure (automake bug#19614).  Set this to "yes" for archivers that
+# write there when all is well; cpio reports a block count.
+am__tar_ignore_stderr=no
 
 # We'll loop over all known methods to create a tar archive until one works.
 _am_tools='gnutar plaintar pax cpio none'
@@ -6129,11 +6135,12 @@ printf %s "checking how to create a ustar tar archive... " >&6; }
   _am_tools=${am_cv_prog_tar_ustar-$_am_tools}
 
   for _am_tool in $_am_tools; do
+    am__tar_ignore_stderr=no
     case $_am_tool in
     gnutar)
       for _am_tar in tar gnutar gtar; do
-        { echo "$as_me:$LINENO: $_am_tar --version" >&5
-   ($_am_tar --version) >&5 2>&5
+        { echo "$as_me:$LINENO: $_am_tar --version | grep GNU >/dev/null" >&5
+   ($_am_tar --version | grep GNU >/dev/null) >&5 2>&5
    ac_status=$?
    echo "$as_me:$LINENO: \$? = $ac_status" >&5
    (exit $ac_status); } && break
@@ -6145,7 +6152,7 @@ printf %s "checking how to create a ustar tar archive... " >&6; }
     plaintar)
       # Must skip GNU tar: if it does not support --format= it doesn't create
       # ustar tarball either.
-      (tar --version) >/dev/null 2>&1 && continue
+      (tar --version | grep GNU) >/dev/null 2>&1 && continue
       am__tar='tar chf - "$$tardir"'
       am__tar_='tar chf - "$tardir"'
       am__untar='tar xf -'
@@ -6159,6 +6166,7 @@ printf %s "checking how to create a ustar tar archive... " >&6; }
       am__tar='find "$$tardir" -print | cpio -o -H ustar -L'
       am__tar_='find "$tardir" -print | cpio -o -H ustar -L'
       am__untar='cpio -i -H ustar -d'
+      am__tar_ignore_stderr=yes
       ;;
     none)
       am__tar=false
@@ -6207,6 +6215,7 @@ fi
 
   { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $am_cv_prog_tar_ustar" >&5
 printf '%s\n' "$am_cv_prog_tar_ustar" >&6; }
+
 
 
 
@@ -25832,8 +25841,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:25835: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:25836: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:25844: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:25845: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -25859,7 +25868,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:25862: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:25871: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -26093,7 +26102,7 @@ fi
 
         fi
       fi
-      echo "$as_me:26096: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:26105: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -32734,8 +32743,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:32737: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:32738: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:32746: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:32747: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -32761,7 +32770,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:32764: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:32773: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -32995,7 +33004,7 @@ fi
 
         fi
       fi
-      echo "$as_me:32998: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:33007: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
@@ -33244,8 +33253,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:33247: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:33248: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:33256: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:33257: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -33271,7 +33280,7 @@ rm -rf conftest*
 
           ;;
       esac
-      echo "$as_me:33274: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:33283: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill. (Not pthread_self,
       # since it is defined as a macro on OSF/1.)
@@ -33505,7 +33514,7 @@ fi
 
         fi
       fi
-      echo "$as_me:33508: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:33517: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
     fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
 printf %s "checking whether POSIX threads API is available... " >&6; }
