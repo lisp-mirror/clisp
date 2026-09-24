@@ -173,7 +173,7 @@ extern_C int raise (int sig);
 
 /* get working directory: */
 #include <sys/param.h>
-/* maximum path length (incl. terminating NULL), returned by getwd(): */
+/* maximum path length (incl. terminating NULL): */
 #ifndef MAXPATHLEN
   #ifdef PATH_MAX
     #define MAXPATHLEN  PATH_MAX  /* <sys/param.h> */
@@ -181,12 +181,7 @@ extern_C int raise (int sig);
     #define MAXPATHLEN  4096
   #endif
 #endif
-#ifdef HAVE_GETCWD
 /* getcwd(3) - declared in <unistd.h> */
-#define getwd(buf)  getcwd(buf,MAXPATHLEN)
-#else
-/* getwd(3) - declared in <unistd.h> */
-#endif
 /* used by PATHNAME */
 
 /* maximum number of symbolic links which are successively resolved: */

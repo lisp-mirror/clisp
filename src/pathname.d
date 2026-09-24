@@ -1,6 +1,6 @@
 /*
  * Pathnames for CLISP
- * Bruno Haible 1990-2025
+ * Bruno Haible 1990-2026
  * Logical Pathnames: Marcus Daniels 16.9.1994
  * ANSI compliance, bugs: Sam Steingold 1998-2013, 2016-2017
  * German comments translated into English: Stefan Kain 2002-01-03
@@ -57,7 +57,7 @@
      the error, and places in resolved_path the absolute pathname
      of the path component which could not be resolved. */
 local char* my_realpath (const char* path, char* resolved_path) {
-  /* Method: use getwd and readlink. */
+  /* Method: use getcwd and readlink. */
   var char mypath[MAXPATHLEN];
   var int symlinkcount = 0; /* the number of symbolic links so far */
   var char* resolved_limit = &resolved_path[MAXPATHLEN-1];
@@ -69,7 +69,7 @@ local char* my_realpath (const char* path, char* resolved_path) {
     var char* resolved_ptr = resolved_path; /* always <= resolved_limit */
     /* poss. use Working-Directory: */
     if (!(path[0]=='/')) { /* not an absolute pathname? */
-      if (getwd(resolved_path) == NULL)
+      if (getcwd(resolved_path,MAXPATHLEN) == NULL)
         return NULL;
       resolved_ptr = resolved_path;
       while (*resolved_ptr) {
@@ -2555,8 +2555,8 @@ local object test_optional_version (object def) {
 #ifdef UNIX
 
 /* the operating system manages a default-directory ("working directory")
- for this process. It can be changed with chdir and queried with getwd.
- See CHDIR(2) and GETWD(3). */
+ for this process. It can be changed with chdir and queried with getcwd.
+ See CHDIR(2) and GETCWD(3). */
 
 #endif
 
@@ -5294,7 +5294,7 @@ local maygc object default_directory (void) {
   var char path_buffer[MAXPATHLEN]; /* cf. GETWD(3) */
   /* store Working Directory in path_buffer: */
   begin_blocking_system_call();
-  if ( getwd(&path_buffer[0]) ==NULL) {
+  if ( getcwd(&path_buffer[0],MAXPATHLEN) ==NULL) {
     end_blocking_system_call();
     pushSTACK(O(dot_string)); /* FILE-ERROR slot PATHNAME */
     pushSTACK(asciz_to_string(&path_buffer[0],O(pathname_encoding))); /* message */
