@@ -1,6 +1,6 @@
 /*
  * Finding the full path of the executable.
- * Bruno Haible 20.12.1994, 2017, 2024
+ * Bruno Haible 20.12.1994, 2017, 2024, 2026
  * Sam Steingold 2004-2006, 2008, 2017
  */
 
@@ -19,11 +19,12 @@ static char* executable_name = NULL;
 #define default_executable_name  "lisp.run"
 #endif
 
+#if !(defined _WIN32 && !defined __CYGWIN__)
+
 /* file descriptor of the executable
  (Only used to verify that we find the correct executable.) */
 static int executable_fd = -1;
 
-#if !(defined _WIN32 && !defined __CYGWIN__)
 /* maybe_executable(pathname)
  checks whether a given pathname may belong to the executable. */
 static int maybe_executable (const char * filename) {
@@ -45,6 +46,7 @@ static int maybe_executable (const char * filename) {
     return 1/*true*/;
   return 0/*false*/;
 }
+
 #endif
 
 /* return the executable name */
