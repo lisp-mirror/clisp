@@ -4639,17 +4639,17 @@ then :
 else case e in #(
   e)                      case `uname -s` in
          CYGWIN*)
-           cl_cv_decolonize='cygpath --unix $x'
+           cl_cv_decolonize='cygpath --unix "$x"'
            ;;
          Windows* | MINGW* | MSYS*)
            if (type cygpath) > /dev/null 2>&1; then
-             cl_cv_decolonize='cygpath --unix $x'
+             cl_cv_decolonize='cygpath --unix "$x"'
            else
-             cl_cv_decolonize="echo \$x | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
+             cl_cv_decolonize="echo \"\$x\" | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
            fi
            ;;
          *)
-           cl_cv_decolonize='echo $x'
+           cl_cv_decolonize='echo "$x"'
            ;;
        esac
        ;;
@@ -4657,7 +4657,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_decolonize" >&5
 printf '%s\n' "$cl_cv_decolonize" >&6; }
-    CLISP_DECOLONIZE=$cl_cv_decolonize
+    CLISP_DECOLONIZE="$cl_cv_decolonize"
 
 
 # Test code for whether the C compiler supports C23 (global declarations)

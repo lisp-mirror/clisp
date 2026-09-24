@@ -22,17 +22,17 @@ distribdir =
 clisp-module : $(GENERATED)
 
 i18n.fas: $(srcdir)/i18n.lisp
-	$(CLISP) -c $(srcdir)/i18n.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/i18n.lisp@BTHE@ -o ./
 
 gettext.o : gettext.m.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
 		-c gettext.m.c -o gettext.o
 
 gettext.m.c : $(srcdir)/gettext.c
-	$(CLISP) -C $(CLISP_LINKKIT)/modprep $(srcdir)/gettext.c ./
+	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/gettext.c@BTHE@ ./
 
 preload.lisp : $(srcdir)/preload.lisp
-	$(LN_S) $(srcdir)/preload.lisp .
+	$(LN) $(srcdir)/preload.lisp .
 
 # Make a module distribution into $(distribdir)
 clisp-module-distrib : clisp-module force

@@ -21,7 +21,7 @@ distribdir =
 clisp-module : $(GENERATED)
 
 readline.c readline.fas : $(srcdir)/readline.lisp
-	$(CLISP) -c $(srcdir)/readline.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/readline.lisp@BTHE@ -o ./
 
 readline.o : readline.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I$(CLISP_LINKKIT) -c readline.c

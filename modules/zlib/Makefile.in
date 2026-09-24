@@ -21,7 +21,7 @@ distribdir =
 clisp-module : $(GENERATED)
 
 zlib.c zlib.fas : $(srcdir)/zlib.lisp
-	$(CLISP) -c $(srcdir)/zlib.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/zlib.lisp@BTHE@ -o ./
 
 zlib.o : zlib.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I$(CLISP_LINKKIT) -c zlib.c

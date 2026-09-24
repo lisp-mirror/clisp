@@ -22,17 +22,17 @@ distribdir =
 clisp-module : $(GENERATED)
 
 pcre.fas: $(srcdir)/pcre.lisp
-	$(CLISP) -c $(srcdir)/pcre.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/pcre.lisp@BTHE@ -o ./
 
 cpcre.o : cpcre.m.c config.h
 	$(CC) $(CPPFLAGS) $(PCRECPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
 		-c cpcre.m.c -o cpcre.o
 
 cpcre.m.c : $(srcdir)/cpcre.c
-	$(CLISP) -C $(CLISP_LINKKIT)/modprep $(srcdir)/cpcre.c ./
+	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/cpcre.c@BTHE@ ./
 
 preload.lisp : $(srcdir)/preload.lisp
-	$(LN_S) $(srcdir)/preload.lisp .
+	$(LN) $(srcdir)/preload.lisp .
 
 # Make a module distribution into $(distribdir)
 clisp-module-distrib : clisp-module force

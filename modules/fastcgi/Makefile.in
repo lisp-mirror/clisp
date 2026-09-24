@@ -24,7 +24,7 @@ distribdir =
 clisp-module : $(GENERATED)
 
 fastcgi.c fastcgi.fas: $(srcdir)/fastcgi.lisp
-	$(CLISP) -c $(srcdir)/fastcgi.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/fastcgi.lisp@BTHE@ -o ./
 
 fastcgi.o: fastcgi.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I$(CLISP_LINKKIT) -I.. -c fastcgi.c

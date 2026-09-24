@@ -3812,7 +3812,7 @@ BUILD_AUX=''
 # building modules, see src/m4/general.m4:CL_MODULE_COMMON_CHECKS:
 #   AC_CONFIG_AUX_DIR([$cl_cv_clisp_libdir/build-aux])
 test -n "${SRCDIR}" && case "${LN_S}" in
-  cp* )                         # ln is not available
+  ln | cp* )                         # 'ln -s' is not available
     echol "build-aux : ${SRCDIR}build-aux"
     echotab "-\$(RMRF) build-aux"
     echotab "-cp -r ${SRCDIR}build-aux build-aux"

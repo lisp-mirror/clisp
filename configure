@@ -486,7 +486,7 @@ do
         makemake_args="--with-dynamic-modules=no ${makemake_args}" ;;
 
       --with-mingw | --with-no-cygwin | --without-cygwin | --with-cygwin=no)
-        echo "$0: $arg is deprecated; use --build= or CC=... instead"
+        echo "$0: $arg is deprecated; use CC=... instead"
         CC="${CC:-gcc} -mno-cygwin"; export CC;
         makemake_args="$makemake_args --win32gcc" ;;
 
@@ -668,21 +668,6 @@ if test -n "$do_config"; then
     CC="$COMPILER"
     export CC
   fi
-  if test -n "$CC"; then
-    # cygwin comes with a true cross-compiler, i.e. one does
-    #   ./configure CC=i686-w64-mingw32-gcc ...
-    # instead of ./configure --with-mingw
-    case "$CC" in
-      *gcc*)
-        CC_machine=`($CC -dumpmachine) 2>/dev/null` || :
-        case "$CC_machine" in
-          *mingw32* )
-            echo "cross-compiling for mingw"
-            subdir_configure_args="${subdir_configure_args} --build=$CC_machine" ;;
-        esac
-        ;;
-    esac
-  fi
   cd "${ABS_DIRNAME}"
   echo "executing $REL_SRCDIR/src/configure $*"
   if test -n "$do_cbc"; then
@@ -743,7 +728,7 @@ if [ "${gl_cv_lib_sigsegv}" != "yes" ]; then
     echo "As you requested, we will proceed without libsigsegv..."
   else
     if [ "$ac_cv_build" = "$ac_cv_host" ]; then host_arg="";
-    else host_arg=" --host=$ac_cv_host --build=$ac_cv_build";
+    else host_arg=" --host=$ac_cv_host";
     fi
     cat <<EOF 1>&2
 $0: libsigsegv was not detected, thus some features, such as

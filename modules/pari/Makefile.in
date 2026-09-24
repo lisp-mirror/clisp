@@ -29,10 +29,10 @@ distribdir =
 clisp-module : $(GENERATED)
 
 desc2lisp.fas : $(srcdir)/desc2lisp.lisp
-	$(CLISP) -c $(srcdir)/desc2lisp.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/desc2lisp.lisp@BTHE@ -o ./
 
 pari.fas pari.c : $(srcdir)/pari.lisp desc2lisp.fas
-	$(CLISP) -i desc2lisp -c $(srcdir)/pari.lisp -o ./ $(PARI_DATADIR)
+	$(CLISP) -i desc2lisp -c @BTHS@$(srcdir)/pari.lisp@BTHE@ -o ./ @BTHS@$(PARI_DATADIR)@BTHE@
 
 pari.o : pari.c config.h
 	$(CC) $(ALL_CFLAGS) -c pari.c
@@ -41,7 +41,7 @@ cpari.o : $(srcdir)/cpari.c
 	$(CC) -I. $(ALL_CFLAGS) -c $(srcdir)/cpari.c
 
 preload.lisp : $(srcdir)/preload.lisp
-	$(LN_S) $(srcdir)/preload.lisp .
+	$(LN) $(srcdir)/preload.lisp .
 
 # Make a module distribution into $(distribdir)
 clisp-module-distrib : clisp-module force

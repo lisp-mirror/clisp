@@ -630,6 +630,8 @@ LIBOBJS
 LIBGDBM_PREFIX
 LTLIBGDBM
 LIBGDBM
+BTHE
+BTHS
 host_os
 host_vendor
 host_cpu
@@ -1985,17 +1987,17 @@ then :
 else case e in #(
   e)                      case `uname -s` in
          CYGWIN*)
-           cl_cv_decolonize='cygpath --unix $x'
+           cl_cv_decolonize='cygpath --unix "$x"'
            ;;
          Windows* | MINGW* | MSYS*)
            if (type cygpath) > /dev/null 2>&1; then
-             cl_cv_decolonize='cygpath --unix $x'
+             cl_cv_decolonize='cygpath --unix "$x"'
            else
-             cl_cv_decolonize="echo \$x | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
+             cl_cv_decolonize="echo \"\$x\" | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
            fi
            ;;
          *)
-           cl_cv_decolonize='echo $x'
+           cl_cv_decolonize='echo "$x"'
            ;;
        esac
        ;;
@@ -2003,7 +2005,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_decolonize" >&5
 printf '%s\n' "$cl_cv_decolonize" >&6; }
-    CLISP_DECOLONIZE=$cl_cv_decolonize
+    CLISP_DECOLONIZE="$cl_cv_decolonize"
 
 
 
@@ -2077,7 +2079,7 @@ then :
   printf %s "(cached) " >&6
 else case e in #(
   e)                                  if $cl_cv_clisp --version 2>/dev/null | head -n 1 | grep "GNU CLISP" >/dev/null 2>&1; then
-             cl_cv_clisp_version=`$cl_cv_clisp -q -norc -x '(lisp-implementation-version)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+             cl_cv_clisp_version=`$cl_cv_clisp -q -norc -x '(lisp-implementation-version)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            else
              as_fn_error $? "'$cl_cv_clisp' is not a CLISP" "$LINENO" 5
            fi
@@ -2092,9 +2094,9 @@ if test ${cl_cv_clisp_libdir+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) cl_cv_clisp_libdir=`$cl_cv_clisp -q -norc -x '(namestring *lib-directory*)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+  e) cl_cv_clisp_libdir=`$cl_cv_clisp -q -norc -x '(namestring *lib-directory*)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            x=$cl_cv_clisp_libdir
-           cl_cv_clisp_libdir=`eval $cl_cv_decolonize`
+           cl_cv_clisp_libdir=`eval "$cl_cv_decolonize"`
            # cf src/clisp-link.in:linkkitdir
            missing=''
            for f in modules.c clisp.h; do
@@ -2113,7 +2115,7 @@ if test ${cl_cv_clisp_linkset+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) cl_cv_clisp_linkset=`$cl_cv_clisp -q -norc -x '(sys::program-name)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+  e) cl_cv_clisp_linkset=`$cl_cv_clisp -q -norc -x '(sys::program-name)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            cl_cv_clisp_linkset=`dirname ${cl_cv_clisp_linkset}`
            missing=''
            # cf. src/clisp-link.in:check_linkset (we do not need to check for
@@ -2576,7 +2578,7 @@ as_fn_append ac_header_c_list " wchar.h wchar_h HAVE_WCHAR_H"
 as_fn_append ac_header_c_list " minix/config.h minix_config_h HAVE_MINIX_CONFIG_H"
 
 # Auxiliary files required by this configure script.
-ac_aux_files="config.guess config.sub config.rpath compile"
+ac_aux_files="config.rpath config.guess config.sub compile"
 
 # Locations in which to look for auxiliary files.
 ac_aux_dir_candidates="$cl_cv_clisp_libdir/build-aux"
@@ -4434,31 +4436,6 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-      if test "X$prefix" = "XNONE"; then
-    acl_final_prefix="$ac_default_prefix"
-  else
-    acl_final_prefix="$prefix"
-  fi
-  if test "X$exec_prefix" = "XNONE"; then
-    acl_final_exec_prefix='${prefix}'
-  else
-    acl_final_exec_prefix="$exec_prefix"
-  fi
-  acl_saved_prefix="$prefix"
-  prefix="$acl_final_prefix"
-  eval acl_final_exec_prefix=\"$acl_final_exec_prefix\"
-  prefix="$acl_saved_prefix"
-
-
-
   # Make sure we can run config.sub.
 $SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL ${ac_aux_dir}config.sub" "$LINENO" 5
@@ -4533,6 +4510,45 @@ host_os=$*
 IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`printf '%s\n' "$host_os" | sed 's/ /-/g'`;; esac
 
+
+
+
+
+
+
+
+
+
+
+  BTHS=; BTHE=
+  case "$build_os" in
+    cygwin*)
+      case "$host_os" in
+        mingw* | windows*)
+          BTHS='"`cygpath -w '; BTHE='`"'
+          ;;
+      esac
+      ;;
+  esac
+
+
+
+
+
+      if test "X$prefix" = "XNONE"; then
+    acl_final_prefix="$ac_default_prefix"
+  else
+    acl_final_prefix="$prefix"
+  fi
+  if test "X$exec_prefix" = "XNONE"; then
+    acl_final_exec_prefix='${prefix}'
+  else
+    acl_final_exec_prefix="$exec_prefix"
+  fi
+  acl_saved_prefix="$prefix"
+  prefix="$acl_final_prefix"
+  eval acl_final_exec_prefix=\"$acl_final_exec_prefix\"
+  prefix="$acl_saved_prefix"
 
 
 

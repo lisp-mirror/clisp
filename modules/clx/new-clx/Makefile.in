@@ -36,13 +36,13 @@ X_CFLAGS = @X_CFLAGS@
 clisp-module : $(GENERATED)
 
 clx.fas clx.lib: $(srcdir)/clx.lisp $(srcdir)/clx-preload.lisp
-	$(CLISP) -i $(srcdir)/clx-preload.lisp -c $(srcdir)/clx.lisp -o ./
+	$(CLISP) -i @BTHS@$(srcdir)/clx-preload.lisp@BTHE@ -c @BTHS@$(srcdir)/clx.lisp@BTHE@ -o ./
 
 image.fas: $(srcdir)/image.lisp clx.lib
-	$(CLISP) -i $(srcdir)/clx-preload.lisp -c $(srcdir)/image.lisp -o ./
+	$(CLISP) -i @BTHS@$(srcdir)/clx-preload.lisp@BTHE@ -c @BTHS@$(srcdir)/image.lisp@BTHE@ -o ./
 
 resource.fas: $(srcdir)/resource.lisp clx.lib
-	$(CLISP) -i $(srcdir)/clx-preload.lisp -c $(srcdir)/resource.lisp -o ./
+	$(CLISP) -i @BTHS@$(srcdir)/clx-preload.lisp@BTHE@ -c @BTHS@$(srcdir)/resource.lisp@BTHE@ -o ./
 
 clx.d: $(srcdir)/clx.f
 	$(CCMP2C) $(srcdir)/clx.f > genclx.c
@@ -52,7 +52,7 @@ clx.d: $(srcdir)/clx.f
 	$(RM) genclx
 
 clx.c: clx.d
-	$(CLISP) -C $(CLISP_LINKKIT)/modprep clx.d clx.c
+	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ clx.d clx.c
 
 clx.o: clx.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(X_CFLAGS) -I$(CLISP_LINKKIT) -c clx.c

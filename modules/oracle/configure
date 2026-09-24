@@ -626,6 +626,9 @@ ac_includes_default="\
 ac_header_c_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+SET_MAKE
+BTHE
+BTHS
 host_os
 host_vendor
 host_cpu
@@ -634,7 +637,6 @@ build_os
 build_vendor
 build_cpu
 build
-SET_MAKE
 LN_S
 LN
 CPP
@@ -2014,17 +2016,17 @@ then :
 else case e in #(
   e)                      case `uname -s` in
          CYGWIN*)
-           cl_cv_decolonize='cygpath --unix $x'
+           cl_cv_decolonize='cygpath --unix "$x"'
            ;;
          Windows* | MINGW* | MSYS*)
            if (type cygpath) > /dev/null 2>&1; then
-             cl_cv_decolonize='cygpath --unix $x'
+             cl_cv_decolonize='cygpath --unix "$x"'
            else
-             cl_cv_decolonize="echo \$x | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
+             cl_cv_decolonize="echo \"\$x\" | sed -e 's,\\\\,/,g' -e 's,^\\(.\\):,/\1,'"
            fi
            ;;
          *)
-           cl_cv_decolonize='echo $x'
+           cl_cv_decolonize='echo "$x"'
            ;;
        esac
        ;;
@@ -2032,7 +2034,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_decolonize" >&5
 printf '%s\n' "$cl_cv_decolonize" >&6; }
-    CLISP_DECOLONIZE=$cl_cv_decolonize
+    CLISP_DECOLONIZE="$cl_cv_decolonize"
 
 
 
@@ -2106,7 +2108,7 @@ then :
   printf %s "(cached) " >&6
 else case e in #(
   e)                                  if $cl_cv_clisp --version 2>/dev/null | head -n 1 | grep "GNU CLISP" >/dev/null 2>&1; then
-             cl_cv_clisp_version=`$cl_cv_clisp -q -norc -x '(lisp-implementation-version)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+             cl_cv_clisp_version=`$cl_cv_clisp -q -norc -x '(lisp-implementation-version)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            else
              as_fn_error $? "'$cl_cv_clisp' is not a CLISP" "$LINENO" 5
            fi
@@ -2121,9 +2123,9 @@ if test ${cl_cv_clisp_libdir+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) cl_cv_clisp_libdir=`$cl_cv_clisp -q -norc -x '(namestring *lib-directory*)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+  e) cl_cv_clisp_libdir=`$cl_cv_clisp -q -norc -x '(namestring *lib-directory*)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            x=$cl_cv_clisp_libdir
-           cl_cv_clisp_libdir=`eval $cl_cv_decolonize`
+           cl_cv_clisp_libdir=`eval "$cl_cv_decolonize"`
            # cf src/clisp-link.in:linkkitdir
            missing=''
            for f in modules.c clisp.h; do
@@ -2142,7 +2144,7 @@ if test ${cl_cv_clisp_linkset+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) cl_cv_clisp_linkset=`$cl_cv_clisp -q -norc -x '(sys::program-name)' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'`
+  e) cl_cv_clisp_linkset=`$cl_cv_clisp -q -norc -x '(sys::program-name)' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'`
            cl_cv_clisp_linkset=`dirname ${cl_cv_clisp_linkset}`
            missing=''
            # cf. src/clisp-link.in:check_linkset (we do not need to check for
@@ -2867,7 +2869,7 @@ if test ${cl_cv_clisp_FFI+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) cl_cv_clisp_FFI=`$cl_cv_clisp -q -norc -x '#+FFI "yes" #-FFI "no"' 2>/dev/null | sed -e 's/^"//' -e 's/"$//'` ;;
+  e) cl_cv_clisp_FFI=`$cl_cv_clisp -q -norc -x '#+FFI "yes" #-FFI "no"' 2>/dev/null | tr -d '\r' | sed -e 's/^"//' -e 's/"$//'` ;;
 esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_clisp_FFI" >&5
@@ -4476,86 +4478,6 @@ fi
 
 
 
-
-
-
-
-
-
-
-
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Programs)${term_norm}" >&5
-printf '%s\n' "$as_me: ${term_bold}** Oracle (Programs)${term_norm}" >&6;}
-
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
-printf %s "checking whether ln -s works... " >&6; }
-LN_S=$as_ln_s
-if test "$LN_S" = "ln -s"; then
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf '%s\n' "yes" >&6; }
-else
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
-printf '%s\n' "no, using $LN_S" >&6; }
-fi
-
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
-printf %s "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
-set x ${MAKE-make}
-ac_make=`printf '%s\n' "$2" | sed 's/+/p/g; s/[^a-zA-Z0-9_]/_/g'`
-if eval test \${ac_cv_prog_make_${ac_make}_set+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) cat >conftest.make <<\_ACEOF
-SHELL = /bin/sh
-all:
-	@printf '%s\n' '@@@%%%=$(MAKE)=@@@%%%'
-_ACEOF
-# GNU make sometimes prints "make[1]: Entering ...", which would confuse us.
-case `${MAKE-make} -f conftest.make 2>/dev/null` in
-  *@@@%%%=?*=@@@%%%*)
-    eval ac_cv_prog_make_${ac_make}_set=yes;;
-  *)
-    eval ac_cv_prog_make_${ac_make}_set=no;;
-esac
-rm -f conftest.make ;;
-esac
-fi
-if eval test \$ac_cv_prog_make_${ac_make}_set = yes; then
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf '%s\n' "yes" >&6; }
-  SET_MAKE=
-else
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf '%s\n' "no" >&6; }
-  SET_MAKE="MAKE=${MAKE-make}"
-fi
-
-
-
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Headers)${term_norm}" >&5
-printf '%s\n' "$as_me: ${term_bold}** Oracle (Headers)${term_norm}" >&6;}
-
-ac_fn_c_check_header_compile "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
-if test "x$ac_cv_header_stdlib_h" = xyes
-then :
-  printf '%s\n' "#define HAVE_STDLIB_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "string.h" "ac_cv_header_string_h" "$ac_includes_default"
-if test "x$ac_cv_header_string_h" = xyes
-then :
-  printf '%s\n' "#define HAVE_STRING_H 1" >>confdefs.h
-
-fi
-
-
-
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Functions)${term_norm}" >&5
-printf '%s\n' "$as_me: ${term_bold}** Oracle (Functions)${term_norm}" >&6;}
-
-
-
   # Make sure we can run config.sub.
 $SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL ${ac_aux_dir}config.sub" "$LINENO" 5
@@ -4630,6 +4552,100 @@ host_os=$*
 IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`printf '%s\n' "$host_os" | sed 's/ /-/g'`;; esac
 
+
+
+
+
+
+
+
+
+
+
+  BTHS=; BTHE=
+  case "$build_os" in
+    cygwin*)
+      case "$host_os" in
+        mingw* | windows*)
+          BTHS='"`cygpath -w '; BTHE='`"'
+          ;;
+      esac
+      ;;
+  esac
+
+
+
+
+
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Programs)${term_norm}" >&5
+printf '%s\n' "$as_me: ${term_bold}** Oracle (Programs)${term_norm}" >&6;}
+
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
+printf %s "checking whether ln -s works... " >&6; }
+LN_S=$as_ln_s
+if test "$LN_S" = "ln -s"; then
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf '%s\n' "yes" >&6; }
+else
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
+printf '%s\n' "no, using $LN_S" >&6; }
+fi
+
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
+printf %s "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
+set x ${MAKE-make}
+ac_make=`printf '%s\n' "$2" | sed 's/+/p/g; s/[^a-zA-Z0-9_]/_/g'`
+if eval test \${ac_cv_prog_make_${ac_make}_set+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) cat >conftest.make <<\_ACEOF
+SHELL = /bin/sh
+all:
+	@printf '%s\n' '@@@%%%=$(MAKE)=@@@%%%'
+_ACEOF
+# GNU make sometimes prints "make[1]: Entering ...", which would confuse us.
+case `${MAKE-make} -f conftest.make 2>/dev/null` in
+  *@@@%%%=?*=@@@%%%*)
+    eval ac_cv_prog_make_${ac_make}_set=yes;;
+  *)
+    eval ac_cv_prog_make_${ac_make}_set=no;;
+esac
+rm -f conftest.make ;;
+esac
+fi
+if eval test \$ac_cv_prog_make_${ac_make}_set = yes; then
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf '%s\n' "yes" >&6; }
+  SET_MAKE=
+else
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf '%s\n' "no" >&6; }
+  SET_MAKE="MAKE=${MAKE-make}"
+fi
+
+
+
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Headers)${term_norm}" >&5
+printf '%s\n' "$as_me: ${term_bold}** Oracle (Headers)${term_norm}" >&6;}
+
+ac_fn_c_check_header_compile "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
+if test "x$ac_cv_header_stdlib_h" = xyes
+then :
+  printf '%s\n' "#define HAVE_STDLIB_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "string.h" "ac_cv_header_string_h" "$ac_includes_default"
+if test "x$ac_cv_header_string_h" = xyes
+then :
+  printf '%s\n' "#define HAVE_STRING_H 1" >>confdefs.h
+
+fi
+
+
+
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** Oracle (Functions)${term_norm}" >&5
+printf '%s\n' "$as_me: ${term_bold}** Oracle (Functions)${term_norm}" >&6;}
 
 
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether malloc (0) returns nonnull" >&5

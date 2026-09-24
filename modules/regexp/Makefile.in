@@ -26,20 +26,20 @@ clisp-module : $(GENERATED)
 .PHONY : all am--refresh clisp-module clisp-module-distrib clean distclean force
 
 regexp.fas: $(srcdir)/regexp.lisp
-	$(CLISP) -c $(srcdir)/regexp.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/regexp.lisp@BTHE@ -o ./
 
 regexi.o : regexi.m.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
 		-c regexi.m.c -o regexi.o
 
 regexi.m.c : $(srcdir)/regexi.c
-	$(CLISP) -C $(CLISP_LINKKIT)/modprep $(srcdir)/regexi.c ./
+	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/regexi.c@BTHE@ ./
 
 config.h : $(srcdir)/config.h.in config.status
 	sh config.status --header=config.h
 
 preload.lisp : $(srcdir)/preload.lisp
-	$(LN_S) $(srcdir)/preload.lisp .
+	$(LN) $(srcdir)/preload.lisp .
 
 # Make a module distribution into $(distribdir)
 clisp-module-distrib : clisp-module force

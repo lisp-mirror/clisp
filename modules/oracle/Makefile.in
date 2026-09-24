@@ -48,7 +48,7 @@ distribdir =
 clisp-module : $(GENERATED)
 
 oracle.c oracle.fas: $(srcdir)/oracle.lisp
-	$(CLISP) -c $(srcdir)/oracle.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/oracle.lisp@BTHE@ -o ./
 
 oracle.o: oracle.c
 	$(CC) $(ALL_CFLAGS) -c oracle.c

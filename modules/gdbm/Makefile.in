@@ -22,17 +22,17 @@ distribdir =
 clisp-module : $(GENERATED)
 
 gdbm.fas: $(srcdir)/gdbm.lisp
-	$(CLISP) -c $(srcdir)/gdbm.lisp -o ./
+	$(CLISP) -c @BTHS@$(srcdir)/gdbm.lisp@BTHE@ -o ./
 
 gdbm.o : gdbm.m.c config.h
 	$(CC) $(CPPFLAGS) $(GDBMCPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
 		-c gdbm.m.c -o gdbm.o
 
 gdbm.m.c : $(srcdir)/gdbm.c
-	$(CLISP) -C $(CLISP_LINKKIT)/modprep $(srcdir)/gdbm.c ./
+	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/gdbm.c@BTHE@ ./
 
 preload.lisp : $(srcdir)/preload.lisp
-	$(LN_S) $(srcdir)/preload.lisp .
+	$(LN) $(srcdir)/preload.lisp .
 
 # Make a module distribution into $(distribdir)
 clisp-module-distrib : clisp-module force

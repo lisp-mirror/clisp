@@ -1,5 +1,48 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
+	Implement build of modules on mingw, in the Cygwin environment.
+	* configure (subdir_configure_args, host_arg): Don't add a --build
+	option. Rely on config.guess for guessing the build system.
+	* src/m4/general.m4 (CL_MODULE_COMMON_CHECKS): Set BTHS, BTHE.
+	* src/m4/clisp.m4 (CLISP_SET): Remove CRs from clisp's output.
+	(CL_DECOLONIZE): Protect $x through double-quotes.
+	(CL_CLISP): Protect $cl_cv_decolonize through double-quotes.
+	* src/configure, modules/**/configure: Regenerated.
+	* src/makemake.in (build-aux): Use a plain copy also on mingw.
+	* modules/berkeley-db/Makefile.in (dbi.fas, bdb.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/clx/new-clx/Makefile.in (clx.fas, image.fas, resource.fas,
+	clx.c): Use BTHS, BTHE.
+	* modules/dbus/Makefile.in (dbus.fas): Use BTHS, BTHE.
+	* modules/dirkey/Makefile.in (dirkey1.fas, dirkey.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/fastcgi/Makefile.in (fastcgi.fas): Use BTHS, BTHE.
+	* modules/gdbm/Makefile.in (gdbm.fas, gdbm.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/gtk2/Makefile.in (gtk.fas): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/i18n/Makefile.in (i18n.fas, gettext.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/libsvm/Makefile.in (libsvm.fas): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/oracle/Makefile.in (oracle.fas): Use BTHS, BTHE.
+	* modules/pari/Makefile.in (desc2lisp.fas, pari.fas): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/pcre/Makefile.in (pcre.fas, cpcre.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/postgresql/Makefile.in (postgresql.fas, sql.fas): Use BTHS,
+	BTHE.
+	* modules/rawsock/Makefile.in (sock.fas, rawsock.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/readline/Makefile.in (readline.fas): Use BTHS, BTHE.
+	* modules/regexp/Makefile.in (regexp.fas, regexi.m.c): Use BTHS, BTHE.
+	(preload.lisp): Use 'ln', not 'ln -s'.
+	* modules/syscalls/Makefile.in (posix.fas, calls.m.c): Use BTHS, BTHE.
+	(preload.lisp, datemsk): Use 'ln', not 'ln -s'.
+	* modules/zlib/Makefile.in (zlib.fas): Use BTHS, BTHE.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
 	Fix build of clisp.exe on mingw.
 	* makemake.in (LIBS): Remove -luser32, -loleaut32; no longer needed.
 	(DRIVER_LIBS): New variable. Use it when linking clisp.exe.
