@@ -4196,7 +4196,7 @@ global int main (argc_t argc, char* argv[]) {
 
  #if defined(WIN32_NATIVE)
   /* cannot do it in init_win32 - too early */
-  if (isatty(stdout_handle)) {
+  if (handle_isatty(stdout_handle)) {
     var HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     if (handle!=INVALID_HANDLE_VALUE) {
       var CONSOLE_SCREEN_BUFFER_INFO info;

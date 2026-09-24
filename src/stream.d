@@ -1,6 +1,6 @@
 /*
  * Streams for CLISP
- * Bruno Haible 1990-2008, 2016-2025
+ * Bruno Haible 1990-2008, 2016-2026
  * Sam Steingold 1998-2011, 2016-2017
  * Generic Streams: Marcus Daniels 8.4.1994
  * SCREEN package for Win32: Arseny Slobodjuck 2001-02-14
@@ -8123,7 +8123,7 @@ modexp maygc object make_file_stream
     if (READ_P(direction)) /* only needed for input handles */
       if (!handle_regular) { /* regular files are certainly not ttys */
         begin_system_call();
-        handle_tty = isatty(file_des);
+        handle_tty = handle_isatty(file_des);
         end_system_call();
       }
     stream = make_unbuffered_stream(strmtype_file,direction,&eltype,
@@ -9221,7 +9221,7 @@ local maygc object make_keyboard_stream (void) {
  #if defined(UNIX)
   /* determine Flag isatty = (stdin_tty ? T : NIL) : */
   begin_system_call();
-  s->strm_keyboard_isatty = (isatty(stdin_handle) ? T : NIL);
+  s->strm_keyboard_isatty = (handle_isatty(stdin_handle) ? T : NIL);
   end_system_call();
   s->strm_keyboard_handle = popSTACK();
   s->strm_keyboard_buffer = NIL;
@@ -9990,8 +9990,8 @@ local bool stdio_same_tty_p (void)
  can trigger GC */
 local maygc object make_terminal_stream_ (void) {
   begin_system_call();
-  var bool stdin_tty = isatty(stdin_handle); /* stdin a Terminal? */
-  var bool stdout_tty = isatty(stdout_handle); /* stdout a Terminal? */
+  var bool stdin_tty = handle_isatty(stdin_handle); /* stdin a Terminal? */
+  var bool stdout_tty = handle_isatty(stdout_handle); /* stdout a Terminal? */
   var bool same_tty = stdin_tty && stdout_tty && stdio_same_tty_p();
   end_system_call();
  #ifdef HAVE_TERMINAL3

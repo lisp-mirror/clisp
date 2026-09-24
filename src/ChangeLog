@@ -1,6 +1,17 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
 	Fix a gcc warning on mingw.
+	* unix.d (handle_isatty): New macro.
+	* win32.d (handle_isatty): Renamed from isatty or clisp_isatty.
+	* win32aux.d (handle_isatty): Renamed from isatty.
+	* spvw.d (main): Invoke handle_isatty instead of isatty.
+	* spvw_sigwinch.d (update_linelength): Likewise.
+	* stream.d (make_file_stream, make_keyboard_stream,
+	make_terminal_stream_): Likewise.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
+	Fix a gcc warning on mingw.
 	* execname.c (executable_fd): Don't define on native Windows.
 
 2026-09-24  Bruno Haible  <bruno@clisp.org>

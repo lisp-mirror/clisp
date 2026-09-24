@@ -1,6 +1,6 @@
 /*
  * Auxiliary functions for CLISP on Win32
- * Bruno Haible 1997-2005, 2009, 2017
+ * Bruno Haible 1997-2005, 2009, 2017, 2026
  * Sam Steingold 1999-2009, 2011
  */
 
@@ -1059,7 +1059,9 @@ global off_t lseek (HANDLE fd, off_t offset, DWORD mode)
 }
 
 /* Testing for possibly interactive handle. */
-global int isatty (HANDLE handle)
+/* Note: This is more general than gnulib's isatty implementation for
+   native Windows. */
+global int handle_isatty (HANDLE handle)
 {
   var DWORD ftype = GetFileType(handle);
   return (ftype == FILE_TYPE_CHAR || ftype == FILE_TYPE_PIPE);
