@@ -1,5 +1,11 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
+	Fix build of clisp.exe on mingw.
+	* makemake.in (LIBS): Remove -luser32, -loleaut32; no longer needed.
+	(DRIVER_LIBS): New variable. Use it when linking clisp.exe.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
 	build: Switch to automake 1.19.
 	* aclocal.m4, src/configure: Regenerated.
 	* modules/*/configure: Regenerated.

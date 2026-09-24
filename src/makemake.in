@@ -2,7 +2,7 @@
 # -*- coding: utf-8; mode: shell-script -*- vim:filetype=sh
 CONFIG_SHELL="@SHELL@"  # mind the quoting, for args like -x.
 # Creation of the Makefile used for compiling CLISP
-# Bruno Haible 1991-2024
+# Bruno Haible 1991-2026
 # Sam Steingold 1999-2012, 2016
 
 # Simple usage:
@@ -1125,7 +1125,7 @@ fi
 if [ $TSYS = master -o $TOS = win32 ] ; then
   OS_INCLUDES=$OS_INCLUDES' win32'
   if [ $TSYS = win32gcc ] ; then
-    LIBS=$LIBS" -luser32 -lole32 -loleaut32 -luuid $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
+    LIBS=$LIBS" -lole32 -luuid $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
   else
     if [ $TSYS = win32msvc ] ; then
       LIBS=$LIBS" user32.lib ws2_32.lib advapi32.lib $LIBSIGSEGV $LIBUNISTRING"
@@ -4074,10 +4074,13 @@ for f in ${MANPAGES}; do
 done
 
 if [ $CROSS = false ] ; then
-  DRIVER_DEP=''; DRIVER_RES=''
+  DRIVER_DEP=''; DRIVER_RES=''; DRIVER_LIBS=''
   if [ $HOS = win32 ]; then
     DRIVER_RES=" clispres${TOBJ}"
     DRIVER_DEP=${DRIVER_RES}" ${SRCDIR}w32shell.c ${SRCDIR}execname.c"
+    if [ $TSYS = win32gcc ] ; then
+      DRIVER_LIBS=" -lole32 -luuid"
+    fi
     echol "clispres${TOBJ} : clisp.rc clisp.ico"
     if [ ${TSYS} = win32gcc ]; then
       echotab "${WINDRES} -i clisp.rc -o clispres.o"
@@ -4118,7 +4121,7 @@ if [ $CROSS = false ] ; then
     echol
   fi
   echol "clisp${TEXE} : clisp.c${DRIVER_DEP}"
-  echotab "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS) -DENABLE_RELOCATABLE clisp.c${DRIVER_RES} ${OUT}clisp${TEXE}"
+  echotab "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS) -DENABLE_RELOCATABLE clisp.c${DRIVER_RES}${DRIVER_LIBS} ${OUT}clisp${TEXE}"
   echol
   if [ $HOS = unix ] ; then
     echol "install : install-bin install-man install-doc"
