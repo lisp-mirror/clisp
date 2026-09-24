@@ -375,11 +375,11 @@ extern void DumpProcessMemoryMap (FILE* out); /* see win32aux.d */
 #ifdef FIONBIO                  /*  */
   /* for socket.d: non-blocking I/O a la BSD 4.2 */
   #define NO_BLOCK_DECL()  \
-    int non_blocking_io = 1
-  #define START_NO_BLOCK(handle, on_fail)                         \
-    if (ioctl(handle,FIONBIO,&non_blocking_io)) { on_fail; }
-  #define END_NO_BLOCK(handle, on_fail)            do {           \
-      non_blocking_io = 0;                                        \
-      if (ioctl(handle,FIONBIO,&non_blocking_io)) { on_fail; }    \
+    unsigned long non_blocking_io = 1
+  #define START_NO_BLOCK(handle, on_fail)                            \
+    if (ioctlsocket(handle,FIONBIO,&non_blocking_io)) { on_fail; }
+  #define END_NO_BLOCK(handle, on_fail)            do {              \
+      non_blocking_io = 0;                                           \
+      if (ioctlsocket(handle,FIONBIO,&non_blocking_io)) { on_fail; } \
     } while (0)
 #endif

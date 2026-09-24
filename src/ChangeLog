@@ -1,6 +1,12 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
 	Fix a gcc warning on mingw.
+	* win32.d (START_NO_BLOCK, END_NO_BLOCK): Call ioctlsocket instead of
+	ioctl.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
+	Fix a gcc warning on mingw.
 	* unix.d (getwd): Remove macro.
 	* pathname.d (my_realpath, default_directory): Use getcwd instead of
 	getwd.
