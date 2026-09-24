@@ -1,5 +1,10 @@
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
+	Fix macOS/arm64 support (regression 2026-08-24).
+	* lispbibl.d: Terminate a comment.
+
+2026-09-24  Bruno Haible  <bruno@clisp.org>
+
 	Implement build of modules on mingw, in the Cygwin environment.
 	* configure (subdir_configure_args, host_arg): Don't add a --build
 	option. Rely on config.guess for guessing the build system.
