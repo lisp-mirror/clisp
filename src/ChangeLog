@@ -1,5 +1,19 @@
 2026-09-25  Bruno Haible  <bruno@clisp.org>
 
+	Implement build of linking sets on mingw, in the Cygwin environment.
+	* src/configure.in: Invoke AC_CANONICAL_BUILD.
+	* src/configure: Regenerated.
+	* makemake.in (build_os): New variable.
+	In the clisp-link rule, substitute also host_os and build_os.
+	* clisp-link.in (lncp, lncp_some): New functions.
+	(lnscp): Renamed from lncp.
+	(lnscp_some): Renamed from lnscp.
+	(make_lisprun): Update.
+	(add): Update. When building native Windows binaries on Cygwin, use lncp
+	instead of lnscp.
+
+2026-09-25  Bruno Haible  <bruno@clisp.org>
+
 	Fix a gcc warning on mingw.
 	* modules/i18n/gettext.c (get_locale_info): Add braces.
 

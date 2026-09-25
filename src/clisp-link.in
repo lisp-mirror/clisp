@@ -4,7 +4,7 @@
 #   command = create, add, run, install
 # For more usage information, see <doc/impnotes.html#mod-overview>.
 # Or <http://clisp.org/modules.html#mod-overview>.
-# Bruno Haible 1994-10-19, 1995-2005, 2018, 2024
+# Bruno Haible 1994-10-19, 1995-2005, 2018, 2024, 2026
 # Sam Steingold 2002-2010
 
 # This could as well be written in Lisp, for portability, but syscalls is
@@ -24,10 +24,9 @@ normalize(){                    # dir rel -> abs path for rel
 }
 
 lncp () {
-  # Make a link from $1 to $2. Try symbolic link, hard link, file copying.
+  # Make a link from $1 to $2. Try hard link, file copying.
   rm -f "$2"
-  ln -s "`normalize . $1`" "$2" 2>/dev/null || \
-    ln "$1" "$2" 2>/dev/null || \
+  ln "$1" "$2" 2>/dev/null || \
     cp -p "$1" "$2"
 }
 
@@ -38,6 +37,26 @@ lncp_some () {
   for f in $*; do
     b=`basename $f`
     lncp "`normalize "${src_dir}" "$f"`" "${destdir}"/$b
+    ret=${ret}" "$b
+  done
+  echo ${ret}
+}
+
+lnscp () {
+  # Make a link from $1 to $2. Try symbolic link, hard link, file copying.
+  rm -f "$2"
+  ln -s "`normalize . $1`" "$2" 2>/dev/null || \
+    ln "$1" "$2" 2>/dev/null || \
+    cp -p "$1" "$2"
+}
+
+lnscp_some () {
+  src_dir=$1; shift
+  destdir=$1; shift
+  ret=''
+  for f in $*; do
+    b=`basename $f`
+    lnscp "`normalize "${src_dir}" "$f"`" "${destdir}"/$b
     ret=${ret}" "$b
   done
   echo ${ret}
@@ -101,7 +120,7 @@ verbose () {
 
 make_lisprun () {
   # Generate new modules.o, compiled from modules.c, includes modules.h
-  lncp "$absolute_linkkitdir"/modules.c modules.c
+  lnscp "$absolute_linkkitdir"/modules.c modules.c
   verbose ${CC} ${CPPFLAGS} ${CFLAGS} -I"$absolute_linkkitdir" -c modules.c
   rm -f modules.c
   # Generate new ${LISPRUN}
@@ -385,10 +404,16 @@ case "$1" in
     . "$sourcedir"/makevars
     if [ -z "$moduledirs" ] ; then
       # Just make links from $destinationdir to $sourcedir
-      lncp_some "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem modules.h modules.o makevars ${FILES};
+      case '@build_os@,@host_os@' in
+        cygwin*,mingw*)
+           # Native Windows clisp does not understand the Cygwin symlinks.
+           lncp_some  "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem ;;
+        *) lnscp_some "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem ;;
+      esac
+      lnscp_some "$sourcedir" "$destinationdir" modules.h modules.o makevars ${FILES}
     else
       cp "$sourcedir"/modules.h "$destinationdir"/modules.h
-      FILES=`lncp_some "$sourcedir" "$destinationdir" ${FILES}`
+      FILES=`lnscp_some "$sourcedir" "$destinationdir" ${FILES}`
       # Prepare the module directories and read their variables
       PRELOAD=''
       LOAD=''
@@ -410,7 +435,7 @@ case "$1" in
             echo 'MODULE('"$mod"')' >> "$destinationdir"/modules.h
           done
         fi
-        FILES=${FILES}' '`lncp_some "$moduledir" "$destinationdir" ${NEW_FILES}`
+        FILES=${FILES}' '`lnscp_some "$moduledir" "$destinationdir" ${NEW_FILES}`
         LIBS=${NEW_LIBS}' '${LIBS}
         for f in $TO_PRELOAD; do
           PRELOAD=${PRELOAD}' -i '"$moduledir/$f"
@@ -471,7 +496,7 @@ case "$1" in
         "$sourcedir"/${LISPRUN} -B "$installbasedir" -M "$sourcedir"/lispinit.mem
       else
         func_tmpdir
-        FILES=`lncp_some "$sourcedir" "$tmp" ${FILES}`
+        FILES=`lnscp_some "$sourcedir" "$tmp" ${FILES}`
         # Prepare the module directories and read their variables
         PRELOAD=''
         LIBS=''
@@ -492,7 +517,7 @@ case "$1" in
           for f in $TO_PRELOAD; do
             PRELOAD=${PRELOAD}' '"$moduledir/$f"
           done
-          FILES=${FILES}' '`lncp_some "$moduledir" "$tmp" ${NEW_FILES}`
+          FILES=${FILES}' '`lnscp_some "$moduledir" "$tmp" ${NEW_FILES}`
           if test -n "${NEW_LIBS}"; then
             LIBS=${NEW_LIBS}' '${LIBS}
             for mod in $NEW_MODULES; do

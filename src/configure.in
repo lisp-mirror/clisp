@@ -28,6 +28,7 @@ dnl
 RSE_BOLD
 BOLD_MSG([check for host type])
 AC_CANONICAL_HOST
+AC_CANONICAL_BUILD
 CL_DECOLONIZE
 BOLD_MSG([checks for programs])
 dnl
