@@ -1,3 +1,8 @@
+2026-09-25  Bruno Haible  <bruno@clisp.org>
+
+	Fix a gcc warning on mingw.
+	* modules/i18n/gettext.c (get_locale_info): Add braces.
+
 2026-09-24  Bruno Haible  <bruno@clisp.org>
 
 	Fix a gcc warning on mingw.

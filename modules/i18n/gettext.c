@@ -251,9 +251,10 @@ static int get_locale_info (int what, char**res, int *res_size, int errorp) {
   begin_system_call();
   val = GetLocaleInfo(LOCALE_SYSTEM_DEFAULT,what,*res,*res_size);
   end_system_call();
-  if (val == 0)
+  if (val == 0) {
     if (errorp) OS_error();
     else return 1;
+  }
   if (val > *res_size) {
     *res = (char*)clisp_realloc(*res,val);
     if (*res == NULL) OS_error();
