@@ -54,8 +54,26 @@ build-prerequisites : check-configures fixperms                              \
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Create the configure files.
 
-MODULES=berkeley-db clx/new-clx dirkey fastcgi i18n oracle pari pcre dbus \
-  postgresql rawsock readline regexp syscalls zlib gtk2 gdbm libsvm
+MODULES = \
+  asdf \
+  berkeley-db \
+  clx/new-clx \
+  dirkey \
+  fastcgi \
+  i18n \
+  oracle \
+  pari \
+  pcre \
+  dbus \
+  postgresql \
+  rawsock \
+  readline \
+  regexp \
+  syscalls \
+  zlib \
+  gtk2 \
+  gdbm \
+  libsvm
 CONFIG_H_IN = src/config.h.in $(patsubst %,modules/%/config.h.in,$(MODULES))
 MOD_CONFIGURES=$(patsubst %,modules/%/configure,$(MODULES))
 CONFIGURES=src/configure $(MOD_CONFIGURES)
@@ -77,7 +95,7 @@ AUTOCONF_FILES = src/aclocal.m4
 AUTOCONF_CACHE = autom4te.cache
 
 $(CONFIGURES) : %/configure : %/configure.in $(AUTOCONF_FILES) version.sh
-# Need to remove $(AUTOCONF_CACHE) before running autotonf, otherwise
+# Need to remove $(AUTOCONF_CACHE) before running autoconf, otherwise
 # changes to version.sh are not taken into account.
 	cd $* && $(RMRF) $(AUTOCONF_CACHE) && autoconf --include=$(CURDIR)/src
 

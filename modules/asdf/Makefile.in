@@ -1,11 +1,11 @@
 # Makefile for CLISP module set ASDF
 
-srcdir = .
-CLISP = clisp -norc -q
-CLISP_LINKKIT = $$($(CLISP) -b)/linkkit
+srcdir = @srcdir@
+CLISP = @CLISP@ -norc -q
+CLISP_LINKKIT = @CLISP_LINKKIT@
 
-LN = ln
-LN_S = ln -s
+LN = @LN@
+LN_S = @LN_S@
 
 MAKE = make
 
@@ -19,7 +19,7 @@ distribdir =
 clisp-module : $(GENERATED)
 
 asdf.fas: $(srcdir)/asdf.lisp
-	$(CLISP) -m 2MW -c $(srcdir)/asdf.lisp -o ./
+	$(CLISP) -m 2MW -c @BTHS@$(srcdir)/asdf.lisp@BTHE@ -o ./
 
 link.sh : $(srcdir)/link.sh
 	$(LN_S) $(srcdir)/link.sh .
