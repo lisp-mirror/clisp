@@ -1,5 +1,11 @@
 2026-09-28  Bruno Haible  <bruno@clisp.org>
 
+	Fix a build failure of the syscalls module on mingw 14.
+	* configure.in: Set gl_cv_lib_assume_bcrypt to 'no'.
+	* src/configure: Regenerated.
+
+2026-09-28  Bruno Haible  <bruno@clisp.org>
+
 	Implement build of 'asdf' module on mingw, in the Cygwin environment.
 	* modules/asdf/Makefile.in: Renamed from modules/asdf/Makefile. Use
 	BTHS, BTHE.

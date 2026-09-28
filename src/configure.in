@@ -58,6 +58,8 @@ CL_AS_UNDERSCORE    dnl sets variable AS_UNDERSCORE, DEFS ASM_UNDERSCORE
 CL_CC_WORKS         dnl final CC check
 dnl
 BOLD_MSG([check for add-ons])
+dnl In getrandom.c, on Windows, prefer dynamic linking with bcrypt.dll.
+gl_cv_lib_assume_bcrypt=no
 gl_INIT
 AM_ICONV dnl DEFS HAVE_ICONV, ICONV_CONST, set variable LIBICONV
 dnl USE_NLS CPPFLAGS LIBINTL
