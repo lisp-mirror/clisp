@@ -1,5 +1,11 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Implement MACHINE-TYPE and MACHINE-VERSION on 64-bit mingw.
+	* misc.d (MACHINE-TYPE, MACHINE-VERSION): Handle the case of
+	PROCESSOR_ARCHITECTURE_AMD64.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Define memory mapping on mingw/x86_64.
 	* makemake.in (Z_XCFLAGS): For mingw/x86_64, enable all optimizations
 	except ASM.

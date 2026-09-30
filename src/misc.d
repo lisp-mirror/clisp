@@ -1,6 +1,6 @@
 /*
  * Miscellaneous CLISP functions
- * Bruno Haible 1990-2008, 2017-2024
+ * Bruno Haible 1990-2008, 2017-2026
  * Sam Steingold 1999-2011, 2017
  */
 
@@ -132,6 +132,8 @@ LISPFUNN(machinetype,0)
       end_system_call();
       if (info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_INTEL) {
         ret = coerce_imm_ss(ascii_to_string("PC/386"));
+      } else if (info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
+        ret = coerce_imm_ss(ascii_to_string("X86_64"));
       }
     }
   #else
@@ -179,6 +181,8 @@ LISPFUNN(machine_version,0)
             TheS8string(ret)->data[3] = '5';
         }
         ret = coerce_imm_ss(ret);
+      } else if (info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
+        ret = coerce_imm_ss(ascii_to_string("X86_64"));
       }
     }
   #else
