@@ -243,8 +243,10 @@ extern off_t lseek (HANDLE fd, off_t offset, DWORD mode);
 #define USE_SYS_TYPES_FD_SET
 #endif
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <winsock2.h> /* most socket functions */
+#include <ws2tcpip.h> /* inet_ntop, inet_pton */
+#include "sockets.h" /* gl_sockets_startup, gl_sockets_cleanup */
+#include <sys/ioctl.h> /* ioctl */
 
 #ifdef __MINGW32__
 #undef USE_SYS_TYPES_FD_SET
@@ -373,13 +375,15 @@ extern void DumpProcessMemoryMap (FILE* out); /* see win32aux.d */
  used by spvw.d */
 
 #ifdef FIONBIO                  /*  */
-  /* for socket.d: non-blocking I/O a la BSD 4.2 */
+  /* for socket.d: non-blocking I/O a la BSD 4.2.
+     This uses the gnulib ioctl override, which ends up calling ioctlsocket
+     via gllib/sockets.c. */
   #define NO_BLOCK_DECL()  \
     unsigned long non_blocking_io = 1
-  #define START_NO_BLOCK(handle, on_fail)                            \
-    if (ioctlsocket(handle,FIONBIO,&non_blocking_io)) { on_fail; }
-  #define END_NO_BLOCK(handle, on_fail)            do {              \
-      non_blocking_io = 0;                                           \
-      if (ioctlsocket(handle,FIONBIO,&non_blocking_io)) { on_fail; } \
+  #define START_NO_BLOCK(handle, on_fail)                      \
+    if (ioctl(handle,FIONBIO,&non_blocking_io)) { on_fail; }
+  #define END_NO_BLOCK(handle, on_fail)            do {        \
+      non_blocking_io = 0;                                     \
+      if (ioctl(handle,FIONBIO,&non_blocking_io)) { on_fail; } \
     } while (0)
 #endif

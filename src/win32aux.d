@@ -346,17 +346,16 @@ global void init_win32 (void)
     CharToOem(&ANSI2OEM_table[1],&ANSI2OEM_table[1]);
   }
  #endif
-  { /* Winsock. */
-    var WSADATA data;
-    if (WSAStartup(MAKEWORD(1,1),&data)) {
-      winsock_initialized = 0;
-      earlylate_asciz_error("\n*** - Failed to initialize winsock library\n",0);
-    } else winsock_initialized = true;
-  }
+  /* Winsock. */
+  if (gl_sockets_startup(MAKEWORD(1,1))) {
+    winsock_initialized = 0;
+    earlylate_asciz_error("\n*** - Failed to initialize winsock library\n",0);
+  } else
+    winsock_initialized = true;
 }
 
 global void done_win32 (void) {
-  if (winsock_initialized && WSACleanup()) {
+  if (winsock_initialized && gl_sockets_cleanup()) {
     earlylate_asciz_error("\n*** - Failed to shutdown winsock library\n",0);
   }
   winsock_initialized = 0;

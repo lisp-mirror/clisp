@@ -1,5 +1,14 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Fix hanging sockets on mingw (regression 2011-07-25, 2026-09-24).
+	* win32.d: Include sockets.h, sys/ioctl.h from gnulib.
+	(START_NO_BLOCK, END_NO_BLOCK): Call ioctl, not ioctlsocket.
+	* win32aux.d (init_win32): Call gl_sockets_startup instead of
+	WSAStartup.
+	(done_win32): Call gl_sockets_cleanup instead of WSACleanup.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Fix a random build failure on 32-bit mingw.
 	* makemake.in (marc.out): Ignore a failure of "./lisp.exe -marc" on
 	Windows.
