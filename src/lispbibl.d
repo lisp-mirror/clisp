@@ -5170,6 +5170,26 @@ typedef signed_int_with_n_bits(oint_addr_len)  saint;
 %% #endif
 %% #endif
 
+/* Bit operations on entities of type oint:
+ ...wbit... instead of ...bit..., "w" = "wide". */
+#if defined(WIDE_SOFT)
+  #define wbit(n)  (1ULL<<(n))
+  #define wbitm(n)  (2ULL<<((n)-1))
+  #define wbit_test(x,n)  ((x) & wbit(n))
+  #define minus_wbit(n)  (-1ULL<<(n))
+#else
+  #define wbit  bit
+  #define wbitm  bitm
+  #define wbit_test  bit_test
+  #define minus_wbit  minus_bit
+#endif
+%% export_def(wbit);
+%% #if notused
+%%  export_def(wbitm);
+%% #endif
+%% export_def(wbit_test);
+%% export_def(minus_wbit);
+
 /* Integer type for immediate values:
  Always 32 = intLsize <= intVsize <= 64. */
 #if (oint_data_len <= 32)
@@ -5181,6 +5201,26 @@ typedef unsigned_int_with_n_bits(intVsize)  uintV;
 typedef signed_int_with_n_bits(intVsize)  sintV;
 %% sprintf(buf,"uint%d",intVsize); emit_typedef(buf,"uintV");
 %% sprintf(buf,"sint%d",intVsize); emit_typedef(buf,"sintV");
+
+/* Bit operations on entities of type uintV:
+ ...vbit... instead of ...bit..., "v" = "value". */
+#if (intVsize > 32)
+  #define vbit(n)  (1ULL<<(n))
+  #define vbitm(n)  (2ULL<<((n)-1))
+  #define vbit_test(x,n)  ((x) & vbit(n))
+  #define minus_vbit(n)  (-1ULL<<(n))
+#else
+  #define vbit  bit
+  #define vbitm  bitm
+  #define vbit_test  bit_test
+  #define minus_vbit  minus_bit
+#endif
+%% #if notused
+%%  export_def(vbit(n));
+%%  export_def(vbitm(n));
+%%  export_def(vbit_test(x,n));
+%%  export_def(minus_vbit(n));
+%% #endif
 
 /* Integer type used to represent an amount of memory:
  (This may be larger than size_t or ptrdiff_t: size_t is required by ISO C to
@@ -5396,46 +5436,6 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
 %% #else
 %%   emit_define("objectplus(obj,offset)","as_object(as_oint(obj)+(soint)(offset))");
 %% #endif
-
-/* Bit operations on entities of type uintV:
- ...vbit... instead of ...bit..., "v" = "value". */
-#if (intVsize > 32)
-  #define vbit(n)  (1ULL<<(n))
-  #define vbitm(n)  (2ULL<<((n)-1))
-  #define vbit_test(x,n)  ((x) & vbit(n))
-  #define minus_vbit(n)  (-1ULL<<(n))
-#else
-  #define vbit  bit
-  #define vbitm  bitm
-  #define vbit_test  bit_test
-  #define minus_vbit  minus_bit
-#endif
-%% #if notused
-%%  export_def(vbit(n));
-%%  export_def(vbitm(n));
-%%  export_def(vbit_test(x,n));
-%%  export_def(minus_vbit(n));
-%% #endif
-
-/* Bit operations on entities of type oint:
- ...wbit... instead of ...bit..., "w" = "wide". */
-#if defined(WIDE_SOFT)
-  #define wbit(n)  (1ULL<<(n))
-  #define wbitm(n)  (2ULL<<((n)-1))
-  #define wbit_test(x,n)  ((x) & wbit(n))
-  #define minus_wbit(n)  (-1ULL<<(n))
-#else
-  #define wbit  bit
-  #define wbitm  bitm
-  #define wbit_test  bit_test
-  #define minus_wbit  minus_bit
-#endif
-%% export_def(wbit);
-%% #if notused
-%%  export_def(wbitm);
-%% #endif
-%% export_def(wbit_test);
-%% export_def(minus_wbit);
 
 #ifdef TYPECODES
 
