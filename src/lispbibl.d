@@ -3752,6 +3752,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     && !(defined(UNIX_LINUX) && defined(M68K) && (defined(HEAPCODES) || defined(ONE_FREE_BIT_HEAPCODES))) \
     && !(defined(UNIX_HAIKU) && defined(I80386))                               \
     && !defined(UNIX_CYGWIN)                                                   \
+    && !(defined(WIN32_NATIVE) && defined(I80386))                             \
     && !defined(NO_TRIVIALMAP)
   /* mmap() allows for a more flexible way of memory management than malloc().
      It's not really memory-mapping, but a more comfortable way to manage two
@@ -3767,7 +3768,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
      messages "Cannot map memory to address 0x202a8000 ... Invalid Argument",
      when more than ca. 500-600 VMAs are in use.
      Also, it does not work well on Cygwin, where it sometimes produces messages
-     "Cannot map memory to address ...". */
+     "Cannot map memory to address ...".
+     Also, it does not work well on 32-bit native Windows, where it sometimes
+     produces messages "Cannot reserve address range ...".*/
   #ifndef TRIVIALMAP_MEMORY
     #define TRIVIALMAP_MEMORY
   #endif
@@ -4025,7 +4028,8 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
       #if defined(UNIX_AIX) || defined(UNIX_SUNOS5)
         /* A compiler other than GCC may be used. */
         #define ONE_FREE_BIT_HEAPCODES
-      #elif (defined(UNIX_CYGWIN) && defined(I80386))
+      #elif (defined(UNIX_CYGWIN) && defined(I80386)) \
+            || (defined(WIN32_NATIVE) && defined(I80386))
         /* On these platforms, KERNELVOID32_HEAPCODES does not work. */
         #define ONE_FREE_BIT_HEAPCODES
       #else
@@ -4205,7 +4209,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
       #endif
       #if defined(WIN32_NATIVE) && defined(I80386) /* mingw, running on Windows 10 */
-        #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 1
+        /* We get the message "Cannot reserve address range at 0x3000000 ." */
+        #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 0
+        /* With SPVW_BLOCKS, we get the message
+           "Cannot reserve address range 0x3000000-0x300ffff ." */
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
       #endif
       #ifndef garcol_bit_o
@@ -4515,7 +4522,8 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
       #define KERNELVOID32_HEAPCODES_WORKS 0
     #endif
     #if defined(WIN32_NATIVE) && defined(I80386) /* mingw, running on Windows 10 */
-      #define KERNELVOID32_HEAPCODES_WORKS 1
+      /* We get the message "Cannot reserve address range at 0x3000000 ." */
+      #define KERNELVOID32_HEAPCODES_WORKS 0
     #endif
   #endif /* KERNELVOID32_HEAPCODES */
   #ifdef GENERIC64_HEAPCODES

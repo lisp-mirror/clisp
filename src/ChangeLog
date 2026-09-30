@@ -1,5 +1,17 @@
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
+	Improve memory mapping on mingw/i386.
+	* makemake.in (Z_XCFLAGS): For mingw/i386, enable all optimizations
+	except -fexpensive-optimizations and ASM.
+	* lispbibl.d [WIN32_NATIVE && I80386]: Don't enable TRIVIALMAP_MEMORY by
+	default. Choose ONE_FREE_BIT_HEAPCODES as preferred HEAPCODES variant.
+	Set HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS and KERNELVOID32_HEAPCODES_WORKS
+	to 0.
+	* Makefile.devel (multibuild-mingw-32): Enable the build variants
+	that work.
+
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
 	In the mingw build, fix the 'strip -s ...' commands.
 	* makemake.in (finish_runtime): Actually use the first argument.
 

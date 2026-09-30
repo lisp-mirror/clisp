@@ -1396,7 +1396,8 @@ if [ $XCC_GCC = true ] ; then
   # Code generation flags:
   # Select optimizations.
   if [ "${with_debug}" = no ] ; then
-    if [ "$cpu" = i386 ] ; then
+    # gcc-14.4.0 on mingw produces incorrect code when -fexpensive-optimizations is used.
+    if [ "$cpu" = i386 -a $HSYS != win32gcc ] ; then
       Z_XCFLAGS=$Z_XCFLAGS' -O2 -fexpensive-optimizations'
     elif [ "$cpu" = sparc ] ; then
       Z_XCFLAGS=$Z_XCFLAGS' -O2'
@@ -1806,14 +1807,8 @@ else
         ;;
 
       # mingw, running on Windows 10 (64-bit)
-      mingw*--i386) # TODO
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM -DNO_ARI_ASM -DNO_SP_ASM"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_FAST_DISPATCH"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_FAST_FLOAT -DNO_FAST_DOUBLE"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ALLOCA"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ADDRESS_SPACE_ASSUMPTIONS"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_GENERATIONAL_GC"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_SYMBOLFLAGS"
+      mingw*--i386)
+        Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM"
         ;;
 
       # 64-bit platforms
