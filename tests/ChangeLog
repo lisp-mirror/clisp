@@ -1,5 +1,10 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Avoid a test failure on 64-bit mingw.
+	* alltest.tst (lambda-parameters-limit): Limit to 512 on 64-bit mingw.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Drop portability to BeOS.
 	* excepsit.tst, ffi.tst: Remove BeOS specific code.
 
