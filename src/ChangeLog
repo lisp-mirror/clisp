@@ -1,5 +1,11 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Define *clhs-root-default* on mingw.
+	* makemake.in (config.lisp): Append the *clhs-root-default*
+	initialization also on Windows.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	syscalls tests: Fix some test failures on mingw.
 	* modules/syscalls/test.tst (float~): Upon underflow, round to 0.
 	(lgamma): Reorganize the tests so that they work on mingw (which has

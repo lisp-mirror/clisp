@@ -3312,15 +3312,13 @@ case "$host_os" in
 esac
 echol "config.lisp : ${SRCDIR}${CONFIG}.lisp"
 echotab "\$(CP) ${SRCDIR}${CONFIG}.lisp config.lisp"
-if [ $TOS = unix ] ; then
-  echotab "chmod +w config.lisp"
-  echotab "echo '(setq *clhs-root-default* \"${hyperspec}\")' >> config.lisp"
-  if [ ${TSYSOS} = cygwin ]; then
-    # maybe convert the cygwin cygdrive pathnames
-    # https://cygwin.com/ml/cygwin/2005-08/msg00460.html
-    DEVPREFIX=`mount -p | sed -nr '2s,/([^ ]+) +\S+ +\S+$,\1,p'`
-    echotab "echo '(setq *device-prefix* \"${DEVPREFIX}\")' >> config.lisp"
-  fi
+echotab "chmod +w config.lisp"
+echotab "echo '(setq *clhs-root-default* \"${hyperspec}\")' >> config.lisp"
+if [ ${TSYSOS} = cygwin ]; then
+  # maybe convert the cygwin cygdrive pathnames
+  # https://cygwin.com/ml/cygwin/2005-08/msg00460.html
+  DEVPREFIX=`mount -p | sed -nr '2s,/([^ ]+) +\S+ +\S+$,\1,p'`
+  echotab "echo '(setq *device-prefix* \"${DEVPREFIX}\")' >> config.lisp"
 fi
 echol
 
