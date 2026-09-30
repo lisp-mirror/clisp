@@ -3452,7 +3452,8 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #define SINGLEMAP_oint_type_shift 24
     /* Set garcol_bit_o to 30. */
     #define SINGLEMAP_garcol_bit_o 30
-    #define SINGLEMAP_WORKS 1
+    /* We see "Cannot map memory to address" messages. */
+    #define SINGLEMAP_WORKS 0
   #endif
   #if defined(WIN32_NATIVE) && defined(I80386) /* mingw, running on Windows 10 */
     #define SINGLEMAP_ADDRESS_BASE 0x04000000UL
@@ -4028,8 +4029,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
       #if defined(UNIX_AIX) || defined(UNIX_SUNOS5)
         /* A compiler other than GCC may be used. */
         #define ONE_FREE_BIT_HEAPCODES
-      #elif (defined(UNIX_CYGWIN) && defined(I80386)) \
-            || (defined(WIN32_NATIVE) && defined(I80386))
+      #elif (defined(WIN32_NATIVE) && defined(I80386))
         /* On these platforms, KERNELVOID32_HEAPCODES does not work. */
         #define ONE_FREE_BIT_HEAPCODES
       #else
@@ -4206,7 +4206,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         /* Warns "clisp might crash later" and
            produces messages "Cannot map memory to address". */
         #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 0
-        #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
+        /* Warns "Return value of malloc() = ffdb0008 is not compatible
+           with the choice of garcol_bit_o." */
+        #define HEAPCODES1BIT_WITH_MALLOC_WORKS 0
       #endif
       #if defined(WIN32_NATIVE) && defined(I80386) /* mingw, running on Windows 10 */
         /* We get the message "Cannot reserve address range at 0x3000000 ." */

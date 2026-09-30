@@ -1,5 +1,15 @@
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
+	Improve memory mapping on Cygwin/i386.
+	* makemake.in (Z_XCFLAGS): For Cygwin/i386, enable all optimizations
+	except ASM.
+	* lispbibl.d [UNIX_CYGWIN && I80386]: Set SINGLEMAP_WORKS to 0. Don't
+	enable ONE_FREE_BIT_HEAPCODES. Set HEAPCODES1BIT_WITH_MALLOC_WORKS to 0.
+	* Makefile.devel (multibuild-cygwin-32): Enable the build variants
+	that work.
+
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
 	Improve memory mapping on mingw/i386.
 	* makemake.in (Z_XCFLAGS): For mingw/i386, enable all optimizations
 	except -fexpensive-optimizations and ASM.

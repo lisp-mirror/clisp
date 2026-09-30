@@ -1796,14 +1796,8 @@ else
         ;;
 
       # Cygwin, running on Windows 10 (64-bit)
-      cygwin--i386) # TODO
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM -DNO_ARI_ASM -DNO_SP_ASM"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_FAST_DISPATCH"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_FAST_FLOAT -DNO_FAST_DOUBLE"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ALLOCA"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_ADDRESS_SPACE_ASSUMPTIONS"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_GENERATIONAL_GC"
-        Z_XCFLAGS="$Z_XCFLAGS -DNO_SYMBOLFLAGS"
+      cygwin--i386)
+        Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM"
         ;;
 
       # mingw, running on Windows 10 (64-bit)
