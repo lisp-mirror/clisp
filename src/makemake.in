@@ -3264,8 +3264,8 @@ echol
 
 if [ ${HSYS} = win32gcc -a "${with_debug}" = no ]; then
 finish_runtime () {
-  # woe32 users do not have gcc, so they cannot disassemble CAR anyway
-  echotab "strip -s lisp${LEXE}"
+  # woe32 users do not have gdb, so they cannot disassemble CAR anyway
+  echotab "strip -s $1"
   echol
 }
 else

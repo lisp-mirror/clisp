@@ -1,5 +1,10 @@
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
+	In the mingw build, fix the 'strip -s ...' commands.
+	* makemake.in (finish_runtime): Actually use the first argument.
+
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
 	Fix an internal error in DIRECTORY on mingw (regression 2018-01-11).
 	* pathname.d (directory_search_scandir) [WIN32_NATIVE]: For TASK_FILE_P,
 	call split_nametype_match instead of wildcard_match.
