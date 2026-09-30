@@ -7234,8 +7234,8 @@ local maygc void directory_search_scandir (bool recursively, task_t next_task,
             }
           } else if (TASK_FILE_P(next_task)) { /* match name&type with direntry: */
             pushSTACK(namestring);
-            var bool name_type_match = split_nametype_match(
-              &STACK_(2+4+3+1),&STACK_(2+1),&STACK_(0+1));
+            var bool name_type_match =
+              split_nametype_match(&STACK_(2+4+3+1),&STACK_(2+1),&STACK_(0+1));
             namestring = popSTACK();
             if (name_type_match) {
               if (directory_search_direntry_ok(namestring,&status)) {
@@ -7365,8 +7365,7 @@ local maygc void directory_search_scandir (bool recursively, task_t next_task,
 
             /* try to resolve .lnk files */
             if (!READDIR_entry_ISDIR() && !nullp(STACK_0)
-                && string_equal(STACK_0,O(lnk_string)))
-            {
+                && string_equal(STACK_0,O(lnk_string))) {
               var char resolved[MAX_PATH];
               var char * full_resolved = resolved;
               with_sstring_0(whole_namestring(STACK_(3)),O(pathname_encoding),linkfile_asciz, {
@@ -7410,7 +7409,7 @@ local maygc void directory_search_scandir (bool recursively, task_t next_task,
 
             if (rresolved == shell_shortcut_notexists
                 && dsp->if_none == DIR_IF_NONE_ERROR)
-                  error_file_not_exists();
+              error_file_not_exists();
 
             if (rresolved != shell_shortcut_notexists
                 || (dsp->if_none != DIR_IF_NONE_DISCARD
@@ -7429,9 +7428,9 @@ local maygc void directory_search_scandir (bool recursively, task_t next_task,
                     PUSH_ON_STACK(1,3+6);
                 }
               } else if (TASK_FILE_P(next_task)) { /* entry is a (halfway) normal file. */
-                if (wildcard_match(STACK_(2+4+6),STACK_0)) {
+                if (split_nametype_match(&STACK_(2+4+6),&STACK_5,&STACK_0)) {
                   /* stack layout: ..., pathname, dir_namestring, direntry,
-                          direntry-maybhacked-pathname, true-pathname,
+                          direntry-maybehacked-pathname, true-pathname,
                           direntry-name-to-check.
                      test Full-Flag and poss. get more information: */
                   if (dsp->full_p      /* :FULL wanted? */

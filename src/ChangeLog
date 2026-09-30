@@ -1,3 +1,9 @@
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
+	Fix an internal error in DIRECTORY on mingw (regression 2018-01-11).
+	* pathname.d (directory_search_scandir) [WIN32_NATIVE]: For TASK_FILE_P,
+	call split_nametype_match instead of wildcard_match.
+
 2026-09-28  Bruno Haible  <bruno@clisp.org>
 
 	Fix a build failure of the syscalls module on mingw 14.
