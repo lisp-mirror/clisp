@@ -1,5 +1,11 @@
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
+	ISO C compliance: Avoid signed integer overflow.
+	* lispbibl.d (vbit, vbitm, minus_vbit, wbit, wbitm, minus_wbit): Shift
+	an 'unsigned long long', not a 'long long'.
+
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
 	Improve memory mapping on Cygwin/i386.
 	* makemake.in (Z_XCFLAGS): For Cygwin/i386, enable all optimizations
 	except ASM.

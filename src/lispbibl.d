@@ -5403,10 +5403,10 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
 /* Bit operations on entities of type uintV:
  ...vbit... instead of ...bit..., "v" = "value". */
 #if (intVsize > 32)
-  #define vbit(n)  (1LL<<(n))
-  #define vbitm(n)  (2LL<<((n)-1))
+  #define vbit(n)  (1ULL<<(n))
+  #define vbitm(n)  (2ULL<<((n)-1))
   #define vbit_test(x,n)  ((x) & vbit(n))
-  #define minus_vbit(n)  (-1LL<<(n))
+  #define minus_vbit(n)  (-1ULL<<(n))
 #else
   #define vbit  bit
   #define vbitm  bitm
@@ -5423,10 +5423,10 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
 /* Bit operations on entities of type oint:
  ...wbit... instead of ...bit..., "w" = "wide". */
 #if defined(WIDE_SOFT)
-  #define wbit(n)  (1LL<<(n))
-  #define wbitm(n)  (2LL<<((n)-1))
+  #define wbit(n)  (1ULL<<(n))
+  #define wbitm(n)  (2ULL<<((n)-1))
   #define wbit_test(x,n)  ((x) & wbit(n))
-  #define minus_wbit(n)  (-1LL<<(n))
+  #define minus_wbit(n)  (-1ULL<<(n))
 #else
   #define wbit  bit
   #define wbitm  bitm
