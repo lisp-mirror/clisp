@@ -7,7 +7,7 @@ There are three ways to create binaries of this package for Microsoft Windows:
 
 Note: For the moment, the status of the target platforms is as follows:
   - mingw, 32-bit: supported.
-  - mingw, 64-bit: not supported.
+  - mingw, 64-bit: supported.
   - MSVC, 32-bit: not supported.
   - MSVC, 64-bit: not supported.
   - Cygwin, 32-bit: supported.

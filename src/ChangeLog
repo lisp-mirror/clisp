@@ -1,5 +1,13 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Bump version.
+	* NEWS: Mark 32-bit and 64-bit mingw as supported.
+	* INSTALL.windows: Mark 64-bit mingw as supported.
+	* version.sh: Bump RELEASE_DATE.
+	* src/configure: Regenerated.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Implement MACHINE-TYPE and MACHINE-VERSION on 64-bit mingw.
 	* misc.d (MACHINE-TYPE, MACHINE-VERSION): Handle the case of
 	PROCESSOR_ARCHITECTURE_AMD64.
