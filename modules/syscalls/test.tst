@@ -117,7 +117,8 @@ T
 ;; if FLOAT= fails, just replace it with FLOAT~
 (defun float= (x y) (= y (/ (+ x y) 2))) FLOAT=
 (defun float~ (x y)
-  (< (abs (/ (- x y) (+ x y) 1/2)) #.(sqrt double-float-epsilon)))
+  (< (without-floating-point-underflow (abs (/ (- x y) (+ x y) 1/2)))
+     #.(sqrt double-float-epsilon)))
 FLOAT~
 
 (float= (os:erf -6)     -1.0d0)  T
@@ -191,16 +192,24 @@ FLOAT~
 (float~ (os:y1 10.0)    0.24901542420695383d0)    T
 (float~ (os:yN 2 1.0)   -1.6506826068162543d0)    T
 (float~ (os:yN 2 10.0)  -0.005868082442208629d0)  T
-;; neither signgam not lgamma_r are defined on win32
-(multiple-value-list (os:lgamma 2))   (0.0d0 #+win32 nil #-win32 1)
+(os:lgamma 2)           0.0d0
+(mapcar (lambda (n)
+          (let ((lg (os:lgamma n)))
+            (list n (float (/ (! (1- n)) (exp lg)) 0f0))))
+        '(3 5 10 15 30 50 100))
+((3 1f0) (5 1f0) (10 1f0) (15 1f0) (30 1f0) (50 1f0) (100 1f0))
+;; neither signgam not lgamma_r are defined on win32/msvc
+#-win32
+(multiple-value-list (os:lgamma 2))
+#-win32
+(0.0d0 1)
+#-win32
 (mapcar (lambda (n)
           (multiple-value-bind (lg s) (os:lgamma n)
             (list n (float (/ (! (1- n)) (exp lg)) 0f0) s)))
         '(3 5 10 15 30 50 100))
-((3 1f0 #+win32 nil #-win32 1) (5 1f0 #+win32 nil #-win32 1)
- (10 1f0 #+win32 nil #-win32 1) (15 1f0 #+win32 nil #-win32 1)
- (30 1f0 #+win32 nil #-win32 1) (50 1f0 #+win32 nil #-win32 1)
- (100 1f0 #+win32 nil #-win32 1))
+#-win32
+((3 1f0 1) (5 1f0 1) (10 1f0 1) (15 1f0 1) (30 1f0 1) (50 1f0 1) (100 1f0 1))
 
 (loop :for n :upfrom 3 :for lg = (os:lgamma n)
   :unless (= 1 (/ (log (! (1- n))) lg)) :return n)

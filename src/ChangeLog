@@ -1,5 +1,12 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	syscalls tests: Fix some test failures on mingw.
+	* modules/syscalls/test.tst (float~): Upon underflow, round to 0.
+	(lgamma): Reorganize the tests so that they work on mingw (which has
+	signgam) and should also work on win32/msvc (which lacks signgam).
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Fix hanging sockets on mingw (regression 2011-07-25, 2026-09-24).
 	* win32.d: Include sockets.h, sys/ioctl.h from gnulib.
 	(START_NO_BLOCK, END_NO_BLOCK): Call ioctl, not ioctlsocket.
