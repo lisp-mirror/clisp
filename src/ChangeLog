@@ -1,5 +1,12 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Fix the modules on 64-bit mingw.
+	* modules/syscalls/calls.c (set_file_attributes): New function.
+	(copy_attributes_and_close): Use it.
+	(POSIX::SYSTEM-INFO): On 64-bit Windows, use UQ_to_I instead of UL_to_I.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Adapt types, macros, and variables for 64-bit mingw.
 	* makemake.in (WIDE_HARD): Test pointer_bitsize, not long_bitsize or
 	long_long_bitsize.

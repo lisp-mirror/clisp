@@ -1,7 +1,7 @@
 /*
  * system calls
  * Copyright (C) 2003-2012,2016-2017 Sam Steingold
- * Copyright (C) 2005,2008,2017-2024 Bruno Haible
+ * Copyright (C) 2005,2008,2017-2026 Bruno Haible
  * Copyright (C) 2005,2010 Arseny Slobodyuk
  * This is Free Software, distributed under the GNU GPL v2+
  */
@@ -2849,6 +2849,12 @@ static inline void symlink_file (char* old_pathstring, char* new_pathstring) {
 }
 #endif
 
+#if defined(WIN32_NATIVE)
+static void* set_file_attributes (const char *path, void* attributes) {
+  BOOL ret = SetFileAttributes(path,(DWORD)attributes);
+  return (void*)ret;
+}
+#endif
 /* Copy attributes from stream STACK_1 to stream STACK_0 and close them
    can trigger GC */
 static void copy_attributes_and_close () {
@@ -2893,7 +2899,7 @@ static void copy_attributes_and_close () {
       pushSTACK(file_stream_truename(STACK_1));
       goto close_and_err;
     }
-    if (!ON_PNAMESTRING(STACK_0,SetFileAttributes,fi.dwFileAttributes)) {
+    if (!ON_PNAMESTRING(STACK_0,set_file_attributes,(void*)fi.dwFileAttributes)) {
       pushSTACK(file_stream_truename(STACK_0));
       goto close_and_err;
     }
@@ -3579,8 +3585,13 @@ DEFUN(POSIX::SYSTEM-INFO,)
   end_system_call();
   pushSTACK(processor_architecture_reverse(si.wProcessorArchitecture));
   pushSTACK(UL_to_I(si.dwPageSize));
-  pushSTACK(UL_to_I((DWORD)si.lpMinimumApplicationAddress));
-  pushSTACK(UL_to_I((DWORD)si.lpMaximumApplicationAddress));
+  #if defined(intQsize)
+  pushSTACK(UQ_to_I((uintptr_t)si.lpMinimumApplicationAddress));
+  pushSTACK(UQ_to_I((uintptr_t)si.lpMaximumApplicationAddress));
+  #else
+  pushSTACK(UL_to_I((uintptr_t)si.lpMinimumApplicationAddress));
+  pushSTACK(UL_to_I((uintptr_t)si.lpMaximumApplicationAddress));
+  #endif
   pushSTACK(UL_to_I(si.dwActiveProcessorMask));
   pushSTACK(UL_to_I(si.dwNumberOfProcessors));
   pushSTACK(UL_to_I(si.dwProcessorType));
