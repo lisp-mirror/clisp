@@ -2,14 +2,14 @@
  * Bestimmung einiger Maschinen-Parameter und -Abhängigkeiten
  * und Ausgabe in ein Include-File
  * Bruno Haible 1991-09-10, 1992-10-12, 1992-12-06, 1993-10-24, 1998-2008, 2004,
- *              2007-2008, 2017, 2024
+ *              2007-2008, 2017, 2024, 2026
  * Sam Steingold 2002, 2007-2008, 2017
  *
  * On some systems, <sys/types.h> defines the types uchar, ushort, uint, ulong.
  * In order to avoid this, there are two approaches:
  * - Define _POSIX_SOURCE. But this is not sufficient on AIX 3.2.5, and - even
  *   worse - on Solaris 10, defining _POSIX_SOURCE with gcc 5.2 leads to a
- *   compilatione error.
+ *   compilation error.
  * - Play games with #define and #undef.
  */
 
@@ -17,6 +17,7 @@
 #define ushort os_ushort
 #define uint   os_uint
 #define ulong  os_ulong
+#include <stdint.h>
 #include <stdio.h>
 #undef ulong
 #undef uint
@@ -401,9 +402,9 @@ void main5(void) {
 }
 
 void main6(void) {
-#define check_sizeof_pointer(type,typestr)                              \
-  { if (sizeof(type) > sizeof(long))                                    \
-      printf("#error \"Type %s does not fit into a long!!\"\n",typestr); \
+#define check_sizeof_pointer(type,typestr)                                   \
+  { if (sizeof(type) > sizeof(intptr_t))                                     \
+      printf("#error \"Type %s does not fit into a intptr_t!!\"\n",typestr); \
   }
   check_sizeof_pointer(char*,"char *");
   check_sizeof_pointer(long*,"long *");
@@ -415,35 +416,35 @@ void main6(void) {
 }
 
 void main7(void) {
-#define test_pointer_casts(type1,type2,typestr1,typestr2)               \
-  if (sizeof(type1) != sizeof(type2)) {                                 \
+#define test_pointer_casts(type1,type2,typestr1,typestr2)                 \
+  if (sizeof(type1) != sizeof(type2)) {                                   \
     printf("#error \"Pointer types %s and %s have different sizes!!\"\n",typestr1,typestr2); \
-  } else {                                                              \
-    int i;                                                              \
-    ulong differences1 = 0, differences2 = 0;                           \
-    for (i = 0; i<100; i++) {                                           \
-      ulong sample;                                                     \
-      type1 sample1;                                                    \
-      type2 sample2;                                                    \
-      get_a_random(ulong,ulong_bitsize,sample);                         \
-      sample1 = (type1)sample;                                          \
-      sample2 = (type2)sample;                                          \
-      differences1 |= ((ulong)sample1 ^ (ulong)(type1)(sample2));       \
-      differences2 |= ((ulong)sample2 ^ (ulong)(type2)(sample1));       \
-    }                                                                   \
-    if (differences1==0)                                                \
+  } else {                                                                \
+    int i;                                                                \
+    uintptr_t differences1 = 0, differences2 = 0;                         \
+    for (i = 0; i<100; i++) {                                             \
+      uintptr_t sample;                                                   \
+      type1 sample1;                                                      \
+      type2 sample2;                                                      \
+      get_a_random(uintptr_t,pointer_bitsize,sample);                     \
+      sample1 = (type1)sample;                                            \
+      sample2 = (type2)sample;                                            \
+      differences1 |= ((uintptr_t)sample1 ^ (uintptr_t)(type1)(sample2)); \
+      differences2 |= ((uintptr_t)sample2 ^ (uintptr_t)(type2)(sample1)); \
+    }                                                                     \
+    if (differences1==0)                                                  \
       printf("/* Casts from %s to %s is OK (does nothing). */\n",typestr2,typestr1); \
-    else                                                                \
-      if (differences1 == ~(ulong)0)                                    \
+    else                                                                  \
+      if (differences1 == ~(uintptr_t)0)                                  \
         printf("#error \"Casts from %s to %s work in an unknown way!!\"\n",typestr2,typestr1); \
-      else                                                              \
+      else                                                                \
         printf("#error \"Casts from %s to %s modify part 0x%8lX of pointer!!\"\n",typestr2,typestr1,differences1); \
-    if (differences2==0)                                                \
+    if (differences2==0)                                                  \
       printf("/* Casts from %s to %s is OK (does nothing). */\n",typestr1,typestr2); \
-    else                                                                \
-      if (differences2 == ~(ulong)0)                                    \
+    else                                                                  \
+      if (differences2 == ~(uintptr_t)0)                                  \
         printf("#error \"Casts from %s to %s work in an unknown way!!\"\n",typestr1,typestr2); \
-      else                                                              \
+      else                                                                \
         printf("#error \"Casts from %s to %s modify part 0x%8lX of pointer!!\"\n",typestr1,typestr2,differences2); \
   }
   test_pointer_casts(char*,long*,"char *","long *");

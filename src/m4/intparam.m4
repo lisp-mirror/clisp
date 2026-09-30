@@ -1,5 +1,5 @@
-# intparam.m4 serial 6  -*- Autoconf -*-
-dnl Copyright (C) 1993-2024 Free Software Foundation, Inc.
+# intparam.m4 serial 7  -*- Autoconf -*-
+dnl Copyright (C) 1993-2026 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -101,10 +101,10 @@ AC_DEFUN([CL_INTPARAM_CROSS],
     if test "$longlong_bitsize" != "$ulonglong_bitsize"; then
       echo "#error \"Integer types long long and unsigned long long have different sizes!!\""
     fi
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],
-      [[typedef int verify[2*(sizeof(char*)<=sizeof (long))-1];]])],
-      [], [echo "#error \"Type char * does not fit into a long!!\""])
-    AC_COMPUTE_INT([pointer_size], [sizeof (char *)])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdint.h>]],
+      [[typedef int verify[2*(sizeof(char*)<=sizeof (intptr_t))-1];]])],
+      [], [echo "#error \"Type char * does not fit into an intptr_t!!\""])
+    AC_COMPUTE_INT([pointer_size], [sizeof (char *)], [], [])
     pointer_bitsize=`expr $pointer_size '*' $char_bitsize`
     echo "/* Pointers of type char * have $pointer_bitsize bits. */"
     echo "#define pointer_bitsize $pointer_bitsize"
@@ -254,7 +254,7 @@ dnl CL_INTPARAM_SIZEOF(type, variable)
 dnl puts into variable the determined size of the type.
 AC_DEFUN([CL_INTPARAM_SIZEOF],
 [
-  AC_COMPUTE_INT([$2], [sizeof($1)])
+  AC_COMPUTE_INT([$2], [sizeof($1)], [], [])
 ])
 
 dnl CL_INTPARAM_ALIGNOF(type, variable)

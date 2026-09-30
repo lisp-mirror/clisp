@@ -1,5 +1,17 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Fix autoconfiguration on 64-bit mingw.
+	This drops portability to some old platforms:
+	OpenBSD 3.8, AIX 5.1, HP-UX 11.11, IRIX 6.5, OSF/1 5.1, MSVC 9.
+	* intparam.c: Include <stdint.h>.
+	(main6): Use 'intptr_t' instead of 'long'.
+	(main7): Use 'uintptr_t' instead of 'ulong'. Patch taken from CLN.
+	* m4/intparam.m4 (CL_INTPARAM_CROSS): Include <stdint.h> and use
+	'intptr_t' instead of 'long'. Patch taken from CLN.
+	* src/configure: Regenerated.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Drop portability to BeOS.
 	* m4/select.m4 (CL_SELECT): Don't test for __BEOS__.
 	* src/configure: Regenerated.
