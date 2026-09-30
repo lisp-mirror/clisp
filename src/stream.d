@@ -3538,10 +3538,8 @@ local void finish_tty_output (Handle handle) {
   begin_system_call();
  #if !(defined(UNIX) && !defined(HAVE_FSYNC))
   if (!( fsync(handle) ==0)) {
-  #ifndef UNIX_BEOS /* BeOS 5 apparently does not set errno */
     if (!IS_EINVAL)
       { OS_error(); }
-  #endif
   } else goto ok;
  #endif
  #ifdef UNIX_TERM_TERMIOS
@@ -3580,10 +3578,8 @@ local void force_tty_output (Handle handle) {
   /* Method: fsync, see FSYNC(2) */
   begin_system_call();
   if (!( fsync(handle) ==0)) {
-   #ifndef UNIX_BEOS /* BeOS 5 apparently does not set errno */
     if (!IS_EINVAL)
       OS_error();
-   #endif
   }
   end_system_call();
 }
@@ -4846,7 +4842,7 @@ local listen_t listen_handle (Handle handle, bool tty_p, int *byte) {
        doing  { return LISTEN_AVAIL; }  and instead try methods 3 and 4. */
     }
   }
-  #elif defined(HAVE_SELECT) && !defined(UNIX_BEOS)
+  #elif defined(HAVE_SELECT)
   {
     /* Use select() with readfds = singleton set {handle}
      and timeout = zero interval. */
@@ -4902,7 +4898,7 @@ local listen_t listen_handle (Handle handle, bool tty_p, int *byte) {
     }
   }
   #endif
-  #if !((defined(HAVE_POLL) && (defined(HAVE_RELIABLE_POLL) || !defined(HAVE_RELIABLE_SELECT))) || (defined(HAVE_SELECT) && !defined(UNIX_BEOS)))
+  #if !((defined(HAVE_POLL) && (defined(HAVE_RELIABLE_POLL) || !defined(HAVE_RELIABLE_SELECT))) || defined(HAVE_SELECT))
   if (tty_p) { /* Terminal */
     /* switch to non-blocking mode, then try read(): */
     var uintB b;
@@ -8872,7 +8868,7 @@ local object rd_ch_keyboard (const gcv_object_t* stream_) {
           goto empty_buffer; /* no character available */
       }
     }
-  #elif defined(HAVE_SELECT) && !defined(UNIX_BEOS)
+  #elif defined(HAVE_SELECT)
     {
       /* Use select with readfds = one-element set {stdin_handle}
        and timeout = small time-interval. */
@@ -13265,14 +13261,13 @@ LISPFUN(make_pipe_io_stream,seclass_default,1,0,norest,key,3,
    ================================
 
  Socket streams are just like handle streams (unbuffered file streams),
- except that on UNIX_BEOS and WIN32_NATIVE, the low-level functions are
- different.
+ except that on WIN32_NATIVE, the low-level functions are different.
 
  Both sides
  ----------
 
  Closes a socket handle. */
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
 local void low_close_socket (object stream, object handle, uintB abort) {
   begin_system_call();
   var int closed;
@@ -13286,15 +13281,11 @@ local void low_close_socket (object stream, object handle, uintB abort) {
   #define low_close_socket  low_close_handle
 #endif
 
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
 
-#ifdef WIN32_NATIVE
-  #define CHECK_INTERRUPT                       \
-    if (errno==EINTR) /* Break by Ctrl-C ?*/    \
-      { end_system_call(); error_interrupt(); }
-#else
-  #define CHECK_INTERRUPT
-#endif
+#define CHECK_INTERRUPT                       \
+  if (errno==EINTR) /* Break by Ctrl-C ?*/    \
+    { end_system_call(); error_interrupt(); }
 
 #define SYSCALL(result,call)                          \
   do {                                                \
@@ -13326,7 +13317,7 @@ local bool sock_error_eof_p (void) {
 /* Input side
  ---------- */
 
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
 
 local maygc sintL low_read_unbuffered_socket (object stream) {
   if (UnbufferedStream_status(stream) < 0) /* already EOF? */
@@ -13365,10 +13356,6 @@ local listen_t low_listen_unbuffered_socket (object stream) {
   var int result = select(FD_SETSIZE,&handle_set,NULL,NULL,&zero_time);
   if (result<0) {
     CHECK_INTERRUPT;
-   #ifdef UNIX_BEOS
-    if (errno==EINTR)
-      goto restart_select;
-   #endif
     ANSIC_error();
   } else {
     /* result = number of handles in handle_set for which read() would
@@ -13436,12 +13423,12 @@ local maygc uintB* low_read_array_unbuffered_socket
   #define UnbufferedSocketStream_input_init(stream)  \
     UnbufferedHandleStream_input_init(stream)
 
-#endif /* UNIX_BEOS || WIN32_NATIVE */
+#endif /* WIN32_NATIVE */
 
 /* Output side
    ----------- */
 
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
 
 local maygc void low_write_unbuffered_socket (object stream, uintB b) {
   var SOCKET handle = TheSocket(TheStream(stream)->strm_ochannel);
@@ -13467,11 +13454,11 @@ local maygc const uintB* low_write_array_unbuffered_socket
   return byteptr+result;
 }
 
-#endif /* UNIX_BEOS || WIN32_NATIVE */
+#endif /* WIN32_NATIVE */
 
 /* Initializes the output side fields of a socket stream.
  UnbufferedSocketStream_output_init(stream); */
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
   #define UnbufferedSocketStream_output_init(stream)                    \
     { UnbufferedStreamLow_write(stream) = &low_write_unbuffered_socket; \
       UnbufferedStreamLow_write_array(stream) =                         \
@@ -13497,7 +13484,7 @@ local maygc const uintB* low_write_array_unbuffered_socket
       UnbufferedStreamLow_clear_output(stream) =                        \
         &low_clear_output_unbuffered_pipe;                              \
     }
-#endif /* UNIX_BEOS || WIN32_NATIVE */
+#endif /* WIN32_NATIVE */
 
 #endif /* X11SOCKETS || SOCKET_STREAMS */
 
@@ -13649,7 +13636,7 @@ LISPFUNN(write_n_bytes,4) {
 
 /* Low-level functions for buffered socket streams. */
 
-#if defined(UNIX_BEOS) || defined(WIN32_NATIVE)
+#if defined(WIN32_NATIVE)
 
 /* UP: Fills the buffer, up to strm_buffered_bufflen bytes.
  low_fill_buffered_socket(stream,persev)
@@ -14847,7 +14834,7 @@ local maygc object handle_pathname (Handle fd) {
   /* Most UNIX platforms have /dev/fd/[012] pseudo-files. */
   /* AIX has /proc/<pid>/fd/[012] pseudo-files but they have zero permissions
      and are therefore not usable for any purpose. */
- #if defined(UNIX) && !(defined(UNIX_AIX) || defined(UNIX_BEOS) || defined(UNIX_HAIKU) || defined(UNIX_MINIX))
+ #if defined(UNIX) && !(defined(UNIX_AIX) || defined(UNIX_HAIKU) || defined(UNIX_MINIX))
   var char buf[20];
   begin_system_call();
   sprintf(buf,"/dev/fd/%d",fd);

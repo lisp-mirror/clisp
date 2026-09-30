@@ -156,7 +156,7 @@
  */
 
 /* this machine: WIN32 or GENERIC_UNIX */
-#if (defined(__unix) || defined(__unix__) || defined(_AIX) || defined(sinix) || defined(__MACH__) || defined(__POSIX__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__BEOS__) || defined(__HAIKU__) || defined(__minix)) && !defined(unix)
+#if (defined(__unix) || defined(__unix__) || defined(_AIX) || defined(sinix) || defined(__MACH__) || defined(__POSIX__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__HAIKU__) || defined(__minix)) && !defined(unix)
   #define unix
 #endif
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
@@ -312,9 +312,6 @@
   #ifdef __CYGWIN__
     #define UNIX_CYGWIN  /* Cygwin (UNIXlike on Windows) */
   #endif
-  #ifdef __BEOS__
-    #define UNIX_BEOS  /* BeOS (UNIXlike) */
-  #endif
   #ifdef __HAIKU__
     #define UNIX_HAIKU  /* Haiku (a BeOS derivative) */
   #endif
@@ -399,8 +396,8 @@
    displays CP437, but we convert from ISO-8859-1 to CP437 in the
    low-level output routine full_write(). */
 #endif
-#if defined(UNIX_BEOS) || defined(UNIX_HAIKU)
-  /* The default encoding on BeOS is UTF-8, not ISO 8859-1.
+#if defined(UNIX_HAIKU)
+  /* The default encoding on Haiku is UTF-8, not ISO 8859-1.
    If compiling with Unicode support, we use it. Else fall back to ASCII. */
   #undef ISOLATIN_CHS
   #ifdef ENABLE_UNICODE
@@ -742,8 +739,8 @@
   #if defined(M68K)
     #define STACK_register "a4" /* highest address register after sp=A7,fp=A6/A5 */
   #endif
-  #if defined(I80386) && !(defined(UNIX_BEOS) || defined(UNIX_HAIKU)) && !defined(DYNAMIC_MODULES)
-    /* On BeOS and Haiku, everything is compiled as PIC, hence %ebx is already booked.
+  #if defined(I80386) && !defined(UNIX_HAIKU) && !defined(DYNAMIC_MODULES)
+    /* On Haiku, everything is compiled as PIC, hence %ebx is already booked.
      If DYNAMIC_MODULES is defined, external modules are compiled as PIC,
      which is why %ebx is already in use. */
     #if (__GNUC__ >= 2) /* The register names have changed */

@@ -427,15 +427,10 @@ type-error
 (delete-duplicates 'abba)
 type-error
 
-;; This test fails on BeOS. The system does not give the ENOTDIR error code
-;; that should be given according to POSIX. I'm too lazy to put a workaround
-;; into pathname.d.
-#-BeOS
 (progn
   (with-open-file (s "./excepsit-tst-foo35.tmp" :direction :output
                      #+(or CMU SBCL) :if-exists #+(or CMU SBCL) :supersede))
   (delete-file "./excepsit-tst-foo35.tmp/bar"))
-#-BeOS
 file-error
 
 (destructuring-bind (a) '(1 2) a)

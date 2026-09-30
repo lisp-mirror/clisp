@@ -64006,10 +64006,7 @@ then :
 else case e in #(
   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#ifdef __BEOS__
-             #include <sys/socket.h>
-            #endif
-            #include <sys/time.h>
+#include <sys/time.h>
            extern
 #ifdef __cplusplus
 "C"
@@ -64060,10 +64057,7 @@ then :
 else case e in #(
   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#ifdef __BEOS__
-        #include <sys/socket.h>
-       #endif
-       #include <sys/time.h>
+#include <sys/time.h>
        #include <sys/select.h>
 
 int
@@ -64115,9 +64109,6 @@ else case e in #(
                   #include <unistd.h>
                  #endif
                  #include <sys/types.h>
-                 #ifdef __BEOS__
-                  #include <sys/socket.h>
-                 #endif
                  #include <sys/time.h>
                  #ifdef HAVE_SYS_SELECT_H
                   #include <sys/select.h>
@@ -64201,9 +64192,6 @@ else case e in #(
              #include <unistd.h>
             #endif
             #include <sys/types.h>
-            #ifdef __BEOS__
-             #include <sys/socket.h>
-            #endif
             #include <sys/time.h>
             #ifdef HAVE_SYS_SELECT_H
              #include <sys/select.h>

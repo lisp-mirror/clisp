@@ -2500,8 +2500,8 @@ if [ $HOS = unix -a $XCC_GCC = true ] ; then
   # We need the full libgcc.a in general. But we don't know its location.
   LIBGCC='`'"${XCC} -print-libgcc-file-name"'` # something like /usr/somewhere/libgcc.a'
   if [ $CROSS = false ] ; then
-    if [ "$HSYSOS" = linux -o "$HSYSOS" = beos -o "$HSYSOS" = cygwin ] ; then
-      # gcc2 is cc on Linux, BeOS and Cygwin. Don't need libgcc.a
+    if [ "$HSYSOS" = linux -o "$HSYSOS" = cygwin ] ; then
+      # gcc2 is cc on Linux and Cygwin. Don't need libgcc.a
       LIBGCC=''
     fi
   fi
@@ -3361,13 +3361,6 @@ if [ $CROSS = false ] ; then
 
   echol "interpreted.mem : lisp${LEXE} \$(LISPFILES) config.lisp"
   test $HOS != unix && echotab "-\$(RM) interpreted.mem"
-  if [ $HSYSOS = beos ] ; then
-    # Work around BeOS 5 kernel bug which causes subsequent invocations
-    # of lisp${LEXE} to be incorrectly relocated. On BeOS, executables and
-    # shared libraries are relocated page-by-page by a kernel routine.
-    echotab "cp -p lisp${LEXE} lisp.tmp"
-    echotab "mv lisp.tmp lisp${LEXE}"
-  fi
   echotab "\$(RUN) ${MEMOPT} -lp ${SAFE_SRCDIR} -x '(and (load \"${SAFE_SRCDIR}init.lisp\") (sys::%saveinitmem) (ext::exit)) (ext::exit t)'"
   echotab "\$(MV) lispimag.mem interpreted.mem"
   echol
@@ -3392,22 +3385,12 @@ if [ $CROSS = false ] ; then
 
   echol "halfcompiled.mem : lisp${LEXE} \$(LISPFILES) config.lisp compiler.fas"
   test $HOS != unix && echotab "-\$(RM) halfcompiled.mem"
-  if [ $HSYSOS = beos ] ; then
-    # Workaround BeOS 5 kernel bug, see explanation above.
-    echotab "cp -p lisp${LEXE} lisp.tmp"
-    echotab "mv lisp.tmp lisp${LEXE}"
-  fi
   echotab "\$(RUN) ${MEMOPT} -lp ${SAFE_SRCDIR} -x '(and (load \"${SAFE_SRCDIR}init.lisp\") (sys::%saveinitmem) (ext::exit)) (ext::exit t)'"
   echotab "\$(MV) lispimag.mem halfcompiled.mem"
   echol
 
   echol "lispinit.mem : lisp${LEXE} \$(FASFILES)"
   test $HOS != unix && echotab "-\$(RM) lispinit.mem"
-  if [ $HSYSOS = beos ] ; then
-    # Workaround BeOS 5 kernel bug, see explanation above.
-    echotab "cp -p lisp${LEXE} lisp.tmp"
-    echotab "mv lisp.tmp lisp${LEXE}"
-  fi
   echotab '$(RUN) -x "(and (load \"init.fas\") (ext::saveinitmem) (ext::exit)) (ext::exit t)"'
   echol
 
@@ -3464,11 +3447,6 @@ if [ $CROSS = false ] ; then
   echol
 
   echol "lispinit2.mem : lisp${LEXE} \$(TESTFASFILES)"
-  if [ $HSYSOS = beos ] ; then
-    # Workaround BeOS 5 kernel bug, see explanation above.
-    echotab "cp -p lisp${LEXE} lisp.tmp"
-    echotab "mv lisp.tmp lisp${LEXE}"
-  fi
   echotab '$(RUN) -x "(and (cd \"'"${RECOMPILEDIR}${NEXT}"'\") (load \"init.fas\") (cd \"'"${PARENT}"'\") (sys::%saveinitmem) (ext::exit)) (ext::exit t)"'
   echotab "-\$(RM) lispinit2.mem"
   echotab "\$(MV) lispimag.mem lispinit2.mem"
@@ -3573,7 +3551,7 @@ if [ $CROSS = false ] ; then
   echotab "output=\"\`\$(RUN) -q -M lispinit.mem -x '(progn ${RAISE})' ${TRCR}\`\"; test \"\$\$output\" = '*** - myerror' || exit 1"
   echotab "if \$(RUN) -q -M lispinit.mem -x '(progn ${RAISE})'; then exit 1; fi"
   case "$host_os" in
-    aix* | hpux* | beos* | haiku* | minix* | mingw*)
+    aix* | hpux* | haiku* | minix* | mingw*)
       # On these platforms, there is no /dev/fd/1.
       ;;
     *)

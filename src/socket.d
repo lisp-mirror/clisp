@@ -55,8 +55,7 @@
    Thus, no direct use of the winsock functions (closesocket, ioctlsocket,
    WSAGetLastError, etc.), except: gethostbyaddr, gethostbyname.
    gethostbyname's 1st argument is 'const char *', not 'const void *', on some
-   platforms: Mac OS X 10.3, FreeBSD 6.0, NetBSD 5.0, Minix, Cygwin, Windows,
-   BeOS.
+   platforms: Mac OS X 10.3, FreeBSD 6.0, NetBSD 5.0, Minix, Cygwin, Windows.
  */
 
 /* ============ hostnames and IP addresses only (no sockets) ============

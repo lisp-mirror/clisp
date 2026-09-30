@@ -238,7 +238,7 @@ extern off_t lseek (HANDLE fd, off_t offset, DWORD mode);
   This may cause runtime problems with W32 sockets"
  Bruno said:
  I think this warning means that read(), write() don't work on sockets
- in mingw32.  Like on BeOS.  CLISP already handles this.
+ in mingw32.
  See the #ifs around stream.d:low_write_unbuffered_socket() etc. */
 #define USE_SYS_TYPES_FD_SET
 #endif

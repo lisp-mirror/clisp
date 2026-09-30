@@ -3,7 +3,7 @@
 <!-- *** Entities for docbook/xml, related to Common Lisp *** -->
 <!--
  Copyright (C) 2000-2011,2016-2017 by Sam Steingold
- Copyright (C) 2024 by Bruno Haible
+ Copyright (C) 2024-2026 by Bruno Haible
  This is Free Software, distributed under the GNU GPL v2+
  See https://www.gnu.org/copyleft/gpl.html
  -->
@@ -152,7 +152,6 @@
 <!ENTITY amiga '<ulink url="http://www.amiga.org/"><emphasis role="platform">Amiga</emphasis></ulink>'>
 <!ENTITY ascii '<ulink url="https://en.wikipedia.org/wiki/ASCII"><emphasis role="platform">ASCII</emphasis></ulink>'>
 <!ENTITY atari '<ulink url="http://www.atari.org/"><emphasis role="platform">Atari</emphasis></ulink>'>
-<!ENTITY beos '<ulink url="https://en.wikipedia.org/wiki/BeOS"><emphasis role="platform">BeOS</emphasis></ulink>'>
 <!ENTITY bsd '<ulink url="http://www.bsd.org/"><emphasis role="platform">*BSD</emphasis></ulink>'>
 <!ENTITY cygwin '<ulink url="https://cygwin.com/"><emphasis role="platform">Cygwin</emphasis></ulink>'>
 <!ENTITY dos '<ulink url="http://www.freedos.org/"><emphasis role="platform">DOS</emphasis></ulink>'>

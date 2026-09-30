@@ -231,11 +231,7 @@ extern int file_id_eq (struct file_id *fi1, struct file_id *fi2);
 
 /* work with open files: */
 #include <fcntl.h> /* declares open(), O_RDWR etc. */
-/* Only a few Unices (like UNIX_CYGWIN) have O_TEXT and O_BINARY.
-   BeOS 5 has them, but they have no effect. */
-#ifdef UNIX_BEOS
-  #undef O_BINARY
-#endif
+/* Only a few Unices (like UNIX_CYGWIN) have O_TEXT and O_BINARY. */
 #ifndef O_BINARY
   #define O_BINARY  0
 #endif
@@ -480,17 +476,6 @@ extern int wait2 (pid_t pid); /* see unixaux.d */
   #define INVALID_SOCKET  (SOCKET)(-1)
   /* Error value for functions returning an `int' status */
   #define SOCKET_ERROR  (-1)
-  /* Signalling a socket-related error */
-  #ifdef UNIX_BEOS
-    /* BeOS 5 sockets cannot be used like file descriptors.
-       Reading and writing from a socket */
-    extern ssize_t sock_read (int socket, void* buf, size_t size, perseverance_t persev);
-    extern ssize_t sock_write (int socket, const void* buf, size_t size, perseverance_t persev);
-  #else
-    /* Reading and writing from a socket */
-    #define sock_read(socket,buf,nbyte,persev)   fd_read(socket,buf,nbyte,persev)
-    #define sock_write(socket,buf,nbyte,persev)  fd_write(socket,buf,nbyte,persev)
-  #endif
   /* Wrapping and unwrapping of a socket in a Lisp object */
   #define allocate_socket(fd)  allocate_handle(fd)
   #define TheSocket(obj)  TheHandle(obj)

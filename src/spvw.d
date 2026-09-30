@@ -1986,9 +1986,6 @@ local void init_object_tab (void) {
      #ifdef UNIX_CYGWIN
       " :CYGWIN"
      #endif
-     #ifdef UNIX_BEOS
-      " :BEOS"
-     #endif
      #ifdef UNIX_HAIKU
       " :HAIKU"
      #endif

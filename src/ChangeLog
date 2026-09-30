@@ -1,3 +1,21 @@
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
+	Drop portability to BeOS.
+	* m4/select.m4 (CL_SELECT): Don't test for __BEOS__.
+	* src/configure: Regenerated.
+	* makemake.in (LIBGCC): Remove test for BeOS.
+	(interpreted.mem, halfcompiled.mem, lispinit.mem, lispinit2.mem): Remove
+	workaround for BeOS.
+	* lispbibl.d (UNIX_BEOS): Remove macro.
+	* unix.d (O_BINARY): Remove workaround for BeOS.
+	(sock_read, sock_write): Remove declarations.
+	* unixaux.d (sock_read_will_hang_p, sock_read, sock_write_will_hang_p,
+	sock_write): Remove functions.
+	* spvw.d (init_object_tab): Remove :BEOS feature.
+	* stream.d (finish_tty_output, force_tty_output): Remove workaround for
+	BeOS.
+	* doc: Remove mention of :BEOS feature.
+
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
 	ISO C compliance: Avoid signed integer overflow.

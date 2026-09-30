@@ -1,3 +1,8 @@
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
+	Drop portability to BeOS.
+	* excepsit.tst, ffi.tst: Remove BeOS specific code.
+
 2026-09-29  Bruno Haible  <bruno@clisp.org>
 
 	Skip a test that hangs on Cygwin.
