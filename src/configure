@@ -64574,17 +64574,19 @@ printf '%s\n' "#define SETSOCKOPT_OPTLEN_T $cl_cv_proto_setsockopt_optlen_t" >>c
 
 
   address_range_prog='
+    #include <stdint.h>
     #include <stdio.h>
-    int printf_address (unsigned long addr)
+    int printf_address (uintptr_t addr)
     {
       FILE* out = fopen("conftest.h","wb");
-      if (sizeof(unsigned long) <= 4)
-        fprintf(out,"0x%08X\n", (unsigned int)addr);
+      if (sizeof(uintptr_t) <= 4)
+        fprintf(out,"0x%08X", (unsigned int)addr);
       else
-        fprintf(out,"0x%08X%08X\n",(unsigned int)(addr>>32),(unsigned int)(addr&0xFFFFFFFF));
+        fprintf(out,"0x%08X%08X",(unsigned int)(addr>>32),(unsigned int)(addr&0xFFFFFFFF));
+      fprintf(out,"%s\n", sizeof(void*) > sizeof(long) ? "ULL" : "UL");
       return ferror(out) || fclose(out);
     }
-    #define chop_address(addr) ((unsigned long)(char*)(addr) & ~0x00FFFFFFL)
+    #define chop_address(addr) ((uintptr_t)(char*)(addr) & ~(uintptr_t)0x00FFFFFFL)
     '
 
   { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for the code address range" >&5
@@ -64631,7 +64633,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_address_code" >&5
 printf '%s\n' "$cl_cv_address_code" >&6; }
-  x=`echo $cl_cv_address_code | sed -e 's,^guessing ,,'`"UL"
+  x=`echo $cl_cv_address_code | sed -e 's,^guessing ,,'`
 
 printf '%s\n' "#define CODE_ADDRESS_RANGE $x" >>confdefs.h
 
@@ -64685,7 +64687,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_address_malloc" >&5
 printf '%s\n' "$cl_cv_address_malloc" >&6; }
-  x=`echo $cl_cv_address_malloc | sed -e 's,^guessing ,,'`"UL"
+  x=`echo $cl_cv_address_malloc | sed -e 's,^guessing ,,'`
 
 printf '%s\n' "#define MALLOC_ADDRESS_RANGE $x" >>confdefs.h
 
@@ -64750,7 +64752,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_address_shlib" >&5
 printf '%s\n' "$cl_cv_address_shlib" >&6; }
-  x=`echo $cl_cv_address_shlib | sed -e 's,^guessing ,,'`"UL"
+  x=`echo $cl_cv_address_shlib | sed -e 's,^guessing ,,'`
 
 printf '%s\n' "#define SHLIB_ADDRESS_RANGE $x" >>confdefs.h
 
@@ -64768,7 +64770,6 @@ else case e in #(
   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-          #include "confdefs.h"
           #include "confdefs.h"
           $address_range_prog
 
@@ -64801,7 +64802,7 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $cl_cv_address_stack" >&5
 printf '%s\n' "$cl_cv_address_stack" >&6; }
-  x=`echo "$cl_cv_address_stack" | sed -e 's,^guessing ,,'`"UL"
+  x=`echo "$cl_cv_address_stack" | sed -e 's,^guessing ,,'`
 
 printf '%s\n' "#define STACK_ADDRESS_RANGE $x" >>confdefs.h
 

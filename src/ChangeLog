@@ -1,6 +1,14 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
 	Fix autoconfiguration on 64-bit mingw.
+	* m4/address.m4 (CL_ADDRESS_RANGE): Include <stdint.h>. Use 'uintptr_t'
+	instead of 'unsigned long'. On 64-bit Windows, print the address ranges
+	with suffix 'ULL' instead of 'UL'.
+	* src/configure: Regenerated.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
+	Fix autoconfiguration on 64-bit mingw.
 	This drops portability to some old platforms:
 	OpenBSD 3.8, AIX 5.1, HP-UX 11.11, IRIX 6.5, OSF/1 5.1, MSVC 9.
 	* intparam.c: Include <stdint.h>.
