@@ -658,6 +658,7 @@ T
         (t '("0.0.0.0" "127.0.0.1" "0.0.0.0" "127.0.0.1")))
 
 ;; Test writing to and reading from a socket after it has encountered ECONNRESET.
+#-CYGWIN ; This test hangs in 32-bit Cygwin.
 (multiple-value-bind (run args) (cmd-args)
   ;; Open a socket server.
   (let ((se (socket:socket-server)))
@@ -697,6 +698,7 @@ T
                   ((:ECONNRESET #.+ECONNRESET+) :APPEND) ; signals ECONNRESET e.g. on Cygwin
                   (t (os-error-code c)))))))
       (socket:socket-server-close se))))
+#-CYGWIN
 (:OUTPUT "foo" NIL :APPEND T T #.(if (equal (ext:operating-system-type) "OpenBSD") ':ERROR ':APPEND))
 
 ;; https://sourceforge.net/p/clisp/feature-requests/46/

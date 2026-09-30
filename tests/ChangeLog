@@ -1,3 +1,8 @@
+2026-09-29  Bruno Haible  <bruno@clisp.org>
+
+	Skip a test that hangs on Cygwin.
+	* socket.tst: Skip a test that hangs on 32-bit Cygwin 2.9.0.
+
 2020-06-21  Bruno Haible  <bruno@clisp.org>
 
 	Avoid test failures on AIX, Haiku, Minix.
