@@ -1,5 +1,52 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Adapt types, macros, and variables for 64-bit mingw.
+	* makemake.in (WIDE_HARD): Test pointer_bitsize, not long_bitsize or
+	long_long_bitsize.
+	* lispbibl.d (WIDE_HARD): Ignore long_bitsize.
+	Include <stdint.h>.
+	(setjmpl, longjmpl): Test pointer_bitsize, not long_bitsize.
+	(jmpl_value): Likewise. Change type to intptr_t.
+	(exact_uint_size_p): Consider also long_long_bitsize.
+	(intQsize, sintQ, uintQ, HAVE_DD, uintDD, sintDD): Test also
+	pointer_bitsize.
+	(SINGLEMAP_oint_type_mask): Use ULL instead of UL.
+	(oint_addr_mask, oint_data_mask): Use wbitm.
+	(oint_addr_mask, oint_type_mask):: Use ULL instead of UL.
+	(wbit, wbitm, wbit_test, minus_wbit): Test also
+	pointer_bitsize.
+	(hardware_addressbus_mask): Conditionally use ULL instead of UL.
+	(sp_jmp_buf_to_jmp_buf): Use 'intptr_t' instead of 'long'.
+	(fbit): New macro.
+	(envbind_case_mask_t, dynjump_mask_t, *_frame_info): Use fbit instead of
+	bit.
+	(uintP_to_I, I_to_uintP): New macros.
+	* spvw.d (jmpl_value): Change type to intptr_t.
+	(init_memory): Use wbit instead of bit.
+	* spvw_allocate.d (relax_reserve): Use wbitm instead of bitm.
+	* spvw_allocate_old.d (relax_reserve): Likewise.
+	* spvw_garcol.d (PRIoint): Define to "ll" if
+	pointer_bitsize > long_bitsize.
+	* spvw_garcol_old.d (PRIoint): Likewise.
+	* spvw_mmap.d (warn_before_mmap, warn_before_reserving_range,
+	mmap_prepare, mmap_zeromap, mmap_filemap): Print addresses as
+	'unsigned long long', through "%llx".
+	* win32aux.d (hyperjump_dest): Change type to uintP.
+	(do_sigintwait): Update.
+	(DumpProcessMemoryMap): Print addresses as 'unsigned long long',
+	through "%llx".
+	* eval.d (reset): Print addresses as 'unsigned long long', through
+	"%llx".
+	* intserial.d (UI_to_LEbytes): Use wbit instead of vbit.
+	(I_to_LEbytes): Use wbit instead of bit.
+	* misc.d (SYS::CODE-ADDRESS-OF): Use uintP_to_I instead of ulong_to_I.
+	* foreign.d (FFI:UNSIGNED-FOREIGN-ADDRESS): Use I_to_uintP instead of
+	I_to_ulong.
+	(FFI:FOREIGN-ADDRESS-UNSIGNED): Use uintP_to_I instead of ulong_to_I.
+	(lookup_foreign_variable): Use 'intptr_t' instead of 'long'.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Refactor.
 	* lispbibl.d (wbit, wbitm, wbit_test, minus_wbit): Move definitions.
 	(vbit, vbitm, vbit_test, minus_vbit): Move definitions.

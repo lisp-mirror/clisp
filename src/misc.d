@@ -440,13 +440,13 @@ LISPFUNN(code_address_of,1)
   if (ulong_p(obj)) /* Number within the range of aint == ulong ==> self */
     VALUES1(obj);
   else if (subrp(obj))          /* SUBR ->  its address */
-    VALUES1(ulong_to_I((aint)(TheSubr(obj)->function)));
+    VALUES1(uintP_to_I((aint)(TheSubr(obj)->function)));
   else if (fsubrp(obj))         /* FSUBR -> its address */
-    VALUES1(ulong_to_I((aint)(TheFsubr(obj)->function)));
+    VALUES1(uintP_to_I((aint)(TheFsubr(obj)->function)));
  #ifdef DYNAMIC_FFI
   else if (ffunctionp(obj)) {
     object fa = check_faddress_valid(TheFfunction(obj)->ff_address);
-    VALUES1(ulong_to_I((uintP)Faddress_value(fa)));
+    VALUES1(uintP_to_I((uintP)Faddress_value(fa)));
   }
  #endif
   else

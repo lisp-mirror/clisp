@@ -191,7 +191,7 @@ local HANDLE sigint_thread = INVALID_HANDLE_VALUE;
 
 /* Destination for hyperjump. Normally &interrupt_handler, but set to &quit
    when a Ctrl-Break was seen. */
-local DWORD hyperjump_dest = (DWORD)&interrupt_handler;
+local uintP hyperjump_dest = (uintP)&interrupt_handler;
 
 local BOOL normal_interrupt_handler (DWORD CtrlType)
 {
@@ -235,7 +235,7 @@ local DWORD WINAPI do_sigintwait (LPVOID arg)
         goto try_hyperjump;
       case WAIT_OBJECT_0+1:
         /* Got a sigbreak_event! */
-        final_exitcode = 130; hyperjump_dest = (DWORD)&quit;
+        final_exitcode = 130; hyperjump_dest = (uintP)&quit;
         goto try_hyperjump;
       case WAIT_TIMEOUT:
         if (!interrupt_pending) { /* already being handled? */
@@ -252,7 +252,11 @@ local DWORD WINAPI do_sigintwait (LPVOID arg)
           var CONTEXT context;
           context.ContextFlags = CONTEXT_CONTROL | CONTEXT_INTEGER;
           GetThreadContext(main_thread,&context);
+          #if defined(AMD64)
+          context.Rip = hyperjump_dest;
+          #else
           context.Eip = hyperjump_dest;
+          #endif
           SetThreadContext(main_thread,&context);
           /* Now it's ok to release the main thread. */
           waitstate = 0;
@@ -1109,7 +1113,7 @@ global _Noreturn void abort (void)
 global void DumpProcessMemoryMap (FILE* out)
 {
   var MEMORY_BASIC_INFORMATION info;
-  var aint address = 0;
+  var uintP address = 0;
   fprint(out,"Memory dump:\n");
   while (VirtualQuery((void*)address,&info,sizeof(info)) == sizeof(info)) {
     /* Always info.BaseAddress = address. */
@@ -1119,10 +1123,11 @@ global void DumpProcessMemoryMap (FILE* out)
       case MEM_COMMIT:  fprint(out,"*"); break;
       default: fprint(out,"?"); break;
     }
-    fprintf(out," 0x%x - 0x%x",(aint)info.BaseAddress,
-            (aint)info.BaseAddress+info.RegionSize-1);
+    fprintf(out," 0x%llx - 0x%llx",
+            (unsigned long long)(uintP)info.BaseAddress,
+            (unsigned long long)(uintP)info.BaseAddress+info.RegionSize-1);
     if (info.State != MEM_FREE) {
-      fprintf(out," (0x%x) ",(aint)info.AllocationBase);
+      fprintf(out," (0x%llx) ",(unsigned long long)(uintP)info.AllocationBase);
       /* info.AllocationProtect is apparently irrelevant. */
       switch (info.Protect & ~(PAGE_GUARD|PAGE_NOCACHE)) {
         case PAGE_READONLY:          fprint(out," R  "); break;
@@ -1148,7 +1153,7 @@ global void DumpProcessMemoryMap (FILE* out)
       }
     }
     fprint(out,"\n");
-    address = (aint)info.BaseAddress + info.RegionSize;
+    address = (uintP)info.BaseAddress + info.RegionSize;
   }
   fprint(out,"End of memory dump.\n");
 }

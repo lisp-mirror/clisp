@@ -1,6 +1,6 @@
 /* Foreign language interface for CLISP
  * Marcus Daniels 8.4.1994
- * Bruno Haible 1995-2005, 2016-2018, 2024-2025
+ * Bruno Haible 1995-2005, 2016-2018, 2024-2026
  * Sam Steingold 2000-2011, 2017
  */
 
@@ -406,7 +406,7 @@ LISPFUNN(set_foreign_pointer,2)
 /* (FFI:UNSIGNED-FOREIGN-ADDRESS integer)
  makes a FOREIGN-ADDRESS object out of an unsigned integer */
 LISPFUNNR(unsigned_foreign_address,1) {
-  VALUES1(make_faddress(O(fp_zero),I_to_ulong(popSTACK())));
+  VALUES1(make_faddress(O(fp_zero),I_to_uintP(popSTACK())));
 }
 
 /* (FFI:FOREIGN-ADDRESS-UNSIGNED foreign-address)
@@ -417,8 +417,8 @@ LISPFUNNR(foreign_address_unsigned,1) {
   if (fvariablep(arg)) arg = TheFvariable(arg)->fv_address;
   else if (ffunctionp(arg)) arg = TheFfunction(arg)->ff_address;
   /* address --> integer */
-  if (faddressp(arg)) value1 = ulong_to_I((uintP)Faddress_value(arg));
-  else if (fpointerp(arg)) value1 = ulong_to_I((uintP)Fpointer_value(arg));
+  if (faddressp(arg)) value1 = uintP_to_I((uintP)Faddress_value(arg));
+  else if (fpointerp(arg)) value1 = uintP_to_I((uintP)Fpointer_value(arg));
   else error_foreign_object(arg);
   mv_count = 1;
 }
@@ -2923,7 +2923,7 @@ local maygc object lookup_foreign_variable
     var object fa = TheFvariable(fvar)->fv_address;
     pushSTACK(fvar); fa = check_faddress_valid(fa); fvar = popSTACK();
     if (!((posfixnum_to_V(TheFvariable(fvar)->fv_size) == sas.size)
-          && (((long)Faddress_value(fa) & (sas.alignment-1)) == 0))) {
+          && (((intptr_t)Faddress_value(fa) & (sas.alignment-1)) == 0))) {
       pushSTACK(fvar);
       pushSTACK(TheSubr(subr_self)->name);
       error(error_condition,GETTEXT("~S: foreign variable ~S does not have the required size or alignment"));

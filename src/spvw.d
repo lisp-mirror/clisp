@@ -1170,12 +1170,12 @@ modexp void* clisp_realloc (void* ptr, size_t size)
   error(storage_condition,GETTEXT("~S: realloc() failed"));
 }
 
-#if (int_bitsize < long_bitsize) && !defined(MULTITHREAD)
+#if (int_bitsize < pointer_bitsize) && !defined(MULTITHREAD)
 /* passing value from longjmpl() to setjmpl()  : */
 #if DYNAMIC_TABLES && defined(export_unwind_protect_macros)
 modexp
 #endif
-long jmpl_value;
+intptr_t jmpl_value;
 #endif
 
 #ifdef NEED_OWN_GETSP
@@ -3267,12 +3267,12 @@ local inline int init_memory (struct argv_initparams *p) {
       /* Distinguish between ONE_FREE_BIT_HEAPCODES and the other HEAPCODES schemes. */
       if (bit_to_avoid >= 16) {
         /* Modify the range so that its endpoints don't contain bit_to_avoid. */
-        if (start & bit(bit_to_avoid)) {
-          start |= bit(bit_to_avoid)-1;
+        if (start & wbit(bit_to_avoid)) {
+          start |= wbit(bit_to_avoid)-1;
           start++;
         }
-        if (end & bit(bit_to_avoid)) {
-          end &= minus_bit(bit_to_avoid);
+        if (end & wbit(bit_to_avoid)) {
+          end &= minus_wbit(bit_to_avoid);
           end--;
         }
         if (!(start < end)) {
@@ -3286,18 +3286,18 @@ local inline int init_memory (struct argv_initparams *p) {
           if (difference > 0) {
             if (difference == 1) {
               /* Use the larger of the two available intervals. */
-              var uintP length1 = (start | (bit(bit_to_avoid)-1)) - start;
-              var uintP length2 = end - (end & minus_bit(bit_to_avoid));
+              var uintP length1 = (start | (wbit(bit_to_avoid)-1)) - start;
+              var uintP length2 = end - (end & minus_wbit(bit_to_avoid));
               if (length1 >= length2) {
-                end = start | (bit(bit_to_avoid)-1);
+                end = start | (wbit(bit_to_avoid)-1);
               } else {
-                start = end & minus_bit(bit_to_avoid);
+                start = end & minus_wbit(bit_to_avoid);
               }
             } else {
               /* The largest available interval has length 2^bit_to_avoid. */
-              start |= bit(bit_to_avoid+1)-1;
+              start |= wbit(bit_to_avoid+1)-1;
               start++;
-              end = start | (bit(bit_to_avoid)-1);
+              end = start | (wbit(bit_to_avoid)-1);
             }
           }
         }

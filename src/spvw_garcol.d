@@ -47,11 +47,11 @@ local void move_conses (sintM delta);
 
 #if DEBUG_GC_MARK
   #define IF_DEBUG_GC_MARK(statement)  statement
-  #if defined(WIDE_SOFT)
+  #if defined(WIDE_SOFT) || (pointer_bitsize > long_bitsize)
     /* oint is defined as uint64. */
     #define PRIoint "ll"
   #else
-    /* oint is defined as uintP. Assume pointer_bitsize == long_bitsize. */
+    /* oint is defined as uintP, and pointer_bitsize == long_bitsize. */
     #define PRIoint "l"
   #endif
 #else
@@ -848,7 +848,7 @@ local void gc_morris3 (Page* page)
  set_GCself(p,type,addr);
  sets p->GCself to type_pointer_object(type,addr). */
 #ifdef TYPECODES
-  #if !(exact_uint_size_p(oint_type_len) && ((oint_type_shift%hfintsize)==0) && (tint_type_mask == bit(oint_type_len)-1))
+  #if !(exact_uint_size_p(oint_type_len) && ((oint_type_shift%hfintsize)==0) && (tint_type_mask == wbit(oint_type_len)-1))
     #ifdef SINGLEMAP_MEMORY
       /* addr contains typeinfo */
       #define make_GCself(type,addr)  \

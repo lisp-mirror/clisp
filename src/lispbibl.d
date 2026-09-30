@@ -374,6 +374,7 @@
      * On ARM64, you can have long_bitsize = pointer_bitsize = 32.
        This is the so-called ilp32 ABI. It is advertised through the _ILP32
        predefined macro.
+   Whereas on 64-bit Windows you have long_bitsize = 32, pointer_bitsize = 64.
  */
 
 
@@ -635,7 +636,7 @@
  WIDE_HARD means on a 64-bit platform.
  WIDE_SOFT means on a 32-bit platform, each object pointer occupies 2 words. */
 
-#if (long_bitsize==64) && (pointer_bitsize==64)
+#if pointer_bitsize==64
   #define WIDE_HARD
 #endif
 
@@ -1124,6 +1125,8 @@
 
 #include <alloca.h>
 %% include_file("alloca.h");
+#include <stdint.h>
+%% puts("#include <stdint.h>");
 #include <stdlib.h>
 %% puts("#include <stdlib.h>");
 #include <sys/types.h>
@@ -1397,22 +1400,22 @@ typedef signed int  signean;
   #endif
 #endif
 /* A longjmp() can only be called using an `int'.
- But if we want to use a `long' and if sizeof(int) < sizeof(long),
+ But if we want to use a `sintP' and if sizeof(int) < sizeof(sintP),
  we'll need a global variable: */
-#if (int_bitsize == long_bitsize)
+#if (int_bitsize == pointer_bitsize)
   #define setjmpl(x)  setjmp(x)
   #define longjmpl(x,y)  longjmp(x,y)
-#else /* (int_bitsize < long_bitsize) */
+#else /* (int_bitsize < pointer_bitsize) */
   #ifndef MULTITHREAD
    /* MT: following is per thread in MT builds */
-    extern long jmpl_value;
+    extern intptr_t jmpl_value;
   #endif
   #define setjmpl(x)  (setjmp(x) ? jmpl_value : 0)
   #define longjmpl(x,y)  (jmpl_value = (y), longjmp(x,1))
 #endif
 %% #ifdef export_unwind_protect_macros
-%%   #if (int_bitsize < long_bitsize) && !defined(MULTITHREAD)
-%%     exportV(long,jmpl_value);
+%%   #if (int_bitsize < pointer_bitsize) && !defined(MULTITHREAD)
+%%     exportV(intptr_t,jmpl_value);
 %%   #endif
 %%   export_def(setjmpl(x))
 %%   export_def(longjmpl(x))
@@ -1527,7 +1530,7 @@ typedef ULONGLONG  uint48;  /* unsigned 48 bit Integer */
 typedef SLONGLONG  sint48;  /* signed 48 bit Integer */
 typedef ULONGLONG  uint64;  /* unsigned 64 bit Integer */
 typedef SLONGLONG  sint64;  /* signed 64 bit Integer */
-#define exact_uint_size_p(n) (((n)==char_bitsize)||((n)==short_bitsize)||((n)==int_bitsize)||((n)==long_bitsize))
+#define exact_uint_size_p(n) (((n)==char_bitsize)||((n)==short_bitsize)||((n)==int_bitsize)||((n)==long_bitsize)||((n)==long_long_bitsize))
 #define signed_int_with_n_bits(n) CONCAT(sint,n)
 #define unsigned_int_with_n_bits(n) CONCAT(uint,n)
 /* Use 'uintn' and 'sintn' for Integers with exactly specified width.
@@ -1564,7 +1567,7 @@ typedef SLONGLONG  sint64;  /* signed 64 bit Integer */
 #define intLsize 32
   typedef signed_int_with_n_bits(intLsize)    sintL;
   typedef unsigned_int_with_n_bits(intLsize)  uintL;
-#if (long_bitsize==64) || defined(MIPS64) || defined(IA64) || defined(AMD64) || defined(ARM64)
+#if (long_bitsize==64) || (pointer_bitsize==64) || defined(MIPS64) || defined(IA64) || defined(AMD64) || defined(ARM64)
   /* Machine has real 64-bit integers in hardware. */
   #define intQsize 64
   typedef signed_int_with_n_bits(intQsize)    sintQ;
@@ -1840,7 +1843,7 @@ typedef unsigned_int_with_n_bits(intBWLsize)  uintBWL;
 #endif
 typedef unsigned_int_with_n_bits(intDsize)  uintD;
 typedef signed_int_with_n_bits(intDsize)    sintD;
-#if (intDDsize<=32) || ((intDDsize<=64) && ((long_bitsize==64) || defined(MIPS64) || defined(IA64) || defined(AMD64) || defined(ARM64)))
+#if (intDDsize<=32) || ((intDDsize<=64) && ((long_bitsize==64) || (pointer_bitsize==64) || defined(MIPS64) || defined(IA64) || defined(AMD64) || defined(ARM64)))
   #define HAVE_DD 1
   typedef unsigned_int_with_n_bits(intDDsize)  uintDD;
   typedef signed_int_with_n_bits(intDDsize)    sintDD;
@@ -3633,7 +3636,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #define SINGLEMAP_garcol_bit_o 63
   #endif
   #define SINGLEMAP_oint_type_len (64-SINGLEMAP_oint_type_shift)
-  #define SINGLEMAP_oint_type_mask (SINGLEMAP_TYPE_MASK | (1UL<<SINGLEMAP_garcol_bit_o))
+  #define SINGLEMAP_oint_type_mask (SINGLEMAP_TYPE_MASK | (1ULL<<SINGLEMAP_garcol_bit_o))
 #endif
 #if defined(SINGLEMAP_ADDRESS_BASE) || defined(SINGLEMAP_TYPE_MASK) || defined(SINGLEMAP_WORKS)
   /* Verify that SINGLEMAP_ADDRESS_BASE, SINGLEMAP_TYPE_MASK, SINGLEMAP_oint_type_shift,
@@ -3655,11 +3658,11 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #error SINGLEMAP_TYPE_MASK is not disjoint to SINGLEMAP_ADDRESS_BASE!
   #endif
   /* Verify that SINGLEMAP_TYPE_MASK contains only bits >= SINGLEMAP_oint_type_shift. */
-  #if (SINGLEMAP_TYPE_MASK & ((1UL<<(SINGLEMAP_oint_type_shift))-1UL)) != 0
+  #if (SINGLEMAP_TYPE_MASK & ((1ULL<<(SINGLEMAP_oint_type_shift))-1ULL)) != 0
     #error SINGLEMAP_TYPE_MASK contains bits < SINGLEMAP_oint_type_shift!
   #endif
   /* Verify that SINGLEMAP_TYPE_MASK contains the bit SINGLEMAP_oint_type_shift. */
-  #if (SINGLEMAP_TYPE_MASK & (1UL<<(SINGLEMAP_oint_type_shift))) == 0
+  #if (SINGLEMAP_TYPE_MASK & (1ULL<<(SINGLEMAP_oint_type_shift))) == 0
     #error You can increase SINGLEMAP_oint_type_shift!
   #endif
 #endif
@@ -4664,7 +4667,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
   #if defined(WIDE_HARD)
     #define oint_addr_shift 0
     #define oint_addr_len 64
-    #define oint_addr_mask 0xFFFFFFFFFFFFFFFFUL
+    #define oint_addr_mask 0xFFFFFFFFFFFFFFFFULL
   #else
     #define oint_addr_shift 0
     #define oint_addr_len 32
@@ -4739,10 +4742,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
       #define oint_addr_shift 0
       #define oint_addr_len oint_type_shift
       /* Not just ~oint_type_mask, because evaluation in preprocessor directives uses intmax_t. */
-      #define oint_addr_mask ((bitm(pointer_bitsize)-1) & ~oint_type_mask)
+      #define oint_addr_mask ((wbitm(pointer_bitsize)-1) & ~oint_type_mask)
       #define oint_data_shift oint_addr_shift
       #define oint_data_len oint_addr_len
-      #define oint_data_mask ((1UL<<oint_data_len)-1)
+      #define oint_data_mask (wbitm(oint_data_len)-1)
       #if oint_data_len < 24
         #error oint_data_len is too small, short-floats need at least 24 data bits!
       #endif
@@ -4966,10 +4969,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
           #define oint_addr_shift 0
           #define oint_addr_len oint_type_shift
           #ifndef oint_addr_mask
-            #define oint_addr_mask ((1UL<<oint_addr_len)-1)
+            #define oint_addr_mask (wbitm(oint_addr_len)-1)
           #endif
           /* Not just ~oint_addr_mask, because evaluation in preprocessor directives uses intmax_t. */
-          #define oint_type_mask (0xFFFFFFFFFFFFFFFFUL & ~oint_addr_mask)
+          #define oint_type_mask (0xFFFFFFFFFFFFFFFFULL & ~oint_addr_mask)
         #endif
       #else
         /* Heap object and STACK addresses are allocated through mymalloc.
@@ -5079,15 +5082,15 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
           #define oint_addr_shift 0
           #define oint_addr_len oint_type_shift
           #ifndef oint_addr_mask
-            #define oint_addr_mask ((1UL<<oint_addr_len)-1)
+            #define oint_addr_mask (wbitm(oint_addr_len)-1)
           #endif
           /* Not just ~oint_addr_mask, because evaluation in preprocessor directives uses intmax_t. */
-          #define oint_type_mask (0xFFFFFFFFFFFFFFFFUL & ~oint_addr_mask)
+          #define oint_type_mask (0xFFFFFFFFFFFFFFFFULL & ~oint_addr_mask)
         #endif
       #endif
       #define oint_data_shift oint_addr_shift
       #define oint_data_len oint_addr_len
-      #define oint_data_mask ((1UL<<oint_data_len)-1)
+      #define oint_data_mask (wbitm(oint_data_len)-1)
     #endif
   #endif
 #endif
@@ -5172,7 +5175,7 @@ typedef signed_int_with_n_bits(oint_addr_len)  saint;
 
 /* Bit operations on entities of type oint:
  ...wbit... instead of ...bit..., "w" = "wide". */
-#if defined(WIDE_SOFT)
+#if defined(WIDE_SOFT) || (pointer_bitsize > long_bitsize)
   #define wbit(n)  (1ULL<<(n))
   #define wbitm(n)  (2ULL<<((n)-1))
   #define wbit_test(x,n)  ((x) & wbit(n))
@@ -5227,9 +5230,8 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
  be enough for the size of a single memory block; ptrdiff_t is required by
  ISO C to be enough for the size of a single memory block plus room for a sign
  bit. But on segmented architectures which allow many medium-sized memory
- blocks, like the 80286 was, the total available memory size may be bigger.
- Also, we avoid size_t because it's likely to be wrong on 64-bit Woe32.) */
-#if !defined(WIDE_HARD) || ((oint_addr_mask & ~0xFFFFFFFFUL) == 0)
+ blocks, like the 80286 was, the total available memory size may be bigger.) */
+#if !defined(WIDE_HARD) || ((oint_addr_mask & ~0xFFFFFFFFULL) == 0)
   /* A 32-bit integer is sufficient. */
   #define intMsize  intLsize
   typedef uintL uintM;
@@ -5442,7 +5444,7 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
   /* Type info:
    typecode(object) and mtypecode(object) yield the type code of
    an object obj. For mtypecode it has to be in memory. */
-  #if !(exact_uint_size_p(oint_type_len) && (tint_type_mask == bit(oint_type_len)-1))
+  #if !(exact_uint_size_p(oint_type_len) && (tint_type_mask == wbit(oint_type_len)-1))
     #define typecode(expr)  \
       ((tint)(as_oint(expr) >> oint_type_shift) & (oint_type_mask >> oint_type_shift))
     #define mtypecode(expr)  typecode(expr)
@@ -6536,7 +6538,12 @@ typedef signed_int_with_n_bits(intVsize)  sintV;
 
 
 /* What's really being sent from an address to the address-bus */
-#define hardware_addressbus_mask  ~0UL  /* Default: nothing is dropped */
+/* Default: nothing is dropped */
+#if pointer_bitsize > long_bitsize
+  #define hardware_addressbus_mask  ~0ULL
+#else
+  #define hardware_addressbus_mask  ~0UL
+#endif
 /* Clever memory-mapping spares us from masking out of certain
  bits before one accesses the address */
 #define addressbus_mask  hardware_addressbus_mask
@@ -11875,7 +11882,7 @@ typedef uintP  SPint;
  Need to add some padding.
  Then jmpbufsize = sizeof(sp_jmp_buf)/sizeof(SPint). */
 #define sp_jmp_buf_incr  (alignof(jmp_buf)>alignof(SPint)?alignof(jmp_buf)-alignof(SPint):0)
-#define sp_jmp_buf_to_jmp_buf(x)  (*(jmp_buf*)(((long)&(x)+(long)sp_jmp_buf_incr)&-(long)(alignof(jmp_buf)>alignof(SPint)?alignof(jmp_buf):1)))
+#define sp_jmp_buf_to_jmp_buf(x)  (*(jmp_buf*)(((intptr_t)&(x)+(intptr_t)sp_jmp_buf_incr)&-(intptr_t)(alignof(jmp_buf)>alignof(SPint)?alignof(jmp_buf):1)))
 #define setjmpspl(x)  setjmpl(sp_jmp_buf_to_jmp_buf(x))
 #define longjmpspl(x,y)  longjmpl(sp_jmp_buf_to_jmp_buf(x),y)
 #define jmpbufsize  ceiling(sizeof(jmp_buf)+sp_jmp_buf_incr,sizeof(SPint))
@@ -14705,6 +14712,7 @@ extern  gcv_environment_t aktenv;
     #define FB3  (garcol_bit_t>TB2 ? TB2 : TB3)
     #define FB2  (garcol_bit_t>TB1 ? TB1 : TB2)
     #define FB1  (garcol_bit_t>TB0 ? TB0 : TB1)
+    #define fbit(n) bit(n)
   #else
     #define FB7  garcol_bit_o
     #define FB6  30
@@ -14713,6 +14721,7 @@ extern  gcv_environment_t aktenv;
     #define FB3  27
     #define FB2  26
     #define FB1  25
+    #define fbit(n) wbit(n)
   #endif
   /* depending on it: */
   #define frame_bit_t    FB7  /* garcol_bit as FRAME-identifier */
@@ -14726,7 +14735,7 @@ extern  gcv_environment_t aktenv;
   #define envbind_bit_t  FB4  /* Bit set for ENV-Frames. */
                               /* Bit is unset for DYNBIND-Frames. */
   /* for further identification of the ENV-Frames: */
-  #define envbind_case_mask_t  (bit(FB3)|bit(FB2)|bit(FB1))
+  #define envbind_case_mask_t  (fbit(FB3)|fbit(FB2)|fbit(FB1))
   /* for further discrimination within the Frames with frame_info < skip2_limit_t: */
   #define entrypoint_bit_t  FB4  /* Bit is set, if FRAME contains */
   /* a non-local entrypoint, with Offset SP_, SP is on the STACK.
@@ -14739,7 +14748,7 @@ extern  gcv_environment_t aktenv;
   #define nested_bit_t unwind_bit_t /* set for IBLOCK and ITAGBODY, */
                                     /* if Exitpoint resp. Tags were nested */
   /* for further discrimination in APPLY/EVAL/CATCH/UNWIND_PROTECT/HANDLER/C_HANDLER/DRIVER: */
-  #define dynjump_mask_t  bit(FB2)  /* unset for APPLY and EVAL, */
+  #define dynjump_mask_t  fbit(FB2) /* unset for APPLY and EVAL, */
                                 /* partially set for UNWIND_PROTECT/DRIVER-Frames */
   #define trapped_bit_t unwind_bit_t /* set for APPLY and EVAL, if */
                                 /* interrupted while unwinding the Frame */
@@ -14769,35 +14778,35 @@ extern  gcv_environment_t aktenv;
   #define    handler_bit_o    (handler_bit_t+oint_type_shift)
   #define        fun_bit_o        (fun_bit_t+oint_type_shift)
   /* single Frame-Info-Bytes: */
-  #define DYNBIND_frame_info          /* %1110... */ (bit(FB7)|bit(FB6)|bit(FB5))
-  #define ENV1V_frame_info            /* %1111000 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4))
-  #define ENV1F_frame_info            /* %1111001 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB1))
-  #define ENV1B_frame_info            /* %1111010 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB2))
-  #define ENV1G_frame_info            /* %1111011 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB2)|bit(FB1))
-  #define ENV1D_frame_info            /* %1111100 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3))
-  #define ENV2VD_frame_info           /* %1111101 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB1))
-  #define ENV5_frame_info             /* %1111110 */ (bit(FB7)|bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB2))
-  #define skip2_limit_t                              (bit(FB7)|bit(FB6)|bit(FB5))
+  #define DYNBIND_frame_info          /* %1110... */ (fbit(FB7)|fbit(FB6)|fbit(FB5))
+  #define ENV1V_frame_info            /* %1111000 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4))
+  #define ENV1F_frame_info            /* %1111001 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB1))
+  #define ENV1B_frame_info            /* %1111010 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB2))
+  #define ENV1G_frame_info            /* %1111011 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB2)|fbit(FB1))
+  #define ENV1D_frame_info            /* %1111100 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3))
+  #define ENV2VD_frame_info           /* %1111101 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB1))
+  #define ENV5_frame_info             /* %1111110 */ (fbit(FB7)|fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB2))
+  #define skip2_limit_t                              (fbit(FB7)|fbit(FB6)|fbit(FB5))
   #ifdef HAVE_SAVED_REGISTERS
-    #define CALLBACK_frame_info       /* %10100.. */ (bit(FB7)|bit(FB5))
+    #define CALLBACK_frame_info       /* %10100.. */ (fbit(FB7)|fbit(FB5))
   #endif
-  #define VAR_frame_info              /* %101010. */ (bit(FB7)|bit(FB5)|bit(FB3))
-  #define FUN_frame_info              /* %101011. */ (bit(FB7)|bit(FB5)|bit(FB3)|bit(FB2))
-  #define IBLOCK_frame_info           /* %1001000 */ (bit(FB7)|bit(FB4))
-  #define NESTED_IBLOCK_frame_info    /* %1011000 */ (bit(FB7)|bit(FB5)|bit(FB4))
-  #define ITAGBODY_frame_info         /* %1001010 */ (bit(FB7)|bit(FB4)|bit(FB2))
-  #define NESTED_ITAGBODY_frame_info  /* %1011010 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB2))
-  #define CBLOCK_CTAGBODY_frame_info  /* %1011001 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB1))
-  #define APPLY_frame_info            /* %1001100 */ (bit(FB7)|bit(FB4)|bit(FB3))
-  #define TRAPPED_APPLY_frame_info    /* %1011100 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB3))
-  #define EVAL_frame_info             /* %1001101 */ (bit(FB7)|bit(FB4)|bit(FB3)|bit(FB1))
-  #define TRAPPED_EVAL_frame_info     /* %1011101 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB1))
-  #define CATCH_frame_info            /* %1101000 */ (bit(FB7)|bit(FB6)|bit(FB4))
-  #define HANDLER_frame_info          /* %1101010 */ (bit(FB7)|bit(FB6)|bit(FB4)|bit(FB2))
-  #define C_HANDLER_frame_info        /* %1101011 */ (bit(FB7)|bit(FB6)|bit(FB4)|bit(FB2)|bit(FB1))
-  #define UNWIND_PROTECT_frame_info   /* %1011110 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB2))
-  #define DRIVER_frame_info           /* %1011111 */ (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB2)|bit(FB1))
-  #define blockgo_max_t                              (bit(FB7)|bit(FB5)|bit(FB4)|bit(FB2))
+  #define VAR_frame_info              /* %101010. */ (fbit(FB7)|fbit(FB5)|fbit(FB3))
+  #define FUN_frame_info              /* %101011. */ (fbit(FB7)|fbit(FB5)|fbit(FB3)|fbit(FB2))
+  #define IBLOCK_frame_info           /* %1001000 */ (fbit(FB7)|fbit(FB4))
+  #define NESTED_IBLOCK_frame_info    /* %1011000 */ (fbit(FB7)|fbit(FB5)|fbit(FB4))
+  #define ITAGBODY_frame_info         /* %1001010 */ (fbit(FB7)|fbit(FB4)|fbit(FB2))
+  #define NESTED_ITAGBODY_frame_info  /* %1011010 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB2))
+  #define CBLOCK_CTAGBODY_frame_info  /* %1011001 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB1))
+  #define APPLY_frame_info            /* %1001100 */ (fbit(FB7)|fbit(FB4)|fbit(FB3))
+  #define TRAPPED_APPLY_frame_info    /* %1011100 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB3))
+  #define EVAL_frame_info             /* %1001101 */ (fbit(FB7)|fbit(FB4)|fbit(FB3)|fbit(FB1))
+  #define TRAPPED_EVAL_frame_info     /* %1011101 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB1))
+  #define CATCH_frame_info            /* %1101000 */ (fbit(FB7)|fbit(FB6)|fbit(FB4))
+  #define HANDLER_frame_info          /* %1101010 */ (fbit(FB7)|fbit(FB6)|fbit(FB4)|fbit(FB2))
+  #define C_HANDLER_frame_info        /* %1101011 */ (fbit(FB7)|fbit(FB6)|fbit(FB4)|fbit(FB2)|fbit(FB1))
+  #define UNWIND_PROTECT_frame_info   /* %1011110 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB2))
+  #define DRIVER_frame_info           /* %1011111 */ (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB2)|fbit(FB1))
+  #define blockgo_max_t                              (fbit(FB7)|fbit(FB5)|fbit(FB4)|fbit(FB2))
 #endif
 #if (oint_type_len==6) || 1 /* provisionally?? */
   /* bit numbers in Frame-Info-Byte:
@@ -14809,6 +14818,7 @@ extern  gcv_environment_t aktenv;
     #define FB3  (garcol_bit_t>TB2 ? TB2 : TB3)
     #define FB2  (garcol_bit_t>TB1 ? TB1 : TB2)
     #define FB1  (garcol_bit_t>TB0 ? TB0 : TB1)
+    #define fbit(n) bit(n)
   #else /* HEAPCODES */
     #define FB6  garcol_bit_o
     #ifdef ONE_FREE_BIT_HEAPCODES
@@ -14825,6 +14835,7 @@ extern  gcv_environment_t aktenv;
       #define FB2  2
       #define FB1  1
     #endif
+    #define fbit(n) wbit(n)
   #endif
   /* depending on it: */
   #define frame_bit_t    FB6  /* garcol_bit as FRAME-indicator */
@@ -14838,7 +14849,7 @@ extern  gcv_environment_t aktenv;
   #define envbind_bit_t  FB4  /* Bit is set for ENV-Frames. */
                               /* Bit unset for DYNBIND-Frames. */
   /* for further identification within the ENV-Frames: */
-  #define envbind_case_mask_t  (bit(FB3)|bit(FB2)|bit(FB1))
+  #define envbind_case_mask_t  (fbit(FB3)|fbit(FB2)|fbit(FB1))
   /* for further discrimination with the Frames with frame_info < skip2_limit_t:
    define entrypoint_limit_t  ...  (below)
    frame_info < entrypoint_limit_t
@@ -14854,7 +14865,7 @@ extern  gcv_environment_t aktenv;
   #define nested_bit_t   FB4  /* set for IBLOCK and ITAGBODY, */
                               /* if exit point or Tags have been nested */
   /* for further discrimination in APPLY/EVAL/CATCH/UNWIND_PROTECT/HANDLER/C_HANDLER/DRIVER: */
-  #define dynjump_mask_t  bit(FB3)  /* unset for APPLY and EVAL, */
+  #define dynjump_mask_t  fbit(FB3) /* unset for APPLY and EVAL, */
                               /* partially set for UNWIND_PROTECT/DRIVER-Frames */
   #define trapped_bit_t  FB4  /* set for APPLY and EVAL, if interrupted while */
                               /* unwinding the Frames */
@@ -14882,37 +14893,37 @@ extern  gcv_environment_t aktenv;
   #define  handler_bit_o  (handler_bit_t+oint_type_shift)
   #define      fun_bit_o      (fun_bit_t+oint_type_shift)
   /* single Frame-Info-Bytes: */
-  #define CATCH_frame_info            /* %100000 */ (bit(FB6))
-  #define APPLY_frame_info            /* %100010 */ (bit(FB6)|bit(FB2))
-  #define EVAL_frame_info             /* %100011 */ (bit(FB6)|bit(FB2)|bit(FB1))
-  #define HANDLER_frame_info          /* %100100 */ (bit(FB6)|bit(FB3))
-  #define C_HANDLER_frame_info        /* %100101 */ (bit(FB6)|bit(FB3)|bit(FB1))
-  #define IBLOCK_frame_info           /* %100110 */ (bit(FB6)|bit(FB3)|bit(FB2))
-  #define ITAGBODY_frame_info         /* %100111 */ (bit(FB6)|bit(FB3)|bit(FB2)|bit(FB1))
-  #define unwind_limit_t                            (bit(FB6)|bit(FB4))
-  #define NESTED_IBLOCK_frame_info    /* %101000 */ (bit(FB6)|bit(FB4))
-  #define NESTED_ITAGBODY_frame_info  /* %101001 */ (bit(FB6)|bit(FB4)|bit(FB1))
-  #define TRAPPED_APPLY_frame_info    /* %101010 */ (bit(FB6)|bit(FB4)|bit(FB2))
-  #define TRAPPED_EVAL_frame_info     /* %101011 */ (bit(FB6)|bit(FB4)|bit(FB2)|bit(FB1))
-  #define CBLOCK_CTAGBODY_frame_info  /* %101100 */ (bit(FB6)|bit(FB4)|bit(FB3))
-  #define blockgo_max_t                             (bit(FB6)|bit(FB4)|bit(FB3))
-  #define UNWIND_PROTECT_frame_info   /* %101110 */ (bit(FB6)|bit(FB4)|bit(FB3)|bit(FB2))
-  #define DRIVER_frame_info           /* %101111 */ (bit(FB6)|bit(FB4)|bit(FB3)|bit(FB2)|bit(FB1))
-  #define entrypoint_limit_t                        (bit(FB6)|bit(FB5))
+  #define CATCH_frame_info            /* %100000 */ (fbit(FB6))
+  #define APPLY_frame_info            /* %100010 */ (fbit(FB6)|fbit(FB2))
+  #define EVAL_frame_info             /* %100011 */ (fbit(FB6)|fbit(FB2)|fbit(FB1))
+  #define HANDLER_frame_info          /* %100100 */ (fbit(FB6)|fbit(FB3))
+  #define C_HANDLER_frame_info        /* %100101 */ (fbit(FB6)|fbit(FB3)|fbit(FB1))
+  #define IBLOCK_frame_info           /* %100110 */ (fbit(FB6)|fbit(FB3)|fbit(FB2))
+  #define ITAGBODY_frame_info         /* %100111 */ (fbit(FB6)|fbit(FB3)|fbit(FB2)|fbit(FB1))
+  #define unwind_limit_t                            (fbit(FB6)|fbit(FB4))
+  #define NESTED_IBLOCK_frame_info    /* %101000 */ (fbit(FB6)|fbit(FB4))
+  #define NESTED_ITAGBODY_frame_info  /* %101001 */ (fbit(FB6)|fbit(FB4)|fbit(FB1))
+  #define TRAPPED_APPLY_frame_info    /* %101010 */ (fbit(FB6)|fbit(FB4)|fbit(FB2))
+  #define TRAPPED_EVAL_frame_info     /* %101011 */ (fbit(FB6)|fbit(FB4)|fbit(FB2)|fbit(FB1))
+  #define CBLOCK_CTAGBODY_frame_info  /* %101100 */ (fbit(FB6)|fbit(FB4)|fbit(FB3))
+  #define blockgo_max_t                             (fbit(FB6)|fbit(FB4)|fbit(FB3))
+  #define UNWIND_PROTECT_frame_info   /* %101110 */ (fbit(FB6)|fbit(FB4)|fbit(FB3)|fbit(FB2))
+  #define DRIVER_frame_info           /* %101111 */ (fbit(FB6)|fbit(FB4)|fbit(FB3)|fbit(FB2)|fbit(FB1))
+  #define entrypoint_limit_t                        (fbit(FB6)|fbit(FB5))
   #ifdef HAVE_SAVED_REGISTERS
-    #define CALLBACK_frame_info       /* %110001 */ (bit(FB6)|bit(FB5)|bit(FB1))
+    #define CALLBACK_frame_info       /* %110001 */ (fbit(FB6)|fbit(FB5)|fbit(FB1))
   #endif
-  #define VAR_frame_info              /* %110010 */ (bit(FB6)|bit(FB5)|bit(FB2))
-  #define FUN_frame_info              /* %110011 */ (bit(FB6)|bit(FB5)|bit(FB2)|bit(FB1))
-  #define skip2_limit_t                             (bit(FB6)|bit(FB5)|bit(FB3))
-  #define DYNBIND_frame_info          /* %1101.. */ (bit(FB6)|bit(FB5)|bit(FB3))
-  #define ENV1V_frame_info            /* %111000 */ (bit(FB6)|bit(FB5)|bit(FB4))
-  #define ENV1F_frame_info            /* %111001 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB1))
-  #define ENV1B_frame_info            /* %111010 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB2))
-  #define ENV1G_frame_info            /* %111011 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB2)|bit(FB1))
-  #define ENV1D_frame_info            /* %111100 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3))
-  #define ENV2VD_frame_info           /* %111101 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB1))
-  #define ENV5_frame_info             /* %111110 */ (bit(FB6)|bit(FB5)|bit(FB4)|bit(FB3)|bit(FB2))
+  #define VAR_frame_info              /* %110010 */ (fbit(FB6)|fbit(FB5)|fbit(FB2))
+  #define FUN_frame_info              /* %110011 */ (fbit(FB6)|fbit(FB5)|fbit(FB2)|fbit(FB1))
+  #define skip2_limit_t                             (fbit(FB6)|fbit(FB5)|fbit(FB3))
+  #define DYNBIND_frame_info          /* %1101.. */ (fbit(FB6)|fbit(FB5)|fbit(FB3))
+  #define ENV1V_frame_info            /* %111000 */ (fbit(FB6)|fbit(FB5)|fbit(FB4))
+  #define ENV1F_frame_info            /* %111001 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB1))
+  #define ENV1B_frame_info            /* %111010 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB2))
+  #define ENV1G_frame_info            /* %111011 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB2)|fbit(FB1))
+  #define ENV1D_frame_info            /* %111100 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3))
+  #define ENV2VD_frame_info           /* %111101 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB1))
+  #define ENV5_frame_info             /* %111110 */ (fbit(FB6)|fbit(FB5)|fbit(FB4)|fbit(FB3)|fbit(FB2))
 #endif
 #define CBLOCK_frame_info  CBLOCK_CTAGBODY_frame_info
 #define CTAGBODY_frame_info  CBLOCK_CTAGBODY_frame_info
@@ -19205,6 +19216,13 @@ extern maygc object Q_to_I (sint64 val);
 %% export_def(ulong_to_I(val));
 %% export_def(slong_to_I(val));
 
+/* Converts a uintP integer to an integer. */
+#if pointer_bitsize <= intLsize
+  #define uintP_to_I(val)  UL_to_I(val)
+#else
+  #define uintP_to_I(val)  UQ_to_I(val)
+#endif
+
 /* Converts a uintM integer into an Integer. */
 #if intMsize <= intLsize
   #define uintM_to_I(val)  UL_to_I(val)
@@ -19306,6 +19324,13 @@ extern sint64 I_to_Q (object obj);
 %% export_def(I_to_sint);
 %% export_def(I_to_ulong);
 %% export_def(I_to_slong);
+
+/* Converts an Integer to a uintP integer. */
+#if pointer_bitsize <= intLsize
+  #define I_to_uintP  I_to_uint32
+#else
+  #define I_to_uintP  I_to_uint64
+#endif
 
 /* Unsigned Digit Sequence to Integer
  UDS_to_I(MSDptr,len)
@@ -19739,8 +19764,8 @@ struct object_tab_tl_ {
     uintC _suspend_count; /* how many times this thread has been suspended ? */
     /* The values of per-thread symbols: */
     gcv_object_t *_ptr_symvalues; /* allocated separately */
-   #if (int_bitsize < long_bitsize)
-    long _jmpl_value;
+   #if (int_bitsize < pointer_bitsize)
+    intptr_t _jmpl_value;
    #endif
    #if defined(HAVE_SIGNALS) && defined(SIGPIPE)
     /* Set ONLY during IO calls to pipes directed to subprocesses. */
@@ -20019,8 +20044,8 @@ struct object_tab_tl_ {
 %% puts("  xmutex_raw_t _gc_suspend_lock;");
 %% puts("  uintC _suspend_count;");
 %% puts("  gcv_object_t *_ptr_symvalues;");
-%% #if (int_bitsize < long_bitsize)
-%%  puts(" long _jmpl_value;");
+%% #if (int_bitsize < pointer_bitsize)
+%%  puts(" intptr_t _jmpl_value;");
 %% #endif
 %% #if defined(HAVE_SIGNALS) && defined(SIGPIPE)
 %%  puts(" bool _writing_to_subprocess;");
@@ -20091,7 +20116,7 @@ struct object_tab_tl_ {
     current_thread()->_running_handle_directory_encoding_error
   #define running_handle_close_errors \
     current_thread()->_running_handle_close_errors
-  #if (int_bitsize < long_bitsize)
+  #if (int_bitsize < pointer_bitsize)
     #define jmpl_value current_thread()->_jmpl_value
   #endif
 
@@ -20114,7 +20139,7 @@ struct object_tab_tl_ {
 %% #endif
 %% export_def(SET_SP_BEFORE_SUSPEND(thr));
 %% #ifdef export_unwind_protect_macros
-%%   #if (int_bitsize < long_bitsize)
+%%   #if (int_bitsize < pointer_bitsize)
 %%     export_def(jmpl_value);
 %%   #endif
 %% #endif

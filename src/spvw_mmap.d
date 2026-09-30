@@ -130,8 +130,8 @@ local bool is_small_range_unmapped (uintP map_addr, uintP map_endaddr)
 local void warn_before_mmap (uintP map_addr, uintP map_endaddr)
 {
   if (mincore_works && !is_small_range_unmapped(map_addr,map_endaddr)) {
-    fprintf(stderr,GETTEXTL("Warning: overwriting existing memory mappings in the address range 0x%lx...0x%lx. clisp will likely crash soon!!\n"),
-            (unsigned long)map_addr,(unsigned long)(map_endaddr-1));
+    fprintf(stderr,GETTEXTL("Warning: overwriting existing memory mappings in the address range 0x%llx...0x%llx. clisp will likely crash soon!!\n"),
+            (unsigned long long)map_addr,(unsigned long long)(map_endaddr-1));
   }
 }
 
@@ -186,8 +186,8 @@ local bool is_large_range_unmapped (uintP map_addr, uintP map_endaddr)
 local void warn_before_reserving_range (uintP map_addr, uintP map_endaddr)
 {
   if (!is_large_range_unmapped(map_addr,map_endaddr)) {
-    fprintf(stderr,GETTEXTL("Warning: reserving address range 0x%lx...0x%lx that contains memory mappings. clisp might crash later!\n"),
-            (unsigned long)map_addr,(unsigned long)(map_endaddr-1));
+    fprintf(stderr,GETTEXTL("Warning: reserving address range 0x%llx...0x%llx that contains memory mappings. clisp might crash later!\n"),
+            (unsigned long long)map_addr,(unsigned long long)(map_endaddr-1));
     dump_process_memory_map(stderr);
   }
 }
@@ -241,8 +241,8 @@ local int mmap_prepare (aint* map_addr, aint* map_endaddr, bool shrinkp)
       addr += info.RegionSize;
     }
     if (largest_len < 0x10000) {
-      fprintf(stderr,GETTEXTL("Cannot reserve address range at 0x%lx ."),
-              *map_addr);
+      fprintf(stderr,GETTEXTL("Cannot reserve address range at 0x%llx ."),
+              (unsigned long long)(*map_addr));
       /* DumpProcessMemoryMap(stderr); */
       return -1;
     }
@@ -251,15 +251,15 @@ local int mmap_prepare (aint* map_addr, aint* map_endaddr, bool shrinkp)
   }
   if (!VirtualAlloc((void*)start_addr,end_addr-start_addr,MEM_RESERVE,PAGE_NOACCESS/*dummy*/)) {
     var DWORD errcode = GetLastError();
-    fprintf(stderr,GETTEXTL("Cannot reserve address range 0x%lx-0x%lx ."),
-            start_addr,end_addr-1);
+    fprintf(stderr,GETTEXTL("Cannot reserve address range 0x%llx-0x%llx ."),
+            (unsigned long long)start_addr,(unsigned long long)(end_addr-1));
     errno_out(errcode);
     /* DumpProcessMemoryMap(stderr); */
     return -1;
   }
  #ifdef DEBUG_SPVW
-  fprintf(stderr,"Reserved address range 0x%lx-0x%lx .\n",
-          start_addr,end_addr-1);
+  fprintf(stderr,"Reserved address range 0x%llx-0x%llx .\n",
+          (unsigned long long)start_addr,(unsigned long long)(end_addr-1));
  #endif
   return 0;
 }
@@ -268,8 +268,8 @@ local int mmap_zeromap (void* map_addr, uintM map_len)
 {
   if (!VirtualAlloc(map_addr,map_len,MEM_COMMIT,PAGE_READWRITE)) {
     var DWORD errcode = GetLastError();
-    fprintf(stderr,GETTEXTL("Cannot map memory to address 0x%lx ."),
-            map_addr);
+    fprintf(stderr,GETTEXTL("Cannot map memory to address 0x%llx ."),
+            (unsigned long long)(uintP)map_addr);
     errno_out(errcode);
     return -1;                  /* error */
   }
@@ -303,14 +303,14 @@ local void* mmap_filemap (void* map_addr, uintM map_len, Handle fd,
                                          (DWORD)offset,map_len,map_addr);
   if (resultaddr == NULL) {
     var DWORD errcode = GetLastError();
-    fprintf(stderr,GETTEXTL("MapViewOfFileEx(addr=0x%x,off=0x%x) failed."),
-            map_addr,offset);
+    fprintf(stderr,GETTEXTL("MapViewOfFileEx(addr=0x%llx,off=0x%llx) failed."),
+            (unsigned long long)(uintP)map_addr,(unsigned long long)offset);
     errno_out(errcode);
     return (void*)(-1);
   }
   if (resultaddr != map_addr) {
-    fprintf(stderr,GETTEXTL("MapViewOfFileEx() returned 0x%x instead of 0x%x."),
-            resultaddr,map_addr);
+    fprintf(stderr,GETTEXTL("MapViewOfFileEx() returned 0x%llx instead of 0x%llx."),
+            (unsigned long long)(uintP)resultaddr,(unsigned long long)(uintP)map_addr);
     fprint(stderr,"\n");
     UnmapViewOfFile(resultaddr);
     return (void*)(-1);
@@ -402,8 +402,8 @@ local int mmap_zeromap (void* map_addr, uintM map_len)
                     -1, 0) /* put empty pages */
        == (void*)(-1)) {
     var int errcode = errno;
-    fprintf(stderr,GETTEXTL("Cannot map memory to address 0x%lx ."),
-            (uintP)map_addr);
+    fprintf(stderr,GETTEXTL("Cannot map memory to address 0x%llx ."),
+            (unsigned long long)(uintP)map_addr);
     errno_out(errcode);
     /* This error tends to repeat, leading to an endless loop.
        It's better to abort than to loop endlessly. */

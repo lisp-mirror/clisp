@@ -143,7 +143,7 @@ local void relax_reserve (uintM need)
      Therefore this special case. */
   #define pointable_usable_test(a) \
     ((((uintP)(a) >> (addr_shift + garcol_bit_o)) & 1) == 0)
-#elif (oint_addr_mask == bitm(pointer_bitsize)-1)
+#elif (oint_addr_mask == wbitm(pointer_bitsize)-1)
   #define pointable_usable_test(a)  true
 #else
   #define pointable_usable_test(a)  \

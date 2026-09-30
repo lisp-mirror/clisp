@@ -684,7 +684,7 @@ esac
 
 # Like WIDE_HARD in lispbibl.d
 if [ $CROSS = false ] ; then
-  if grep 'define long_bitsize 64' intparam.h > /dev/null && grep 'define long_long_bitsize 64' intparam.h > /dev/null; then
+  if grep 'define pointer_bitsize 64' intparam.h > /dev/null; then
     WIDE_HARD='true'
   else
     WIDE_HARD='false'
