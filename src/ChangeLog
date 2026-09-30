@@ -1,5 +1,11 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Fix a random build failure on 32-bit mingw.
+	* makemake.in (marc.out): Ignore a failure of "./lisp.exe -marc" on
+	Windows.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Bump version.
 	* NEWS: Mark 32-bit and 64-bit mingw as supported.
 	* INSTALL.windows: Mark 64-bit mingw as supported.

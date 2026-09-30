@@ -3298,7 +3298,12 @@ if [ $TSYS = win32msvc -a "${with_debug}" != no ] ; then
 fi
 
 echol "marc.out : lisp${LEXE}"
-echotab "${HERE}lisp${LEXE} -marc > marc.out"
+# This sometimes fails on mingw/i386.
+if [ $HOS = win32 ] ; then
+  echotab "-${HERE}lisp${LEXE} -marc > marc.out"
+else
+  echotab "${HERE}lisp${LEXE} -marc > marc.out"
+fi
 echol
 
 case "$host_os" in
