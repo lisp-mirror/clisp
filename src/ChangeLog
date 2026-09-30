@@ -1,5 +1,20 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Define memory mapping on mingw/x86_64.
+	* makemake.in (Z_XCFLAGS): For mingw/x86_64, enable all optimizations
+	except ASM.
+	* lispbibl.d [WIN32_NATIVE && AMD64]: Define
+	MAPPABLE_ADDRESS_RANGE_START, MAPPABLE_ADDRESS_RANGE_END.
+	Choose values for SINGLEMAP_*.
+	Choose GENERIC64_HEAPCODES as preferred HEAPCODES variant.
+	Set HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS, HEAPCODES1BIT_WITH_MALLOC_WORKS
+	to 0. Set GENERIC64C_HEAPCODES_WORKS to 1.
+	Set TYPECODES_WITH_TRIVIALMAP_WORKS, TYPECODES_WITH_MALLOC_WORKS to 0.
+	* Makefile.devel (multibuild-mingw-64): Enable the build variants
+	that work.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Fix the modules on 64-bit mingw.
 	* modules/syscalls/calls.c (set_file_attributes): New function.
 	(copy_attributes_and_close): Use it.

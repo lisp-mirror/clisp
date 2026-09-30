@@ -2991,6 +2991,16 @@ typedef enum {
     #define MAPPABLE_ADDRESS_RANGE_START 0x000700000000UL
     #define MAPPABLE_ADDRESS_RANGE_END   0x05FFFFFFFFFFUL
   #endif
+  #if defined(WIN32_NATIVE) && defined(AMD64)
+    /* On mingw, running on Windows 10 (64-bit):
+       CODE_ADDRESS_RANGE   = 0x00007FF760000000ULL
+       MALLOC_ADDRESS_RANGE = 0x000001FAAE000000ULL
+       SHLIB_ADDRESS_RANGE  = 0x0000016858000000ULL
+       STACK_ADDRESS_RANGE  = 0x0000006CF4000000ULL
+       There is room from 0x020000000000ULL to 0x7F0000000000ULL. */
+    #define MAPPABLE_ADDRESS_RANGE_START 0x020000000000ULL
+    #define MAPPABLE_ADDRESS_RANGE_END   0x5FFFFFFFFFFFULL
+  #endif
 #endif
 /* When changed: do nothing */
 
@@ -3632,6 +3642,14 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
        "Cannot map memory to address 0xb0000e0000". */
     #define SINGLEMAP_WORKS 0
   #endif
+  #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw, running on Windows 10 */
+    #define SINGLEMAP_ADDRESS_BASE 0x400000000000ULL
+    #define SINGLEMAP_TYPE_MASK    0x1F8000000000ULL
+    #define SINGLEMAP_oint_type_shift 39
+    /* Actually no such configuration works, because the CODE_ADDRESS_RANGE
+       consumes so many bits that we have at most 1+1 bits for the typecode. */
+    #define SINGLEMAP_WORKS 0
+  #endif
   #ifndef SINGLEMAP_garcol_bit_o
     #define SINGLEMAP_garcol_bit_o 63
   #endif
@@ -4041,6 +4059,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         /* With GENERIC64_HEAPCODES we don't need to make assumptions about the
            address range. */
         #define GENERIC64_HEAPCODES
+      #elif (defined(WIN32_NATIVE) && defined(AMD64))
+        /* On these platforms, ONE_FREE_BIT_HEAPCODES does not work. */
+        #define GENERIC64_HEAPCODES
       #else
         /* The general case. */
         #define ONE_FREE_BIT_HEAPCODES
@@ -4327,6 +4348,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         /* Produces messages "Cannot map memory to address". */
         #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 0
         /* Crashes. */
+        #define HEAPCODES1BIT_WITH_MALLOC_WORKS 0
+      #endif
+      #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
+        #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 0
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 0
       #endif
       #ifndef garcol_bit_o
@@ -4663,6 +4688,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
       /* Produces messages "Cannot map memory to address". */
       #define GENERIC64C_HEAPCODES_WORKS 0
     #endif
+    #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
+      #define GENERIC64C_HEAPCODES_WORKS 1
+    #endif
   #endif /* GENERIC64_HEAPCODES */
   #if defined(WIDE_HARD)
     #define oint_addr_shift 0
@@ -4962,6 +4990,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
             /* Produces messages "Cannot map memory to address". */
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 0
           #endif
+          #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
+            #define TYPECODES_WITH_TRIVIALMAP_WORKS 0
+          #endif
           #define oint_type_len 8
           #ifndef oint_type_shift
             #define oint_type_shift 56
@@ -5072,6 +5103,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
           #endif
           #if defined(UNIX_CYGWIN) && defined(AMD64) /* Cygwin */
             #define TYPECODES_WITH_MALLOC_WORKS 1
+          #endif
+          #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
+            #define TYPECODES_WITH_MALLOC_WORKS 0
           #endif
           #ifndef oint_type_shift
             #define oint_type_shift 56
