@@ -1,6 +1,6 @@
 /* A substitute for ISO C99 <wctype.h>, for platforms that lack it.
 
-   Copyright (C) 2006-2024 Free Software Foundation, Inc.
+   Copyright (C) 2006-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -50,16 +50,19 @@
  #error "Please include config.h first."
 #endif
 
-#if @HAVE_WINT_T@
-/* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.  */
+/* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.
+   But don't do it in very old mingw, when <wchar.h> is already partially
+   processed.  */
+#if @HAVE_WINT_T@ && !(defined __MINGW32__ && defined _WCHAR_H)
 # include <wchar.h>
 #endif
 
 /* Native Windows (mingw, MSVC) have declarations of towupper, towlower, and
    isw* functions in <ctype.h>, <wchar.h> as well as in <wctype.h>.  Include
    <ctype.h>, <wchar.h> in advance to avoid rpl_ prefix being added to the
-   declarations.  */
-#if defined _WIN32 && ! defined __CYGWIN__
+   declarations.  But don't do it in very old mingw, when <wchar.h> is already
+   partially processed.  */
+#if defined _WIN32 && !defined __CYGWIN__ && !(defined __MINGW32__ && defined _WCHAR_H)
 # include <ctype.h>
 # include <wchar.h>
 #endif
@@ -264,27 +267,7 @@ rpl_towupper (wint_t wc)
 
 #  else
 
-/* IRIX 5.3 has macros but no functions, its isw* macros refer to an
-   undefined variable _ctmp_ and to <ctype.h> macros like _P, and they
-   refer to system functions like _iswctype that are not in the
-   standard C library.  Rather than try to get ancient buggy
-   implementations like this to work, just disable them.  */
-#   undef iswalnum
-#   undef iswalpha
-#   undef iswblank
-#   undef iswcntrl
-#   undef iswdigit
-#   undef iswgraph
-#   undef iswlower
-#   undef iswprint
-#   undef iswpunct
-#   undef iswspace
-#   undef iswupper
-#   undef iswxdigit
-#   undef towlower
-#   undef towupper
-
-/* Linux libc5 has <wctype.h> and the functions but they are broken.  */
+/* On some old platforms the functions are broken.  */
 #   if @REPLACE_ISWCNTRL@
 #    if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #     define iswalnum rpl_iswalnum
@@ -673,7 +656,6 @@ _GL_CXXALIAS_SYS (wctype, wctype_t, (const char *name));
 _GL_CXXALIASWARN (wctype);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef wctype
 # if HAVE_RAW_DECL_WCTYPE
 _GL_WARN_ON_USE (wctype, "wctype is unportable - "
                  "use gnulib module wctype for portability");
@@ -701,7 +683,6 @@ _GL_CXXALIAS_SYS (iswctype, int, (wint_t wc, wctype_t desc));
 _GL_CXXALIASWARN (iswctype);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef iswctype
 # if HAVE_RAW_DECL_ISWCTYPE
 _GL_WARN_ON_USE (iswctype, "iswctype is unportable - "
                  "use gnulib module iswctype for portability");
@@ -755,7 +736,6 @@ _GL_CXXALIAS_SYS (wctrans, wctrans_t, (const char *name));
 _GL_CXXALIASWARN (wctrans);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef wctrans
 # if HAVE_RAW_DECL_WCTRANS
 _GL_WARN_ON_USE (wctrans, "wctrans is unportable - "
                  "use gnulib module wctrans for portability");
@@ -783,7 +763,6 @@ _GL_CXXALIAS_SYS (towctrans, wint_t, (wint_t wc, wctrans_t desc));
 _GL_CXXALIASWARN (towctrans);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef towctrans
 # if HAVE_RAW_DECL_TOWCTRANS
 _GL_WARN_ON_USE (towctrans, "towctrans is unportable - "
                  "use gnulib module towctrans for portability");

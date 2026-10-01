@@ -1,6 +1,6 @@
 /* nl_langinfo() replacement: query locale dependent information.
 
-   Copyright (C) 2007-2024 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -59,7 +59,7 @@
 
 #endif
 
-/* nl_langinfo() must be multithread-safe.  To achieve this without using
+/* nl_langinfo() must be thread-safe.  To achieve this without using
    thread-local storage:
      1. We use a specific static buffer for each possible argument.
         So that different threads can call nl_langinfo with different arguments,
@@ -79,15 +79,13 @@ ctype_codeset (void)
   /* This function is only used on platforms which don't have uselocale().
      Therefore we don't need to look at the per-thread locale first, here.  */
   static char result[2 + 10 + 1];
-  char buf[2 + 10 + 1];
-  char locale[SETLOCALE_NULL_MAX];
-  char *codeset;
-  size_t codesetlen;
 
+  char locale[SETLOCALE_NULL_MAX];
   if (setlocale_null_r (LC_CTYPE, locale, sizeof (locale)))
     locale[0] = '\0';
 
-  codeset = buf;
+  char buf[2 + 10 + 1];
+  char *codeset = buf;
   codeset[0] = '\0';
 
   if (locale[0])
@@ -105,7 +103,7 @@ ctype_codeset (void)
             codeset = codeset_start;
           else
             {
-              codesetlen = modifier - codeset_start;
+              size_t codesetlen = modifier - codeset_start;
               if (codesetlen < sizeof buf)
                 {
                   codeset = memcpy (buf, codeset_start, codesetlen);
@@ -121,14 +119,14 @@ ctype_codeset (void)
      GetACP, which returns the locale's codepage as a number (although
      this doesn't change according to what the 'setlocale' call specified).
      Either way, prepend "CP" to make it a valid codeset name.  */
-  codesetlen = strlen (codeset);
+  size_t codesetlen = strlen (codeset);
   if (0 < codesetlen && codesetlen < sizeof buf - 2)
     memmove (buf + 2, codeset, codesetlen + 1);
   else
     sprintf (buf + 2, "%u", GetACP ());
   /* For a locale name such as "French_France.65001", in Windows 10,
      setlocale now returns "French_France.utf8" instead.  */
-  if (strcmp (buf + 2, "65001") == 0 || strcmp (buf + 2, "utf8") == 0)
+  if (streq (buf + 2, "65001") || streq (buf + 2, "utf8"))
     return (char *) "UTF-8";
   else
     {
@@ -154,11 +152,15 @@ ctype_codeset (void)
    "thread5 disturbed by threadN!", even when threadN invokes only
       nl_langinfo (CODESET);
       nl_langinfo (CRNCYSTR);
-   Similarly on Solaris 10.  */
+   Similarly on Solaris 10 and macOS 26.  */
 
-# if !NL_LANGINFO_MTSAFE /* Solaris */
+# if !NL_LANGINFO_MTSAFE /* macOS, Solaris */
 
-#  define ITEMS (MAXSTRMSG + 1)
+#  ifdef __sun /* Solaris */
+#   define ITEMS (MAXSTRMSG + 1)
+#  else /* macOS */
+#   define ITEMS (CRNCYSTR + 20)
+#  endif
 #  define MAX_RESULT_LEN 80
 
 static char *
@@ -205,10 +207,9 @@ static char *
 nl_langinfo_with_lock (nl_item item)
 {
   CRITICAL_SECTION *lock = gl_get_nl_langinfo_lock ();
-  char *ret;
 
   EnterCriticalSection (lock);
-  ret = nl_langinfo_unlocked (item);
+  char *ret = nl_langinfo_unlocked (item);
   LeaveCriticalSection (lock);
 
   return ret;
@@ -244,11 +245,10 @@ nl_langinfo_with_lock (nl_item item)
   if (pthread_in_use())
     {
       pthread_mutex_t *lock = gl_get_nl_langinfo_lock ();
-      char *ret;
 
       if (pthread_mutex_lock (lock))
         abort ();
-      ret = nl_langinfo_unlocked (item);
+      char *ret = nl_langinfo_unlocked (item);
       if (pthread_mutex_unlock (lock))
         abort ();
 
@@ -266,11 +266,10 @@ static char *
 nl_langinfo_with_lock (nl_item item)
 {
   mtx_t *lock = gl_get_nl_langinfo_lock ();
-  char *ret;
 
   if (mtx_lock (lock) != thrd_success)
     abort ();
-  ret = nl_langinfo_unlocked (item);
+  char *ret = nl_langinfo_unlocked (item);
   if (mtx_unlock (lock) != thrd_success)
     abort ();
 
@@ -295,10 +294,6 @@ rpl_nl_langinfo (nl_item item)
     case CODESET:
       return ctype_codeset ();
 # endif
-# if GNULIB_defined_T_FMT_AMPM
-    case T_FMT_AMPM:
-      return (char *) "%I:%M:%S %p";
-# endif
 # if GNULIB_defined_ALTMON
     case ALTMON_1:
     case ALTMON_2:
@@ -315,6 +310,24 @@ rpl_nl_langinfo (nl_item item)
       /* We don't ship the appropriate localizations with gnulib.  Therefore,
          treat ALTMON_i like MON_i.  */
       item = item - ALTMON_1 + MON_1;
+      break;
+# endif
+# if GNULIB_defined_ABALTMON
+    case ABALTMON_1:
+    case ABALTMON_2:
+    case ABALTMON_3:
+    case ABALTMON_4:
+    case ABALTMON_5:
+    case ABALTMON_6:
+    case ABALTMON_7:
+    case ABALTMON_8:
+    case ABALTMON_9:
+    case ABALTMON_10:
+    case ABALTMON_11:
+    case ABALTMON_12:
+      /* We don't ship the appropriate localizations with gnulib.  Therefore,
+         treat ABALTMON_i like ABMON_i.  */
+      item = item - ABALTMON_1 + ABMON_1;
       break;
 # endif
 # if GNULIB_defined_ERA
@@ -342,12 +355,6 @@ rpl_nl_langinfo (nl_item item)
       /* The format is not standardized.  In glibc it is a sequence of 10
          strings, appended in memory.  */
       return (char *) "\0\0\0\0\0\0\0\0\0\0";
-# endif
-# if GNULIB_defined_YESEXPR || !FUNC_NL_LANGINFO_YESEXPR_WORKS
-    case YESEXPR:
-      return (char *) "^[yY]";
-    case NOEXPR:
-      return (char *) "^[nN]";
 # endif
     default:
       break;
@@ -510,30 +517,57 @@ nl_langinfo (nl_item item)
           return result[item - ALTMON_1];
         }
     }
-    case ABMON_1:
-    case ABMON_2:
-    case ABMON_3:
-    case ABMON_4:
-    case ABMON_5:
-    case ABMON_6:
-    case ABMON_7:
-    case ABMON_8:
-    case ABMON_9:
-    case ABMON_10:
-    case ABMON_11:
-    case ABMON_12:
-      {
-        static char result[12][30];
-        static char const abmonths[][sizeof "Jan"] = {
-          "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-          "Aug", "Sep", "Oct", "Nov", "Dec"
-        };
-        tmm.tm_mon = item - ABMON_1;
-        if (!strftime (buf, sizeof result[0], "%b", &tmm))
-          return (char *) abmonths[item - ABMON_1];
-        strcpy (result[item - ABMON_1], buf);
-        return result[item - ABMON_1];
-      }
+    {
+      static char const abmonths[][sizeof "Jan"] = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+        "Aug", "Sep", "Oct", "Nov", "Dec"
+      };
+      case ABMON_1:
+      case ABMON_2:
+      case ABMON_3:
+      case ABMON_4:
+      case ABMON_5:
+      case ABMON_6:
+      case ABMON_7:
+      case ABMON_8:
+      case ABMON_9:
+      case ABMON_10:
+      case ABMON_11:
+      case ABMON_12:
+        {
+          static char result[12][30];
+          tmm.tm_mon = item - ABMON_1;
+          if (!strftime (buf, sizeof result[0], "%b", &tmm))
+            return (char *) abmonths[item - ABMON_1];
+          strcpy (result[item - ABMON_1], buf);
+          return result[item - ABMON_1];
+        }
+      case ABALTMON_1:
+      case ABALTMON_2:
+      case ABALTMON_3:
+      case ABALTMON_4:
+      case ABALTMON_5:
+      case ABALTMON_6:
+      case ABALTMON_7:
+      case ABALTMON_8:
+      case ABALTMON_9:
+      case ABALTMON_10:
+      case ABALTMON_11:
+      case ABALTMON_12:
+        {
+          static char result[12][50];
+          tmm.tm_mon = item - ABALTMON_1;
+          /* The platforms without nl_langinfo() don't support strftime with
+             %Ob.  We don't even need to try.  */
+          #if 0
+          if (!strftime (buf, sizeof result[0], "%Ob", &tmm))
+          #endif
+            if (!strftime (buf, sizeof result[0], "%b", &tmm))
+              return (char *) abmonths[item - ABALTMON_1];
+          strcpy (result[item - ABALTMON_1], buf);
+          return result[item - ABALTMON_1];
+        }
+    }
     case ERA:
       return (char *) "";
     case ALT_DIGITS:

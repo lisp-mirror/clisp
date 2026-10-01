@@ -1,6 +1,6 @@
 # wcrtomb.m4
-# serial 21
-dnl Copyright (C) 2008-2024 Free Software Foundation, Inc.
+# serial 25
+dnl Copyright (C) 2008-2026 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -33,7 +33,7 @@ AC_DEFUN([gl_FUNC_WCRTOMB],
     dnl fi
     if test $REPLACE_WCRTOMB = 0; then
       dnl On Android 4.3, wcrtomb produces wrong characters in the C locale.
-      dnl On AIX 4.3, OSF/1 5.1 and Solaris <= 11.3, wcrtomb (NULL, 0, NULL)
+      dnl On AIX 4.3 and Solaris <= 11.3, wcrtomb (NULL, 0, NULL)
       dnl sometimes returns 0 instead of 1.
       AC_REQUIRE([AC_PROG_CC])
       AC_REQUIRE([gt_LOCALE_FR])
@@ -83,8 +83,8 @@ int main ()
           dnl is present.
 changequote(,)dnl
           case "$host_os" in
-            # Guess no on AIX 4, OSF/1, Solaris, native Windows.
-            aix4* | osf* | solaris* | mingw* | windows*)
+            # Guess no on AIX 4, Solaris, native Windows.
+            aix4* | solaris* | mingw* | windows*)
               gl_cv_func_wcrtomb_retval="guessing no" ;;
             # Guess yes otherwise.
             *)
@@ -113,7 +113,7 @@ int main ()
       if (wcrtomb (NULL, 0, NULL) != 1)
         result |= 2;
       {
-        wchar_t wc = (wchar_t) 0xBADFACE;
+        wchar_t wc = (wchar_t) {0xBADFACE};
         if (mbtowc (&wc, "\303\274", 2) == 2)
           if (wcrtomb (NULL, wc, NULL) != 1)
             result |= 2;
@@ -145,6 +145,15 @@ int main ()
            REPLACE_WCRTOMB=1 ;;
       esac
     fi
+    dnl When we adjust mbrtowc in the C locale, we need to adjust wcrtomb as well, for consistency.
+    AC_REQUIRE([gl_MBRTOWC_C_LOCALE])
+    case "$gl_cv_func_mbrtowc_C_locale_sans_EILSEQ" in
+      *yes) ;;
+      *) AC_DEFINE([MBRTOWC_IN_C_LOCALE_MAYBE_EILSEQ], [1],
+           [Define if the mbrtowc function may signal encoding errors in the C locale.])
+         REPLACE_WCRTOMB=1
+         ;;
+    esac
   fi
 ])
 

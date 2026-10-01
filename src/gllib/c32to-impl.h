@@ -1,5 +1,5 @@
 /* Case mapping of a 32-bit wide character.
-   Copyright (C) 2020-2024 Free Software Foundation, Inc.
+   Copyright (C) 2020-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -21,7 +21,7 @@
 
 #if GNULIB_defined_mbstate_t
 # include "localcharset.h"
-# include "streq.h"
+# include "streq-opt.h"
 #endif
 
 #if GL_CHAR32_T_IS_UNICODE
@@ -39,7 +39,7 @@ FUNC (wint_t wc)
   /* The char32_t encoding of a multibyte character is defined by the way
      mbrtoc32() is defined.  */
 
-#if GNULIB_defined_mbstate_t            /* AIX, IRIX */
+#if GNULIB_defined_mbstate_t            /* AIX */
   /* mbrtoc32() is defined on top of mbtowc() for the non-UTF-8 locales
      and directly for the UTF-8 locales.  */
   if (wc != WEOF)
@@ -52,22 +52,6 @@ FUNC (wint_t wc)
     }
   else
     return wc;
-
-#elif HAVE_WORKING_MBRTOC32 && HAVE_WORKING_C32RTOMB /* glibc, Android */
-  /* mbrtoc32() is essentially defined by the system libc.  */
-
-# if _GL_WCHAR_T_IS_UCS4
-  /* The char32_t encoding of a multibyte character is known to be the same as
-     the wchar_t encoding.  */
-  return WCHAR_FUNC (wc);
-# else
-  /* The char32_t encoding of a multibyte character is known to be UCS-4,
-     different from the wchar_t encoding.  */
-  if (wc != WEOF)
-    return UCS_FUNC (wc);
-  else
-    return wc;
-# endif
 
 #elif _GL_SMALL_WCHAR_T                 /* Cygwin, mingw, MSVC */
   /* The wchar_t encoding is UTF-16.
@@ -90,7 +74,23 @@ FUNC (wint_t wc)
     return UCS_FUNC (wc);
 # endif
 
-#else /* macOS, FreeBSD, NetBSD, OpenBSD, HP-UX, Solaris, Minix, Android */
+#elif HAVE_WORKING_MBRTOC32 && HAVE_WORKING_C32RTOMB /* glibc, NetBSD ≥ 11, Android */
+  /* mbrtoc32() is essentially defined by the system libc.  */
+
+# if _GL_WCHAR_T_IS_UCS4
+  /* The char32_t encoding of a multibyte character is known to be the same as
+     the wchar_t encoding.  */
+  return WCHAR_FUNC (wc);
+# else
+  /* The char32_t encoding of a multibyte character is known to be UCS-4,
+     different from the wchar_t encoding.  */
+  if (wc != WEOF)
+    return UCS_FUNC (wc);
+  else
+    return wc;
+# endif
+
+#else /* macOS, FreeBSD, NetBSD < 11, OpenBSD, HP-UX, Solaris, Minix, Android */
   /* char32_t and wchar_t are equivalent.  */
   static_assert (sizeof (char32_t) == sizeof (wchar_t));
 

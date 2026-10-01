@@ -1,6 +1,6 @@
 /* getpagesize emulation for systems where it cannot be done in a C macro.
 
-   Copyright (C) 2007, 2009-2024 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2009-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -17,10 +17,10 @@
 
 /* Written by Bruno Haible and Martin Lambers.  */
 
+#define _GL_GETPAGESIZE_INLINE _GL_EXTERN_INLINE
 #include <config.h>
 
 /* Specification. */
-#define _GL_GETPAGESIZE_INLINE _GL_EXTERN_INLINE
 #include <unistd.h>
 
 /* This implementation is only for native Windows systems.  */

@@ -1,5 +1,5 @@
 /* A POSIX <locale.h>.
-   Copyright (C) 2007-2024 Free Software Foundation, Inc.
+   Copyright (C) 2007-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -67,6 +67,85 @@
    On systems that don't define it, use the same value as GNU libintl.  */
 #if !defined LC_MESSAGES
 # define LC_MESSAGES 1729
+#endif
+
+#if !@HAVE_LOCALE_T@
+# if !defined GNULIB_defined_locale_t
+/* The values of the POSIX-standardized LC_* macros are:
+
+                  LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
+
+   glibc, Solaris,     3        0           5         4            1        2
+   Android
+   macOS, *BSD         1        2           6         3            4        5
+   native Windows      1        2        1729         3            4        5
+
+   We map these to the log2(LC_*_MASK) values, chosen to be compatible with
+   later releases of the same operating system.  */
+#  if defined __APPLE__ && defined __MACH__          /* macOS */
+/*                LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
+
+   category            1        2           6         3            4        5
+   log2(LC_*_MASK)     0        1           2         3            4        5
+ */
+#   define _gl_log2_lc_mask(category) ((0x2543100 >> (4 * (category))) & 0xf)
+#  elif defined __FreeBSD__ || defined __DragonFly__ /* FreeBSD */
+/*                LC_COLLATE LC_CTYPE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME
+
+   category            1        2           6         3            4        5
+   log2(LC_*_MASK)     0        1           5         2            3        4
+ */
+#   define _gl_log2_lc_mask(category) ((category) - 1)
+#  elif defined _WIN32 && !defined __CYGWIN__        /* native Windows */
+#   define _gl_log2_lc_mask(category) \
+      ((category) == LC_MESSAGES ? 0 : (category))
+#  else                           /* glibc, Solaris, Android, NetBSD, OpenBSD */
+#   define _gl_log2_lc_mask(category) (category)
+#  endif
+/* From there we map them to array indices 0..5.  */
+#  if (_gl_log2_lc_mask (LC_COLLATE) == 0 || _gl_log2_lc_mask (LC_CTYPE) == 0 \
+       || _gl_log2_lc_mask (LC_MESSAGES) == 0)
+  /* glibc, Solaris, Android, macOS, FreeBSD, native Windows */
+#   define _gl_log2_lcmask_to_index(c) (c)
+#   define _gl_index_to_log2_lcmask(i) (i)
+#  else
+  /* NetBSD, OpenBSD */
+#   define _gl_log2_lcmask_to_index(c) ((c) - 1)
+#   define _gl_index_to_log2_lcmask(i) ((i) + 1)
+#  endif
+/* Define the LC_*_MASK macros.  */
+#  define LC_COLLATE_MASK  (1 << _gl_log2_lc_mask (LC_COLLATE))
+#  define LC_CTYPE_MASK    (1 << _gl_log2_lc_mask (LC_CTYPE))
+#  define LC_MESSAGES_MASK (1 << _gl_log2_lc_mask (LC_MESSAGES))
+#  define LC_MONETARY_MASK (1 << _gl_log2_lc_mask (LC_MONETARY))
+#  define LC_NUMERIC_MASK  (1 << _gl_log2_lc_mask (LC_NUMERIC))
+#  define LC_TIME_MASK     (1 << _gl_log2_lc_mask (LC_TIME))
+#  define LC_ALL_MASK \
+     (LC_COLLATE_MASK | LC_CTYPE_MASK | LC_MESSAGES_MASK | LC_MONETARY_MASK \
+      | LC_NUMERIC_MASK | LC_TIME_MASK)
+/* Now define the locale_t type.  */
+struct gl_locale_category_t
+{
+  char *name;
+  bool is_c_locale;
+#  if @HAVE_WINDOWS_LOCALE_T@
+  /* Use the native Windows '_locale_t' type.
+     Documentation:
+     <https://learn.microsoft.com/en-us/cpp/c-runtime-library/locale>
+     This field is NULL if is_c_locale is true.  But don't use this NULL value,
+     since for the native Windows *_l functions a null _locale_t means to use
+     the global locale.  */
+  _locale_t system_locale;
+#  endif
+};
+struct gl_locale_t
+{
+  struct gl_locale_category_t category[6];
+};
+typedef struct gl_locale_t *locale_t;
+#  define LC_GLOBAL_LOCALE ((locale_t)(-1))
+#  define GNULIB_defined_locale_t 1
+# endif
 #endif
 
 /* On native Windows with MSVC, 'struct lconv' lacks the members int_p_* and
@@ -166,15 +245,21 @@ struct lconv
 #endif
 
 #if @GNULIB_LOCALECONV@
+/* The return type 'const struct lconv *' serves the purpose of producing
+   warnings for invalid uses of the value returned from this function.  */
 # if @REPLACE_LOCALECONV@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef localeconv
 #   define localeconv rpl_localeconv
+#   define GNULIB_defined_localeconv 1
 #  endif
-_GL_FUNCDECL_RPL (localeconv, struct lconv *, (void), );
-_GL_CXXALIAS_RPL (localeconv, struct lconv *, (void));
+_GL_FUNCDECL_RPL (localeconv, const struct lconv *, (void), );
+_GL_CXXALIAS_RPL (localeconv, const struct lconv *, (void));
 # else
-_GL_CXXALIAS_SYS (localeconv, struct lconv *, (void));
+_GL_CXXALIAS_SYS_CAST (localeconv, const struct lconv *, (void));
+#  if !defined localeconv && !defined __cplusplus
+#   define localeconv() ((const struct lconv *) localeconv ())
+#  endif
 # endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (localeconv);
@@ -185,7 +270,6 @@ _GL_CXXALIASWARN (localeconv);
 #  define localeconv localeconv_used_without_requesting_gnulib_module_localeconv
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef localeconv
 # if HAVE_RAW_DECL_LOCALECONV
 _GL_WARN_ON_USE (localeconv,
                  "localeconv returns too few information on some platforms - "
@@ -194,22 +278,29 @@ _GL_WARN_ON_USE (localeconv,
 #endif
 
 #if @GNULIB_SETLOCALE@
+/* The return type 'const char *' serves the purpose of producing warnings
+   for invalid uses of the value returned from this function.  */
 # if @REPLACE_SETLOCALE@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef setlocale
 #   define setlocale rpl_setlocale
 #   define GNULIB_defined_setlocale 1
 #  endif
-_GL_FUNCDECL_RPL (setlocale, char *, (int category, const char *locale), );
-_GL_CXXALIAS_RPL (setlocale, char *, (int category, const char *locale));
+_GL_FUNCDECL_RPL (setlocale, const char *,
+                  (int category, const char *locale), );
+_GL_CXXALIAS_RPL (setlocale, const char *,
+                  (int category, const char *locale));
 # else
-_GL_CXXALIAS_SYS (setlocale, char *, (int category, const char *locale));
+_GL_CXXALIAS_SYS_CAST (setlocale, const char *,
+                       (int category, const char *locale));
+#  if !defined setlocale && !defined __cplusplus
+#   define setlocale(...) ((const char *) setlocale (__VA_ARGS__))
+#  endif
 # endif
 # if __GLIBC__ >= 2
 _GL_CXXALIASWARN (setlocale);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef setlocale
 # if HAVE_RAW_DECL_SETLOCALE
 _GL_WARN_ON_USE (setlocale, "setlocale works differently on native Windows - "
                  "use gnulib module setlocale for portability");
@@ -221,7 +312,7 @@ _GL_WARN_ON_USE (setlocale, "setlocale works differently on native Windows - "
 # include "setlocale_null.h"
 #endif
 
-#if /*@GNULIB_NEWLOCALE@ ||*/ (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_NEWLOCALE@)
+#if @GNULIB_NEWLOCALE@ || (@GNULIB_GETLOCALENAME_L_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_NEWLOCALE@)
 # if @REPLACE_NEWLOCALE@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef newlocale
@@ -234,57 +325,49 @@ _GL_FUNCDECL_RPL (newlocale, locale_t,
 _GL_CXXALIAS_RPL (newlocale, locale_t,
                   (int category_mask, const char *name, locale_t base));
 # else
-#  if @HAVE_NEWLOCALE@
+#  if !@HAVE_NEWLOCALE@
+_GL_FUNCDECL_SYS (newlocale, locale_t,
+                  (int category_mask, const char *name, locale_t base),
+                  _GL_ARG_NONNULL ((2)));
+#  endif
 _GL_CXXALIAS_SYS (newlocale, locale_t,
                   (int category_mask, const char *name, locale_t base));
-#  endif
 # endif
-# if __GLIBC__ >= 2 && @HAVE_NEWLOCALE@
+# if __GLIBC__ >= 2
 _GL_CXXALIASWARN (newlocale);
 # endif
-# if @HAVE_NEWLOCALE@ || @REPLACE_NEWLOCALE@
-#  ifndef HAVE_WORKING_NEWLOCALE
-#   define HAVE_WORKING_NEWLOCALE 1
-#  endif
-# endif
 #elif defined GNULIB_POSIXCHECK
-# undef newlocale
 # if HAVE_RAW_DECL_NEWLOCALE
 _GL_WARN_ON_USE (newlocale, "newlocale is not portable");
 # endif
 #endif
 
-#if @GNULIB_DUPLOCALE@ || (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_DUPLOCALE@)
-# if @HAVE_DUPLOCALE@ /* locale_t may be undefined if !@HAVE_DUPLOCALE@.  */
-#  if @REPLACE_DUPLOCALE@
-#   if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#    undef duplocale
-#    define duplocale rpl_duplocale
-#    define GNULIB_defined_duplocale 1
-#   endif
+#if @GNULIB_DUPLOCALE@ || (@GNULIB_GETLOCALENAME_L_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_DUPLOCALE@)
+# if @REPLACE_DUPLOCALE@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef duplocale
+#   define duplocale rpl_duplocale
+#   define GNULIB_defined_duplocale 1
+#  endif
 _GL_FUNCDECL_RPL (duplocale, locale_t, (locale_t locale), _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (duplocale, locale_t, (locale_t locale));
-#  else
-_GL_CXXALIAS_SYS (duplocale, locale_t, (locale_t locale));
+# else
+#  if !@HAVE_DUPLOCALE@
+_GL_FUNCDECL_SYS (duplocale, locale_t, (locale_t locale), _GL_ARG_NONNULL ((1)));
 #  endif
+_GL_CXXALIAS_SYS (duplocale, locale_t, (locale_t locale));
 # endif
-# if __GLIBC__ >= 2 && @HAVE_DUPLOCALE@
+# if __GLIBC__ >= 2
 _GL_CXXALIASWARN (duplocale);
 # endif
-# if @HAVE_DUPLOCALE@
-#  ifndef HAVE_WORKING_DUPLOCALE
-#   define HAVE_WORKING_DUPLOCALE 1
-#  endif
-# endif
 #elif defined GNULIB_POSIXCHECK
-# undef duplocale
 # if HAVE_RAW_DECL_DUPLOCALE
-_GL_WARN_ON_USE (duplocale, "duplocale is buggy on some glibc systems - "
+_GL_WARN_ON_USE (duplocale, "duplocale is unportable and buggy on some glibc systems - "
                  "use gnulib module duplocale for portability");
 # endif
 #endif
 
-#if /*@GNULIB_FREELOCALE@ ||*/ (@GNULIB_LOCALENAME_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_FREELOCALE@)
+#if @GNULIB_FREELOCALE@ || (@GNULIB_GETLOCALENAME_L_UNSAFE@ && @LOCALENAME_ENHANCE_LOCALE_FUNCS@ && @HAVE_FREELOCALE@)
 # if @REPLACE_FREELOCALE@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef freelocale
@@ -294,19 +377,48 @@ _GL_WARN_ON_USE (duplocale, "duplocale is buggy on some glibc systems - "
 _GL_FUNCDECL_RPL (freelocale, void, (locale_t locale), _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (freelocale, void, (locale_t locale));
 # else
-#  if @HAVE_FREELOCALE@
+#  if !@HAVE_FREELOCALE@
+_GL_FUNCDECL_SYS (freelocale, void, (locale_t locale), _GL_ARG_NONNULL ((1)));
+#  endif
 /* Need to cast, because on FreeBSD and Mac OS X 10.13, the return type is
                                    int.  */
 _GL_CXXALIAS_SYS_CAST (freelocale, void, (locale_t locale));
-#  endif
 # endif
-# if __GLIBC__ >= 2 && @HAVE_FREELOCALE@
+# if __GLIBC__ >= 2
 _GL_CXXALIASWARN (freelocale);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef freelocale
 # if HAVE_RAW_DECL_FREELOCALE
 _GL_WARN_ON_USE (freelocale, "freelocale is not portable");
+# endif
+#endif
+
+#if @GNULIB_GETLOCALENAME_L@
+# if @REPLACE_GETLOCALENAME_L@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef getlocalename_l
+#   define getlocalename_l rpl_getlocalename_l
+#  endif
+_GL_FUNCDECL_RPL (getlocalename_l, const char *,
+                  (int category, locale_t locale),
+                  _GL_ARG_NONNULL ((2)));
+_GL_CXXALIAS_RPL (getlocalename_l, const char *,
+                  (int category, locale_t locale));
+# else
+#  if !@HAVE_GETLOCALENAME_L@
+_GL_FUNCDECL_SYS (getlocalename_l, const char *,
+                  (int category, locale_t locale),
+                  _GL_ARG_NONNULL ((2)));
+#  endif
+_GL_CXXALIAS_SYS (getlocalename_l, const char *,
+                  (int category, locale_t locale));
+# endif
+# if __GLIBC__ >= 2
+_GL_CXXALIASWARN (getlocalename_l);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# if HAVE_RAW_DECL_GETLOCALENAME_L
+_GL_WARN_ON_USE (getlocalename_l, "getlocalename_l is not portable");
 # endif
 #endif
 

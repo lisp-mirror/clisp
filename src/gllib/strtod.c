@@ -1,4 +1,4 @@
-/* Copyright (C) 1991-1992, 1997, 1999, 2003, 2006, 2008-2024 Free Software
+/* Copyright (C) 1991-1992, 1997, 1999, 2003, 2006, 2008-2026 Free Software
    Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
@@ -35,6 +35,14 @@
 
 #include "c-ctype.h"
 
+#if defined USE_FLOAT
+# include "isnanf-nolibm.h"
+#elif defined USE_LONG_DOUBLE
+# include "isnanl-nolibm.h"
+#else
+# include "isnand-nolibm.h"
+#endif
+
 #undef MIN
 #undef MAX
 #if defined USE_FLOAT
@@ -47,6 +55,7 @@
 #  define HAVE_UNDERLYING_STRTOD HAVE_STRTOF
 # endif
 # define HAS_GRADUAL_UNDERFLOW_PROBLEM STRTOF_HAS_GRADUAL_UNDERFLOW_PROBLEM
+# define HAS_MINUS_NAN_BUG STRTOF_HAS_MINUS_NAN_BUG
 # define DOUBLE float
 # define MIN FLT_MIN
 # define MAX FLT_MAX
@@ -81,6 +90,7 @@
 #  define HAVE_UNDERLYING_STRTOD HAVE_STRTOLD
 # endif
 # define HAS_GRADUAL_UNDERFLOW_PROBLEM STRTOLD_HAS_GRADUAL_UNDERFLOW_PROBLEM
+# define HAS_MINUS_NAN_BUG STRTOLD_HAS_MINUS_NAN_BUG
 # define DOUBLE long double
 # define MIN LDBL_MIN
 # define MAX LDBL_MAX
@@ -100,6 +110,7 @@
 #  define HAVE_UNDERLYING_STRTOD 1
 # endif
 # define HAS_GRADUAL_UNDERFLOW_PROBLEM STRTOD_HAS_GRADUAL_UNDERFLOW_PROBLEM
+# define HAS_MINUS_NAN_BUG STRTOD_HAS_MINUS_NAN_BUG
 # define DOUBLE double
 # define MIN DBL_MIN
 # define MAX DBL_MAX
@@ -120,29 +131,63 @@ locale_isspace (char c)
   return isspace (uc) != 0;
 }
 
+#if HAS_MINUS_NAN_BUG
+
+/* The underlying implementation works fine, except for signed NaNs.  */
+
+DOUBLE
+STRTOD (const char *nptr, char **endptr)
+# undef STRTOD
+# if defined USE_FLOAT
+#  undef strtof
+#  define STRTOD strtof
+#  define ISNAN isnanf
+# elif defined USE_LONG_DOUBLE
+#  undef strtold
+#  define STRTOD strtold
+#  define ISNAN isnanl
+# else
+#  undef strtod
+#  define STRTOD strtod
+#  define ISNAN isnand
+# endif
+{
+  DOUBLE value = STRTOD (nptr, endptr);
+  if (ISNAN (value))
+    {
+      while (locale_isspace (*nptr))
+        nptr++;
+      if (*nptr == '-' && !signbit (value))
+        value = - value;
+    }
+  return value;
+}
+
+#else
+
 /* Determine the decimal-point character according to the current locale.  */
 static char
 decimal_point_char (void)
 {
   const char *point;
-  /* Determine it in a multithread-safe way.  We know nl_langinfo is
-     multithread-safe on glibc systems and Mac OS X systems, but is not required
-     to be multithread-safe by POSIX.  sprintf(), however, is multithread-safe.
-     localeconv() is rarely multithread-safe.  */
-#if HAVE_NL_LANGINFO && (__GLIBC__ || defined __UCLIBC__ || (defined __APPLE__ && defined __MACH__))
+  /* Determine it in a thread-safe way.  We know nl_langinfo is
+     thread-safe on glibc systems and Mac OS X systems, but is not required
+     to be thread-safe by POSIX.  sprintf(), however, is thread-safe.
+     localeconv() is rarely thread-safe.  */
+# if HAVE_NL_LANGINFO && (__GLIBC__ || defined __UCLIBC__ || (defined __APPLE__ && defined __MACH__))
   point = nl_langinfo (RADIXCHAR);
-#elif 1
+# elif 1
   char pointbuf[5];
   sprintf (pointbuf, "%#.0f", 1.0);
   point = &pointbuf[1];
-#else
+# else
   point = localeconv () -> decimal_point;
-#endif
+# endif
   /* The decimal point is always a single byte: either '.' or ','.  */
   return (point[0] != '\0' ? point[0] : '.');
 }
 
-#if !USE_LDEXP
+# if !USE_LDEXP
  #undef LDEXP
  #define LDEXP dummy_ldexp
  /* A dummy definition that will never be invoked.  */
@@ -151,7 +196,7 @@ decimal_point_char (void)
    abort ();
    return L_(0.0);
  }
-#endif
+# endif
 
 /* Return X * BASE**EXPONENT.  Return an extreme value and set errno
    to ERANGE if underflow or overflow occurs.  */
@@ -230,15 +275,10 @@ parse_number (const char *nptr,
               char **endptr)
 {
   const char *s = nptr;
-  const char *digits_start;
-  const char *digits_end;
-  const char *radixchar_ptr;
-  long int exponent;
-  DOUBLE num;
 
   /* First, determine the start and end of the digit sequence.  */
-  digits_start = s;
-  radixchar_ptr = NULL;
+  const char *digits_start = s;
+  const char *radixchar_ptr = NULL;
   for (;; ++s)
     {
       if (base == 16 ? c_isxdigit (*s) : c_isdigit (*s))
@@ -252,10 +292,11 @@ parse_number (const char *nptr,
         /* Any other character terminates the digit sequence.  */
         break;
     }
-  digits_end = s;
+  const char *digits_end = s;
   /* Now radixchar_ptr == NULL or
      digits_start <= radixchar_ptr < digits_end.  */
 
+  long int exponent;
   if (false)
     { /* Unoptimized.  */
       exponent =
@@ -282,14 +323,12 @@ parse_number (const char *nptr,
     }
 
   /* Then, convert the digit sequence to a number.  */
+  DOUBLE num;
   {
-    const char *dp;
     num = 0;
-    for (dp = digits_start; dp < digits_end; dp++)
+    for (const char *dp = digits_start; dp < digits_end; dp++)
       if (dp != radixchar_ptr)
         {
-          int digit;
-
           /* Make sure that multiplication by BASE will not overflow.  */
           if (!(num <= MAX / base))
             {
@@ -305,6 +344,7 @@ parse_number (const char *nptr,
             }
 
           /* Eat the next digit.  */
+          int digit;
           if (c_isdigit (*dp))
             digit = *dp - '0';
           else if (base == 16 && c_isxdigit (*dp))
@@ -349,70 +389,65 @@ parse_number (const char *nptr,
 static DOUBLE
 minus_zero (void)
 {
-#if defined __hpux || defined __sgi || defined __ICC
+# if defined __hpux || defined __ICC
   return -MIN * MIN;
-#else
+# else
   return -0.0;
-#endif
+# endif
 }
 
 /* Convert NPTR to a DOUBLE.  If ENDPTR is not NULL, a pointer to the
    character after the last one used in the number is put in *ENDPTR.  */
 DOUBLE
 STRTOD (const char *nptr, char **endptr)
-#if HAVE_UNDERLYING_STRTOD
-# if defined USE_FLOAT
-#  undef strtof
-# elif defined USE_LONG_DOUBLE
-#  undef strtold
+# if HAVE_UNDERLYING_STRTOD
+#  if defined USE_FLOAT
+#   undef strtof
+#  elif defined USE_LONG_DOUBLE
+#   undef strtold
+#  else
+#   undef strtod
+#  endif
+#  if HAS_GRADUAL_UNDERFLOW_PROBLEM
+#   define SET_ERRNO_UPON_GRADUAL_UNDERFLOW(RESULT) \
+     do                                                          \
+       {                                                         \
+         if ((RESULT) != 0 && (RESULT) < MIN && (RESULT) > -MIN) \
+           errno = ERANGE;                                       \
+       }                                                         \
+     while (0)
+#  else
+#   define SET_ERRNO_UPON_GRADUAL_UNDERFLOW(RESULT) (void)0
+#  endif
 # else
-#  undef strtod
-# endif
-# if HAS_GRADUAL_UNDERFLOW_PROBLEM
-#  define SET_ERRNO_UPON_GRADUAL_UNDERFLOW(RESULT) \
-    do                                                          \
-      {                                                         \
-        if ((RESULT) != 0 && (RESULT) < MIN && (RESULT) > -MIN) \
-          errno = ERANGE;                                       \
-      }                                                         \
-    while (0)
-# else
+#  undef STRTOD
+#  define STRTOD(NPTR,ENDPTR) \
+    parse_number (NPTR, 10, 10, 1, radixchar, 'e', ENDPTR)
 #  define SET_ERRNO_UPON_GRADUAL_UNDERFLOW(RESULT) (void)0
 # endif
-#else
-# undef STRTOD
-# define STRTOD(NPTR,ENDPTR) \
-   parse_number (NPTR, 10, 10, 1, radixchar, 'e', ENDPTR)
-# define SET_ERRNO_UPON_GRADUAL_UNDERFLOW(RESULT) (void)0
-#endif
 /* From here on, STRTOD refers to the underlying implementation.  It needs
    to handle only finite unsigned decimal numbers with non-null ENDPTR.  */
 {
-  char radixchar;
-  bool negative = false;
-
-  /* The number so far.  */
-  DOUBLE num;
-
-  const char *s = nptr;
-  const char *end;
-  char *endbuf;
   int saved_errno = errno;
 
-  radixchar = decimal_point_char ();
+  char radixchar = decimal_point_char ();
+
+  const char *s = nptr;
 
   /* Eat whitespace.  */
   while (locale_isspace (*s))
     ++s;
 
   /* Get the sign.  */
-  negative = *s == '-';
+  bool negative = *s == '-';
   if (*s == '-' || *s == '+')
     ++s;
 
-  num = STRTOD (s, &endbuf);
+  char *endbuf;
+  DOUBLE num = /* The number so far.  */
+    STRTOD (s, &endbuf);
   SET_ERRNO_UPON_GRADUAL_UNDERFLOW (num);
-  end = endbuf;
+  const char *end = endbuf;
 
   if (c_isdigit (s[*s == radixchar]))
     {
@@ -492,6 +527,10 @@ STRTOD (const char *nptr, char **endptr)
                 }
               end = e;
             }
+          /* If "1e50" was converted to Inf (overflow), errno needs to be
+             set.  */
+          else if (isinf (num))
+            errno = ERANGE;
         }
 
       s = end;
@@ -550,3 +589,5 @@ STRTOD (const char *nptr, char **endptr)
     return minus_zero ();
   return negative ? -num : num;
 }
+
+#endif

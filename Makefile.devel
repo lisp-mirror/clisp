@@ -405,7 +405,9 @@ GNULIB_CORE = no-c++ stdint-h bool attribute havelib gettext localcharset stdlib
 	host-cpu-c-abi socklen sockets fd-hook setenv unsetenv errno-h ioctl \
 	arpa_inet-h netinet_in-h inet_ntop inet_pton socketlib strerror_r-posix \
 	nocrash libsigsegv gnu-make gettimeofday getpagesize sys_time-h sys_wait-h \
-	vma-iter c-strtod noreturn libunistring-optional crypto/sha1
+	localtime time_r tzsanitize vma-iter c-strtod noreturn \
+	libunistring-optional \
+	crypto/sha1
 GNULIB_SYSCALLS = mktime strftime strptime strverscmp uname fnmatch-gnu
 GNULIB_IMPORTS = $(GNULIB_CORE) $(GNULIB_SYSCALLS) regex recvfrom sendto
 GNULIB_IMPORTED_LOG = /tmp/gnulib-imported.log
@@ -444,7 +446,7 @@ LIBTOOL_VERSION = 2.4.7
 LIBTOOL_SOURCE_FILE = libtool-$(LIBTOOL_VERSION).tar.gz
 LIBTOOL_SOURCE_URL = https://ftp.gnu.org/gnu/libtool/$(LIBTOOL_SOURCE_FILE)
 # an alternative way to update libtool files is "cd src; libtoolize --copy"
-AUTOMAKE_VERSION = 1.16.5
+AUTOMAKE_VERSION = 1.19
 AUTOMAKE_GIT = https://git.savannah.gnu.org/cgit/automake.git/plain/lib/
 GTK_GIT_ROOT = https://gitlab.gnome.org/GNOME/gtk/-/raw
 GNULIB_AUX=config.guess config.rpath config.sub

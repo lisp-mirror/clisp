@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2024 Free Software Foundation, Inc.
+# Copyright (C) 2002-2026 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@
 #  link-follow \
 #  listen \
 #  localcharset \
+#  localtime \
 #  lstat \
 #  mkdtemp \
 #  mkfifo \
@@ -98,7 +99,7 @@
 #  stat \
 #  stdint-h \
 #  stdlib-h \
-#  streq \
+#  streq-opt \
 #  strerror_r-posix \
 #  strftime \
 #  strptime \
@@ -107,6 +108,8 @@
 #  sys_time-h \
 #  sys_uio-h \
 #  sys_wait-h \
+#  time_r \
+#  tzsanitize \
 #  uname \
 #  uniname/uniname \
 #  unistd-h \
@@ -150,6 +153,7 @@ gl_MODULES([
   link-follow
   listen
   localcharset
+  localtime
   lstat
   mkdtemp
   mkfifo
@@ -177,7 +181,7 @@ gl_MODULES([
   stat
   stdint-h
   stdlib-h
-  streq
+  streq-opt
   strerror_r-posix
   strftime
   strptime
@@ -186,6 +190,8 @@ gl_MODULES([
   sys_time-h
   sys_uio-h
   sys_wait-h
+  time_r
+  tzsanitize
   uname
   uniname/uniname
   unistd-h

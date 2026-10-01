@@ -1,5 +1,5 @@
 /* Safe automatic memory allocation.
-   Copyright (C) 2003-2007, 2009-2024 Free Software Foundation, Inc.
+   Copyright (C) 2003-2007, 2009-2026 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2003.
 
    This file is free software: you can redistribute it and/or modify
@@ -102,7 +102,7 @@ extern void *mmalloca (size_t n)
    on the stack.  N and S should be nonnegative and free of side effects.
    The array must be freed using freea() before the function returns.  */
 #define nmalloca(n, s) \
-  (xalloc_oversized (n, s) ? NULL : malloca ((n) * (size_t) (s)))
+  (xalloc_oversized (n, s) ? NULL : malloca ((n) * (size_t) {(s)}))
 
 
 #ifdef __cplusplus

@@ -306,6 +306,7 @@ extern int handle_isatty (HANDLE handle); /* see win32aux.d */
    extern BOOL FileTimeToLocalFileTime (const FILETIME* FileTime, FILETIME* LocalFileTime);
    extern BOOL FileTimeToSystemTime (const FILETIME* LocalFileTime, SYSTEMTIME* LocalSystemTime);
  used by time.d */
+#include "tzsanitize.h"
 
 /* Pausing
    extern void Sleep (DWORD Milliseconds);

@@ -1,6 +1,6 @@
 /* Convert string to floating-point number, using the C locale.
 
-   Copyright (C) 2003-2004, 2006, 2009-2024 Free Software Foundation, Inc.
+   Copyright (C) 2003-2004, 2006, 2009-2026 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -79,10 +79,10 @@ static char
 decimal_point_char (void)
 {
   const char *point;
-  /* Determine it in a multithread-safe way.  We know nl_langinfo is
-     multithread-safe on glibc systems and Mac OS X systems, but is not required
-     to be multithread-safe by POSIX.  sprintf(), however, is multithread-safe.
-     localeconv() is rarely multithread-safe.  */
+  /* Determine it in a thread-safe way.  We know nl_langinfo is
+     thread-safe on glibc systems and Mac OS X systems, but is not required
+     to be thread-safe by POSIX.  sprintf(), however, is thread-safe.
+     localeconv() is rarely thread-safe.  */
 # if HAVE_NL_LANGINFO && (__GLIBC__ || defined __UCLIBC__ || (defined __APPLE__ && defined __MACH__))
   point = nl_langinfo (RADIXCHAR);
 # elif 1
@@ -180,8 +180,9 @@ C_STRTOD (char const *nptr, char **endptr)
             end = p + 1;
             if (p[1] == 'x' || p[1] == 'X')
               {
-                size_t num_hex_digits = 0;
                 p += 2;
+
+                size_t num_hex_digits = 0;
                 /* Parse a non-empty sequence of hexadecimal digits optionally
                    containing the decimal point character '.'.  */
                 while (*p != '\0')
@@ -295,11 +296,10 @@ C_STRTOD (char const *nptr, char **endptr)
           /* Create a modified floating-point number, in which the character '.'
              is replaced with the locale-dependent decimal_point.  */
           size_t len = end - start;
+
+          char stackbuf[1000];
           char *buf;
           char *buf_malloced = NULL;
-          char stackbuf[1000];
-          char *end_in_buf;
-
           if (len < sizeof (stackbuf))
             buf = stackbuf;
           else
@@ -323,6 +323,7 @@ C_STRTOD (char const *nptr, char **endptr)
             buf[decimal_point_p - start] = decimal_point;
           buf[len] = '\0';
 
+          char *end_in_buf;
           r = STRTOD (buf, &end_in_buf);
           if (endptr != NULL)
             *endptr = (char *) (start + (end_in_buf - buf));

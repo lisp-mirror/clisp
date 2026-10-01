@@ -1,6 +1,6 @@
 # regex.m4
-# serial 78
-dnl Copyright (C) 1996-2001, 2003-2024 Free Software Foundation, Inc.
+# serial 82
+dnl Copyright (C) 1996-2001, 2003-2026 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -36,6 +36,7 @@ AC_DEFUN([gl_REGEX],
         [AC_LANG_PROGRAM(
           [[#include <regex.h>
 
+            #include <ctype.h>
             #include <locale.h>
             #include <limits.h>
             #include <string.h>
@@ -53,6 +54,11 @@ AC_DEFUN([gl_REGEX],
             /* Exit with distinguishable exit code.  */
             static void sigabrt_no_core (int sig) { raise (SIGTERM); }
             #endif
+
+            /* There is no need to check whether RE_SYNTAX_EMACS is
+               (RE_CHAR_CLASSES | RE_INTERVALS), corresponding to
+               Emacs 21 (2001) and later, because Gnulib's lib/regex.h
+               is always used and has this value.  */
           ]],
           [[int result = 0;
             static struct re_pattern_buffer regex;
@@ -312,6 +318,76 @@ AC_DEFUN([gl_REGEX],
                 free (regs.start);
                 free (regs.end);
               }
+
+            /* These tests are derived from bug#68725, reported by
+               Ed Morton.  The regex uses backrefs with optional groups
+               to detect palindromes.  */
+            {
+              regex_t re68725;
+              i = regcomp (&re68725,
+                           "^(.?)(.?).?\\\\2\\\\1$",
+                           REG_EXTENDED);
+              if (i)
+                result |= 64;
+              else
+                {
+                  regmatch_t pm[3];
+                  /* "ab" is not a palindrome, so must not match
+                     with $.  */
+                  if (regexec (&re68725, "ab", 1, pm, 0) == 0)
+                    result |= 64;
+                  /* Without $, a shorter match (e.g., empty or "a")
+                     is valid at position 0.  Ensure set_regs retries
+                     with a shorter match_last when the longest
+                     structural match fails content validation.  */
+                  regfree (&re68725);
+                  i = regcomp (&re68725,
+                               "^(.?)(.?).?\\\\2\\\\1",
+                               REG_EXTENDED);
+                  if (i)
+                    result |= 64;
+                  else if (regexec (&re68725, "ab", 3, pm, 0) != 0)
+                    result |= 64;
+                  regfree (&re68725);
+                }
+            }
+
+            /* Test for glibc bug 20381
+               <https://sourceware.org/bugzilla/show_bug.cgi?id=20381>.  */
+            if (setlocale (LC_ALL, "el_GR.iso88597")
+                || setlocale (LC_ALL, "el_GR.ISO8859-7")
+                || setlocale (LC_ALL, "el_GR.iso8859-7"))
+              {
+                /* Check this only in Greek locales that seem to be working.
+                    In macOS 26, for example, setlocale (LC_ALL, "el_GR.ISO8859-7")
+                    succeed but acts like the C locale.  */
+                if (toupper (0xf2) == 0xd3 && toupper (0xf3) == 0xd3)
+                  for (int i = 0; i < 3; i++)
+                    for (int j = 0; j < 3; j++)
+                      {
+                        static char const str[3][2] = { "\xd3", "\xf2", "\xf3" };
+                        regex_t re;
+                        int err = regcomp (&re, str[i], REG_ICASE | REG_NOSUB);
+                        if (err)
+                          {
+                            result |= 64;
+                            continue;
+                          }
+
+                        int with = regexec (&re, str[j], 0, NULL, 0);
+                        free (re.fastmap);
+                        re.fastmap = NULL;
+                        re.fastmap_accurate = 0;
+                        int without = regexec (&re, str[j], 0, NULL, 0);
+                        if (with != without)
+                          result |= 64;
+
+                        regfree (&re);
+                      }
+
+                if (! setlocale (LC_ALL, "C"))
+                  return 64;
+            }
 
 #if 0
             /* It would be nice to reject hosts whose regoff_t values are too

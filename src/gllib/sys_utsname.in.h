@@ -1,5 +1,5 @@
 /* Substitute for <sys/utsname.h>.
-   Copyright (C) 2009-2024 Free Software Foundation, Inc.
+   Copyright (C) 2009-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -99,7 +99,6 @@ struct utsname
 extern int uname (struct utsname *buf) _GL_ARG_NONNULL ((1));
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef uname
 # if HAVE_RAW_DECL_UNAME
 _GL_WARN_ON_USE (uname, "uname is unportable - "
                  "use gnulib module uname for portability");

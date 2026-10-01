@@ -677,6 +677,7 @@ REPLACE_ABORT
 REPLACE__EXIT
 HAVE_DECL_UNSETENV
 HAVE_UNLOCKPT
+HAVE_SYS_PROCESS_H
 HAVE_SYS_LOADAVG_H
 HAVE_STRUCT_RANDOM_DATA
 HAVE_STRTOULL
@@ -695,7 +696,6 @@ HAVE_RPMATCH
 HAVE_REALPATH
 HAVE_REALLOCARRAY
 HAVE_RANDOM_R
-HAVE_RANDOM_H
 HAVE_RANDOM
 HAVE_QSORT_R
 HAVE_PTSNAME_R
@@ -722,12 +722,6 @@ HAVE_CANONICALIZE_FILE_NAME
 HAVE_ATOLL
 HAVE_ALIGNED_ALLOC
 HAVE__EXIT
-EOVERFLOW_VALUE
-EOVERFLOW_HIDDEN
-ENOLINK_VALUE
-ENOLINK_HIDDEN
-EMULTIHOP_VALUE
-EMULTIHOP_HIDDEN
 NEXT_AS_FIRST_DIRECTIVE_ERRNO_H
 NEXT_ERRNO_H
 PRAGMA_COLUMNS
@@ -7136,237 +7130,6 @@ printf '%s\n' "$gl_cv_next_errno_h" >&6; }
     GL_GENERATE_ERRNO_H=true
   fi
 
-  if $GL_GENERATE_ERRNO_H; then
-    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for EMULTIHOP value" >&5
-printf %s "checking for EMULTIHOP value... " >&6; }
-if test ${gl_cv_header_errno_h_EMULTIHOP+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e)
-      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <errno.h>
-#ifdef EMULTIHOP
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_EMULTIHOP=yes
-else case e in #(
-  e) gl_cv_header_errno_h_EMULTIHOP=no ;;
-esac
-fi
-rm -rf conftest*
-
-      if test $gl_cv_header_errno_h_EMULTIHOP = no; then
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-#ifdef EMULTIHOP
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_EMULTIHOP=hidden
-fi
-rm -rf conftest*
-
-        if test $gl_cv_header_errno_h_EMULTIHOP = hidden; then
-                              if ac_fn_c_compute_int "$LINENO" "EMULTIHOP" "gl_cv_header_errno_h_EMULTIHOP"        "
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-/* The following two lines are a workaround against an autoconf-2.52 bug.  */
-#include <stdio.h>
-#include <stdlib.h>
-"
-then :
-
-fi
-
-        fi
-      fi
-     ;;
-esac
-fi
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_header_errno_h_EMULTIHOP" >&5
-printf '%s\n' "$gl_cv_header_errno_h_EMULTIHOP" >&6; }
-    case $gl_cv_header_errno_h_EMULTIHOP in
-      yes | no)
-        EMULTIHOP_HIDDEN=0; EMULTIHOP_VALUE=
-        ;;
-      *)
-        EMULTIHOP_HIDDEN=1; EMULTIHOP_VALUE="$gl_cv_header_errno_h_EMULTIHOP"
-        ;;
-    esac
-
-
-  fi
-
-
-  if $GL_GENERATE_ERRNO_H; then
-    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for ENOLINK value" >&5
-printf %s "checking for ENOLINK value... " >&6; }
-if test ${gl_cv_header_errno_h_ENOLINK+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e)
-      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <errno.h>
-#ifdef ENOLINK
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_ENOLINK=yes
-else case e in #(
-  e) gl_cv_header_errno_h_ENOLINK=no ;;
-esac
-fi
-rm -rf conftest*
-
-      if test $gl_cv_header_errno_h_ENOLINK = no; then
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-#ifdef ENOLINK
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_ENOLINK=hidden
-fi
-rm -rf conftest*
-
-        if test $gl_cv_header_errno_h_ENOLINK = hidden; then
-                              if ac_fn_c_compute_int "$LINENO" "ENOLINK" "gl_cv_header_errno_h_ENOLINK"        "
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-/* The following two lines are a workaround against an autoconf-2.52 bug.  */
-#include <stdio.h>
-#include <stdlib.h>
-"
-then :
-
-fi
-
-        fi
-      fi
-     ;;
-esac
-fi
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_header_errno_h_ENOLINK" >&5
-printf '%s\n' "$gl_cv_header_errno_h_ENOLINK" >&6; }
-    case $gl_cv_header_errno_h_ENOLINK in
-      yes | no)
-        ENOLINK_HIDDEN=0; ENOLINK_VALUE=
-        ;;
-      *)
-        ENOLINK_HIDDEN=1; ENOLINK_VALUE="$gl_cv_header_errno_h_ENOLINK"
-        ;;
-    esac
-
-
-  fi
-
-
-  if $GL_GENERATE_ERRNO_H; then
-    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for EOVERFLOW value" >&5
-printf %s "checking for EOVERFLOW value... " >&6; }
-if test ${gl_cv_header_errno_h_EOVERFLOW+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e)
-      cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <errno.h>
-#ifdef EOVERFLOW
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_EOVERFLOW=yes
-else case e in #(
-  e) gl_cv_header_errno_h_EOVERFLOW=no ;;
-esac
-fi
-rm -rf conftest*
-
-      if test $gl_cv_header_errno_h_EOVERFLOW = no; then
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-#ifdef EOVERFLOW
-yes
-#endif
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP_TRADITIONAL "yes" >/dev/null 2>&1
-then :
-  gl_cv_header_errno_h_EOVERFLOW=hidden
-fi
-rm -rf conftest*
-
-        if test $gl_cv_header_errno_h_EOVERFLOW = hidden; then
-                              if ac_fn_c_compute_int "$LINENO" "EOVERFLOW" "gl_cv_header_errno_h_EOVERFLOW"        "
-#define _XOPEN_SOURCE_EXTENDED 1
-#include <errno.h>
-/* The following two lines are a workaround against an autoconf-2.52 bug.  */
-#include <stdio.h>
-#include <stdlib.h>
-"
-then :
-
-fi
-
-        fi
-      fi
-     ;;
-esac
-fi
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_header_errno_h_EOVERFLOW" >&5
-printf '%s\n' "$gl_cv_header_errno_h_EOVERFLOW" >&6; }
-    case $gl_cv_header_errno_h_EOVERFLOW in
-      yes | no)
-        EOVERFLOW_HIDDEN=0; EOVERFLOW_VALUE=
-        ;;
-      *)
-        EOVERFLOW_HIDDEN=1; EOVERFLOW_VALUE="$gl_cv_header_errno_h_EOVERFLOW"
-        ;;
-    esac
-
-
-  fi
-
-
 
 
   { printf '%s\n' "$as_me:${as_lineno-$LINENO}: ${term_bold}** System Calls (Functions)${term_norm}" >&5
@@ -8693,7 +8456,6 @@ fi
   HAVE_PTSNAME_R=1;
   HAVE_QSORT_R=1;
   HAVE_RANDOM=1;
-  HAVE_RANDOM_H=1;
   HAVE_RANDOM_R=1;
   HAVE_REALLOCARRAY=1;
   HAVE_REALPATH=1;
@@ -8712,6 +8474,7 @@ fi
   HAVE_STRTOULL=1;
   HAVE_STRUCT_RANDOM_DATA=1;
   HAVE_SYS_LOADAVG_H=0;
+  HAVE_SYS_PROCESS_H=0;
   HAVE_UNLOCKPT=1;
   HAVE_DECL_UNSETENV=1;
   REPLACE__EXIT=0;

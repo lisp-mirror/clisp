@@ -1,6 +1,6 @@
 /* Obtain a series of random bytes.
 
-   Copyright 2020-2024 Free Software Foundation, Inc.
+   Copyright 2020-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -83,6 +83,9 @@ initialize (void)
 # else
 
 #  define BCryptGenRandomFunc BCryptGenRandom
+#  if _GL_GNUC_PREREQ (4, 2)
+#   pragma GCC diagnostic ignored "-Waddress"
+#  endif
 
 # endif
 

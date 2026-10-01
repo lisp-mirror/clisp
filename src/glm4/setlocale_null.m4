@@ -1,18 +1,18 @@
 # setlocale_null.m4
-# serial 9
-dnl Copyright (C) 2019-2024 Free Software Foundation, Inc.
+# serial 11
+dnl Copyright (C) 2019-2026 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 dnl This file is offered as-is, without any warranty.
 
-AC_DEFUN([gl_FUNC_SETLOCALE_NULL],
+AC_DEFUN_ONCE([gl_FUNC_SETLOCALE_NULL],
 [
   AC_REQUIRE([AC_CANONICAL_HOST])
   AC_REQUIRE([gl_PTHREADLIB])
   AC_CHECK_HEADERS_ONCE([threads.h])
 
-  AC_CACHE_CHECK([whether setlocale (LC_ALL, NULL) is multithread-safe],
+  AC_CACHE_CHECK([whether setlocale (LC_ALL, NULL) is thread-safe],
     [gl_cv_func_setlocale_null_all_mtsafe],
     [case "$host_os" in
        # Guess no on musl libc, macOS, FreeBSD, NetBSD, OpenBSD, AIX, Haiku.
@@ -32,8 +32,8 @@ AC_DEFUN([gl_FUNC_SETLOCALE_NULL],
           [gl_cv_func_setlocale_null_all_mtsafe=yes],
           [gl_cv_func_setlocale_null_all_mtsafe=no])
         ;;
-       # Guess yes on glibc, HP-UX, IRIX, Solaris, native Windows.
-       *-gnu* | gnu* | hpux* | irix* | solaris* | mingw* | windows*)
+       # Guess yes on glibc, HP-UX, Solaris, native Windows.
+       *-gnu* | gnu* | hpux* | solaris* | mingw* | windows*)
          gl_cv_func_setlocale_null_all_mtsafe=yes ;;
        # If we don't know, obey --enable-cross-guesses.
        *)
@@ -54,17 +54,17 @@ AC_DEFUN([gl_FUNC_SETLOCALE_NULL],
     *)    SETLOCALE_NULL_ALL_MTSAFE=0 ;;
   esac
   AC_DEFINE_UNQUOTED([SETLOCALE_NULL_ALL_MTSAFE], [$SETLOCALE_NULL_ALL_MTSAFE],
-    [Define to 1 if setlocale (LC_ALL, NULL) is multithread-safe.])
+    [Define to 1 if setlocale (LC_ALL, NULL) is thread-safe.])
 
   dnl This is about a single category (not LC_ALL).
-  AC_CACHE_CHECK([whether setlocale (category, NULL) is multithread-safe],
+  AC_CACHE_CHECK([whether setlocale (category, NULL) is thread-safe],
     [gl_cv_func_setlocale_null_one_mtsafe],
     [case "$host_os" in
        # Guess no on OpenBSD, AIX.
        openbsd* | aix*)
          gl_cv_func_setlocale_null_one_mtsafe=no ;;
-       # Guess yes on glibc, musl libc, macOS, FreeBSD, NetBSD, HP-UX, IRIX, Solaris, Haiku, Cygwin, native Windows.
-       *-gnu* | gnu* | *-musl* | midipix* | darwin* | freebsd* | midnightbsd* | netbsd* | hpux* | irix* | solaris* | haiku* | cygwin* | mingw* | windows*)
+       # Guess yes on glibc, musl libc, macOS, FreeBSD, NetBSD, HP-UX, Solaris, Haiku, Cygwin, native Windows.
+       *-gnu* | gnu* | *-musl* | midipix* | darwin* | freebsd* | midnightbsd* | netbsd* | hpux* | solaris* | haiku* | cygwin* | mingw* | windows*)
          gl_cv_func_setlocale_null_one_mtsafe=yes ;;
        # If we don't know, obey --enable-cross-guesses.
        *)
@@ -85,7 +85,7 @@ AC_DEFUN([gl_FUNC_SETLOCALE_NULL],
     *)    SETLOCALE_NULL_ONE_MTSAFE=0 ;;
   esac
   AC_DEFINE_UNQUOTED([SETLOCALE_NULL_ONE_MTSAFE], [$SETLOCALE_NULL_ONE_MTSAFE],
-    [Define to 1 if setlocale (category, NULL) is multithread-safe.])
+    [Define to 1 if setlocale (category, NULL) is thread-safe.])
 
   dnl Determine link dependencies of lib/setlocale_null.c and lib/setlocale-lock.c.
   if test $SETLOCALE_NULL_ALL_MTSAFE = 0 || test $SETLOCALE_NULL_ONE_MTSAFE = 0; then

@@ -1,6 +1,6 @@
 /* Provide gettimeofday for systems that don't have it or for which it's broken.
 
-   Copyright (C) 2001-2003, 2005-2007, 2009-2024 Free Software Foundation, Inc.
+   Copyright (C) 2001-2003, 2005-2007, 2009-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -61,6 +61,9 @@ initialize (void)
 # else
 
 #  define GetSystemTimePreciseAsFileTimeFunc GetSystemTimePreciseAsFileTime
+#  if _GL_GNUC_PREREQ (4, 2)
+#   pragma GCC diagnostic ignored "-Waddress"
+#  endif
 
 # endif
 
@@ -92,12 +95,12 @@ gettimeofday (struct timeval *restrict tv, void *restrict tz)
      microseconds.
      More discussion on this topic:
      <http://www.windowstimestamp.com/description>.  */
-  FILETIME current_time;
-
 # if !(_WIN32_WINNT >= _WIN32_WINNT_WIN8)
   if (!initialized)
     initialize ();
 # endif
+
+  FILETIME current_time;
   if (GetSystemTimePreciseAsFileTimeFunc != NULL)
     GetSystemTimePreciseAsFileTimeFunc (&current_time);
   else

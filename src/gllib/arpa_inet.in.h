@@ -1,6 +1,6 @@
 /* A GNU-like <arpa/inet.h>.
 
-   Copyright (C) 2005-2006, 2008-2024 Free Software Foundation, Inc.
+   Copyright (C) 2005-2006, 2008-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -73,37 +73,49 @@ _GL_INLINE_HEADER_BEGIN
 /* Host to network byte order. */
 
 #if !@HAVE_DECL_HTONS@
+# if !GNULIB_defined_htons
 _GL_ARPA_INET_INLINE uint16_t
 htons (uint16_t value)
 {
   return htobe16 (value);
 }
+#  define GNULIB_defined_htons 1
+# endif
 #endif
 
 #if !@HAVE_DECL_HTONL@
+# if !GNULIB_defined_htonl
 _GL_ARPA_INET_INLINE uint32_t
 htonl (uint32_t value)
 {
   return htobe32 (value);
 }
+#  define GNULIB_defined_htonl 1
+# endif
 #endif
 
 /* Network to host byte order.  */
 
 #if !@HAVE_DECL_NTOHS@
+# if !GNULIB_defined_ntohs
 _GL_ARPA_INET_INLINE uint16_t
 ntohs (uint16_t value)
 {
   return htobe16 (value);
 }
+#  define GNULIB_defined_ntohs 1
+# endif
 #endif
 
 #if !@HAVE_DECL_NTOHL@
+# if !GNULIB_defined_ntohl
 _GL_ARPA_INET_INLINE uint32_t
 ntohl (uint32_t value)
 {
   return htobe32 (value);
 }
+#  define GNULIB_defined_ntohl 1
+# endif
 #endif
 
 
@@ -159,7 +171,6 @@ _GL_CXXALIAS_SYS_CAST (inet_ntop, const char *,
 _GL_CXXALIASWARN (inet_ntop);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef inet_ntop
 # if HAVE_RAW_DECL_INET_NTOP
 _GL_WARN_ON_USE (inet_ntop, "inet_ntop is unportable - "
                  "use gnulib module inet_ntop for portability");
@@ -190,7 +201,6 @@ _GL_CXXALIAS_SYS (inet_pton, int,
 _GL_CXXALIASWARN (inet_pton);
 # endif
 #elif defined GNULIB_POSIXCHECK
-# undef inet_pton
 # if HAVE_RAW_DECL_INET_PTON
 _GL_WARN_ON_USE (inet_pton, "inet_pton is unportable - "
                  "use gnulib module inet_pton for portability");

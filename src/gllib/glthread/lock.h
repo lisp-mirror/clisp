@@ -1,5 +1,5 @@
 /* Locking in multithreaded situations.
-   Copyright (C) 2005-2024 Free Software Foundation, Inc.
+   Copyright (C) 2005-2026 Free Software Foundation, Inc.
 
    This file is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as
@@ -73,17 +73,20 @@
 /* This file uses HAVE_THREADS_H, HAVE_PTHREAD_RWLOCK,
    HAVE_PTHREAD_RWLOCK_RDLOCK_PREFER_WRITER,
    PTHREAD_RWLOCK_WRITER_NONRECURSIVE_INITIALIZER_NP,
+   USE_ISOC_THREADS, USE_POSIX_THREADS, USE_ISOC_AND_POSIX_THREADS,
+   USE_WINDOWS_THREADS,
    HAVE_PTHREAD_MUTEX_RECURSIVE.  */
 #if !_GL_CONFIG_H_INCLUDED
  #error "Please include config.h first."
 #endif
 
-#include <errno.h>
 #include <stdlib.h>
 
-#include "glthread/once.h"
-
+#if (USE_ISOC_THREADS || USE_POSIX_THREADS || USE_ISOC_AND_POSIX_THREADS \
+     || USE_WINDOWS_THREADS)
+# include "glthread/once.h"
 /* c11_threads_in_use() is defined in glthread/once.h.  */
+#endif
 
 /* ========================================================================= */
 
@@ -239,7 +242,7 @@ typedef pthread_rwlock_t gl_rwlock_t;
 #    endif
 #    define glthread_rwlock_init(LOCK) \
        (pthread_in_use () ? pthread_rwlock_init (LOCK, NULL) : 0)
-#   else /* glibc with bug https://sourceware.org/bugzilla/show_bug.cgi?id=13701 */
+#   else /* glibc with bug https://sourceware.org/PR13701 */
 #    define gl_rwlock_initializer \
        PTHREAD_RWLOCK_WRITER_NONRECURSIVE_INITIALIZER_NP
 #    define glthread_rwlock_init(LOCK) \

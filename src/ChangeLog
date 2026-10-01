@@ -1,3 +1,22 @@
+2026-10-02  Bruno Haible  <bruno@clisp.org>
+
+	Fix result of SYS::DEFAULT-TIME-ZONE on mingw, when TZ is set by Cygwin.
+	* Makefile.devel (GNULIB_CORE): Add localtime, time_r, tzsanitize.
+	(AUTOMAKE_VERSION): Bump to 1.19.
+	* po/Makefile.in.in (CATALOGS): Determine like gettext-1.0
+	po/Makefile.in.in does.
+	* win32.d: Include tzsanitize.h.
+	* spvw.d (main): Invoke tzsanitize.
+	Then update to the newest gnulib.
+	Ran "make -f Makefile.devel build-aux-update gnulib-imported \
+	&& make -f Makefile.devel build-prerequisites".
+	* build-aux/*: Update.
+	* gllib/*: Update from gnulib.
+	* glm4/*: Likewise.
+	* aclocal.m4, src/configure, src/config.h.in: Regenerated.
+	* modules/*/configure, modules/*/config.h.in: Regenerated.
+	* version.h: Update.
+
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
 	Fix conversion of time stamps, off by 1 ms, on Cygwin.

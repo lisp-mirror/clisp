@@ -4126,6 +4126,14 @@ global int main (argc_t argc, char* argv[]) {
  #ifdef GNU_GETTEXT
   init_language(argv0.argv_language,argv0.argv_localedir,false);
  #endif
+  /* Deal with TZ.
+     This is needed, so that with a mingw/MSVCRT build in a Cygwin enviroment,
+     in a German locale
+       $ TZ=Europe/Berlin ./lisp -M lispinit.mem -N locale -q -x '(sys::default-time-zone 1111053 t)'
+     returns -2;T (correct), not -1;T (incorrect). */
+ #ifdef WIN32_NATIVE
+  tzsanitize();
+ #endif
 
   /* Initialize memory and load a memory image (if specified). */
   if (init_memory(&argv1) < 0) goto no_mem;
