@@ -571,8 +571,8 @@ global void abort() {
  used by syscalls and dirkey modules */
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#define FACTOR 0x19db1ded53ea710LL
-#define NSPERSEC 10000000LL
+#define OFFSET_FROM_1601 116444736000000000LL /* number of 100ns between 1601 and 1970 */
+#define NSPERSEC 10000000LL                   /* number of 100ns in a second */
 modexp long time_t_from_filetime (const FILETIME * ptr) {
   /* A file time is the number of 100ns since jan 1 1601
      stuffed into two long words.
@@ -582,19 +582,19 @@ modexp long time_t_from_filetime (const FILETIME * ptr) {
     ((long long) ptr->dwHighDateTime << 32) + ((unsigned) ptr->dwLowDateTime);
   /* pass "no time" as epoch */
   if (x == 0) return 0;
-  x -= FACTOR;               /* number of 100ns between 1601 and 1970 */
+  x -= OFFSET_FROM_1601;
   rem = x % ((long long) NSPERSEC);
   rem += (NSPERSEC/2);
-  x /= (long long) NSPERSEC;    /* number of 100ns in a second */
+  x /= (long long) NSPERSEC;
   x += (long long) (rem/NSPERSEC);
   return x;
 }
 modexp void time_t_to_filetime (time_t time_in, FILETIME *out) {
-  long long x = time_in * NSPERSEC + FACTOR;
+  long long x = time_in * NSPERSEC + OFFSET_FROM_1601;
   out->dwHighDateTime = x >> 32;
   out->dwLowDateTime = x;
 }
-#undef FACTOR
+#undef OFFSET_FROM_1601
 #undef NSPERSEC
 
 #endif

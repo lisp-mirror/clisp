@@ -1,5 +1,12 @@
 2026-09-30  Bruno Haible  <bruno@clisp.org>
 
+	Fix conversion of time stamps, off by 1 ms, on Cygwin.
+	Cf. Cygwin commit e873a0c7f31ca9135b520a96d851a00120e315d1
+	and <https://cygwin.com/pipermail/cygwin-apps/2012-March/029760.html>.
+	* unixaux.d (OFFSET_FROM_1601): Rename from FACTOR. Correct value.
+
+2026-09-30  Bruno Haible  <bruno@clisp.org>
+
 	Define *clhs-root-default* on mingw.
 	* makemake.in (config.lisp): Append the *clhs-root-default*
 	initialization also on Windows.
