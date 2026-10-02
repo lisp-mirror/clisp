@@ -1,5 +1,10 @@
 2026-10-02  Bruno Haible  <bruno@clisp.org>
 
+	build: Tweak POT file generation.
+	* po/po_header.txt: Change charset to UTF-8.
+
+2026-10-02  Bruno Haible  <bruno@clisp.org>
+
 	Fix result of SYS::DEFAULT-TIME-ZONE on mingw, when TZ is set by Cygwin.
 	* Makefile.devel (GNULIB_CORE): Add localtime, time_r, tzsanitize.
 	(AUTOMAKE_VERSION): Bump to 1.19.
