@@ -1,5 +1,19 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Define memory mapping on mingw/arm64.
+	* makemake.in (Z_XCFLAGS): For mingw/arm64, enable all optimizations
+	except ASM.
+	* lispbibl.d [WIN32_NATIVE && ARM64]: Define
+	MAPPABLE_ADDRESS_RANGE_START, MAPPABLE_ADDRESS_RANGE_END.
+	Choose values for SINGLEMAP_*.
+	Set HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS, HEAPCODES1BIT_WITH_MALLOC_WORKS
+	to 1. Set GENERIC64C_HEAPCODES_WORKS to 1.
+	Set TYPECODES_WITH_TRIVIALMAP_WORKS, TYPECODES_WITH_MALLOC_WORKS to 1.
+	* Makefile.devel (multibuild-mingw-arm64): Enable the build variants
+	that work.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Work around clang bug on mingw/arm64.
 	* intmal.d (karatsuba_threshold): Define to a large value on arm64 with
 	clang.

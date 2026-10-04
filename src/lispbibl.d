@@ -533,7 +533,7 @@
 /* A property of the processor:
  The sequence in which words/long-words are being put into bytes */
 #if defined(short_little_endian) || defined(int_little_endian) || defined(long_little_endian)
-  /* Z80, VAX, I80386, DECALPHA, MIPSEL, IA64, AMD64, RISCV64, ...:
+  /* Z80, VAX, I80386, DECALPHA, MIPSEL, IA64, AMD64, ARM64, RISCV64, ...:
    Low Byte is the lowest, High Byte in a higher address */
   #if defined(BIG_ENDIAN_P)
     #error Bogus BIG_ENDIAN_P!
@@ -3001,6 +3001,16 @@ typedef enum {
     #define MAPPABLE_ADDRESS_RANGE_START 0x020000000000ULL
     #define MAPPABLE_ADDRESS_RANGE_END   0x5FFFFFFFFFFFULL
   #endif
+  #if defined(WIN32_NATIVE) && defined(ARM64)
+    /* On mingw/arm64, running on Windows 11:
+       CODE_ADDRESS_RANGE   = 0x00007FF746000000ULL (varies)
+       MALLOC_ADDRESS_RANGE = 0x0000024408000000ULL (varies)
+       SHLIB_ADDRESS_RANGE  = 0x000001F42E000000ULL (varies)
+       STACK_ADDRESS_RANGE  = 0x000000696D000000ULL (varies)
+       There is room from 0x030000000000ULL to 0x7F0000000000ULL. */
+    #define MAPPABLE_ADDRESS_RANGE_START 0x040000000000ULL
+    #define MAPPABLE_ADDRESS_RANGE_END   0x5FFFFFFFFFFFULL
+  #endif
 #endif
 /* When changed: do nothing */
 
@@ -3643,6 +3653,14 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #define SINGLEMAP_WORKS 0
   #endif
   #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw, running on Windows 10 */
+    #define SINGLEMAP_ADDRESS_BASE 0x400000000000ULL
+    #define SINGLEMAP_TYPE_MASK    0x1F8000000000ULL
+    #define SINGLEMAP_oint_type_shift 39
+    /* Actually no such configuration works, because the CODE_ADDRESS_RANGE
+       consumes so many bits that we have at most 1+1 bits for the typecode. */
+    #define SINGLEMAP_WORKS 0
+  #endif
+  #if defined(WIN32_NATIVE) && defined(ARM64) /* mingw, running on Windows 11 */
     #define SINGLEMAP_ADDRESS_BASE 0x400000000000ULL
     #define SINGLEMAP_TYPE_MASK    0x1F8000000000ULL
     #define SINGLEMAP_oint_type_shift 39
@@ -4354,6 +4372,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
         #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 0
         #define HEAPCODES1BIT_WITH_MALLOC_WORKS 0
       #endif
+      #if defined(WIN32_NATIVE) && defined(ARM64) /* mingw */
+        #define HEAPCODES1BIT_WITH_TRIVIALMAP_WORKS 1
+        #define HEAPCODES1BIT_WITH_MALLOC_WORKS 1
+      #endif
       #ifndef garcol_bit_o
         #define garcol_bit_o 63
       #endif
@@ -4691,6 +4713,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
     #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
       #define GENERIC64C_HEAPCODES_WORKS 1
     #endif
+    #if defined(WIN32_NATIVE) && defined(ARM64) /* mingw */
+      #define GENERIC64C_HEAPCODES_WORKS 1
+    #endif
   #endif /* GENERIC64_HEAPCODES */
   #if defined(WIDE_HARD)
     #define oint_addr_shift 0
@@ -4993,6 +5018,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
           #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
           #endif
+          #if defined(WIN32_NATIVE) && defined(ARM64) /* mingw */
+            #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
+          #endif
           #define oint_type_len 8
           #ifndef oint_type_shift
             #define oint_type_shift 56
@@ -5105,6 +5133,9 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
             #define TYPECODES_WITH_MALLOC_WORKS 1
           #endif
           #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
+            #define TYPECODES_WITH_MALLOC_WORKS 1
+          #endif
+          #if defined(WIN32_NATIVE) && defined(ARM64) /* mingw */
             #define TYPECODES_WITH_MALLOC_WORKS 1
           #endif
           #ifndef oint_type_shift

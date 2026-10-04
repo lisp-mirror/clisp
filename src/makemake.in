@@ -1947,6 +1947,11 @@ else
         Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM"
         ;;
 
+      # mingw, running on Windows 11
+      mingw*--aarch64)
+        Z_XCFLAGS="$Z_XCFLAGS -DNO_ASM"
+        ;;
+
       *) # On unknown platforms, use --enable-portability.
          enable_portability=yes
          ;;
