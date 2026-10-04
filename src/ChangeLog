@@ -1,5 +1,10 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Change MACHINE-TYPE to return a read-only string.
+	* misc.d (MACHINE-TYPE): Return a read-only string.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Define memory mapping on mingw/arm64.
 	* makemake.in (Z_XCFLAGS): For mingw/arm64, enable all optimizations
 	except ASM.

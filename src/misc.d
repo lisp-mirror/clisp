@@ -123,7 +123,7 @@ LISPFUNN(machinetype,0)
     end_system_call();
     pushSTACK(asciz_to_string(utsname.machine,O(misc_encoding)));
     funcall(L(nstring_upcase),1); /* convert to uppercase */
-    ret = value1;
+    ret = coerce_imm_ss(value1);
   #elif defined(WIN32_NATIVE)
     {
       var SYSTEM_INFO info;
