@@ -4991,7 +4991,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
             #define TYPECODES_WITH_TRIVIALMAP_WORKS 0
           #endif
           #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
-            #define TYPECODES_WITH_TRIVIALMAP_WORKS 0
+            #define TYPECODES_WITH_TRIVIALMAP_WORKS 1
           #endif
           #define oint_type_len 8
           #ifndef oint_type_shift
@@ -5105,7 +5105,7 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
             #define TYPECODES_WITH_MALLOC_WORKS 1
           #endif
           #if defined(WIN32_NATIVE) && defined(AMD64) /* mingw */
-            #define TYPECODES_WITH_MALLOC_WORKS 0
+            #define TYPECODES_WITH_MALLOC_WORKS 1
           #endif
           #ifndef oint_type_shift
             #define oint_type_shift 56

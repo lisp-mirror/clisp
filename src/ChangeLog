@@ -1,5 +1,14 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Update memory mapping on mingw/x86_64.
+	* lispbibl.d [WIN32_NATIVE && AMD64]: Set
+	TYPECODES_WITH_TRIVIALMAP_WORKS, TYPECODES_WITH_MALLOC_WORKS to 1.
+	* Makefile.devel (multibuild-mingw-64): Add
+	build-porting64-gcc-one_free_bit_heapcodes-malloc,
+	build-porting64-gcc-one_free_bit_heapcodes-trivialmap.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Adapt types, macros, and variables for 64-bit mingw, part 2.
 	* spvw.d (quit): Use fbit instead of bit.
 	* eval.d (unwind, reset, unwind_upto, throw_to, invoke_handlers,
