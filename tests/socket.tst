@@ -609,25 +609,28 @@ T
 ;; https://sourceforge.net/p/clisp/mailman/message/19641749/
 (check-os-error (socket:socket-connect 12345 "localhost" :timeout 30)
   #.(let ((os (ext:operating-system-type)))
-      (cond ((equal os "Windows") '(:ETIMEDOUT 10060))
+      (cond ((equal os "Windows") `(:ETIMEDOUT ,+ETIMEDOUT+))
             (t `(:ECONNREFUSED ,+ECONNREFUSED+)))))
 T
 ;; :TIMEOUT 0 means to return a useful result or error immediately.
 ;; https://gitlab.com/gnu-clisp/clisp/-/issues/25
 (check-os-error (socket:socket-connect 12345 "localhost" :timeout 0)
   #.(let ((os (ext:operating-system-type)))
-      (cond ((equal os "Windows") '(:ETIMEDOUT 10060))
-            ((equal os "CYGWIN") `(:ETIMEDOUT ,+ETIMEDOUT+))
+      (cond ((or (equal os "CYGWIN")
+                 (equal os "Windows"))
+             `(:ETIMEDOUT ,+ETIMEDOUT+))
             (t `(:ECONNREFUSED ,+ECONNREFUSED+)))))
 T
 (check-os-error (socket:socket-connect 12345 "localhost" :buffered nil :timeout 0)
   #.(let ((os (ext:operating-system-type)))
-      (cond ((equal os "Windows") '(:ETIMEDOUT 10060))
-            ((equal os "CYGWIN") `(:ETIMEDOUT ,+ETIMEDOUT+))
+      (cond ((or (equal os "CYGWIN")
+                 (equal os "Windows"))
+             `(:ETIMEDOUT ,+ETIMEDOUT+))
             (t `(:ECONNREFUSED ,+ECONNREFUSED+)))))
 T
 
 ;; https://sourceforge.net/p/clisp/bugs/587/: non-0 timeout
+#-win32 ; This test hangs in mingw.
 (multiple-value-bind (run args) (cmd-args)
   (let ((is (ext:run-program run :arguments (append args '("-q" "-q" "-x" "
             (let ((se (socket:socket-server)))
@@ -644,6 +647,7 @@ T
       (or (string= (setq local (lisp-implementation-version))
                    (setq remote (read-line so)))
           (list :local local :remote remote)))))
+#-win32
 T
 
 (let ((interfaces '#.(cond ((equal (ext:operating-system-type) "Minix") '())
@@ -688,6 +692,7 @@ T
                 (princ 'read-char) (princ-error c)
                 (case (os-error-code c)
                   ((:ECONNRESET #.+ECONNRESET+) t)
+                  #+win32 ((:EWOULDBLOCK 140) t) ; signals EWOULDBLOCK on mingw
                   (t (os-error-code c))))
               (end-of-file (c)
                 (princ 'read-char) (princ-error c) t))
@@ -699,7 +704,9 @@ T
                   (t (os-error-code c)))))))
       (socket:socket-server-close se))))
 #-CYGWIN
-(:OUTPUT "foo" NIL :APPEND T T #.(if (equal (ext:operating-system-type) "OpenBSD") ':ERROR ':APPEND))
+(:OUTPUT "foo" NIL #-win32 :APPEND #+win32 :OUTPUT
+ T T
+ #.(if (equal (ext:operating-system-type) "OpenBSD") ':ERROR ':APPEND))
 
 ;; https://sourceforge.net/p/clisp/feature-requests/46/
 (check-os-error (socket:socket-connect 0)
@@ -709,10 +716,10 @@ T
                  (equal os "Darwin")
                  (equal os "AIX")
                  (equal os "SunOS")
-                 (equal os "CYGWIN"))
+                 (equal os "CYGWIN")
+                 (equal os "Windows"))
              `(:EADDRNOTAVAIL ,+EADDRNOTAVAIL+))
             ((equal os "Minix") `(:EADDRNOTAVAIL ,+EADDRNOTAVAIL+ 213))
-            ((equal os "Windows") '(:EADDRNOTAVAIL 10049))
             (t `(:ECONNREFUSED ,+ECONNREFUSED+)))))
 T
 

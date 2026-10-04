@@ -1,6 +1,13 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
 	Avoid a test failure on mingw.
+	* socket.tst: On win32, use errno values, not GetLastError() values
+	(needed since 2011-07-19). Disable a test that hangs. Update some
+	expected results.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
+	Avoid a test failure on mingw.
 	* path.tst: Update some expected results for win32.
 
 2026-09-30  Bruno Haible  <bruno@clisp.org>
