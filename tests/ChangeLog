@@ -1,5 +1,11 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Avoid a test failure on mingw/arm64.
+	* alltest.tst (lambda-parameters-limit): Limit to 512 on all native
+	Windows platforms.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Avoid a test failure on mingw.
 	* socket.tst: On win32, use errno values, not GetLastError() values
 	(needed since 2011-07-19). Disable a test that hangs. Update some
