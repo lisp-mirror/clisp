@@ -1,6 +1,6 @@
 /*
  * top level loop, aux functions for the debugger, stepper for CLISP
- * Bruno Haible 1990-2005, 2016-2017
+ * Bruno Haible 1990-2005, 2016-2026
  * ILISP friendliness: Marcus Daniels 8.4.1994
  * Sam Steingold 2001-2011
  * German comments translated into English: Stefan Kain 2004-08-30
@@ -689,12 +689,12 @@ local bool blockgo_frame_p(fcint frame_info)
 
 /* Macro: Tests, if the frame at FRAME is an EVAL/APPLY frame. */
 #define evalapply_frame_p()  \
-  ((framecode(FRAME_(0)) & ~(bit(eval_bit_t)|bit(trapped_bit_t))) == \
-   ((EVAL_frame_info|APPLY_frame_info) & ~(bit(eval_bit_t)|bit(trapped_bit_t))))
+  ((framecode(FRAME_(0)) & ~(fbit(eval_bit_t)|fbit(trapped_bit_t))) == \
+   ((EVAL_frame_info|APPLY_frame_info) & ~(fbit(eval_bit_t)|fbit(trapped_bit_t))))
 
 /* Macro: Tests, if the frame at FRAME is an APPLY frame. */
 #define apply_frame_p()  \
-  ((framecode(FRAME_(0)) & ~bit(trapped_bit_t)) == (APPLY_frame_info & ~bit(trapped_bit_t)))
+  ((framecode(FRAME_(0)) & ~fbit(trapped_bit_t)) == (APPLY_frame_info & ~fbit(trapped_bit_t)))
 
 /* UP: jumps up one stackitem */
 local gcv_object_t* frame_up_1 (gcv_object_t* stackptr)

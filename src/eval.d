@@ -415,7 +415,7 @@ global /*maygc*/ void unwind (void)
                || frame_info == EVAL_frame_info || frame_info == TRAPPED_EVAL_frame_info,
                GCTRIGGER1(mv_space));
  #ifdef unwind_bit_t
-  if (frame_info & bit(unwind_bit_t)) /* anything to do? */
+  if (frame_info & fbit(unwind_bit_t)) /* anything to do? */
  #else
   if (frame_info >= unwind_limit_t) /* anything to do? */
  #endif
@@ -423,7 +423,7 @@ global /*maygc*/ void unwind (void)
          IBLOCK or ITAGBODY unnested) */
       if (frame_info < skip2_limit_t) { /* ENV- or DYNBIND-Frame? */
        #ifdef entrypoint_bit_t
-        if (frame_info & bit(entrypoint_bit_t)) /* BLOCK, TAGBODY, CATCH etc. ? */
+        if (frame_info & fbit(entrypoint_bit_t)) /* BLOCK, TAGBODY, CATCH etc. ? */
        #else
         if (frame_info < entrypoint_limit_t) /* BLOCK, TAGBODY, CATCH etc. ? */
        #endif
@@ -444,7 +444,7 @@ global /*maygc*/ void unwind (void)
             /* UNWIND_PROTECT_FRAME DRIVER_FRAME or trapped APPLY/EVAL_FRAME */
             if (frame_info & dynjump_mask_t) {
               /* UNWIND_PROTECT_FRAME or DRIVER_FRAME */
-              if (frame_info & bit(driver_bit_t)) {
+              if (frame_info & fbit(driver_bit_t)) {
                 /* DRIVER_FRAME */
               } else {
                 /* UNWIND_PROTECT_FRAME */
@@ -467,7 +467,7 @@ global /*maygc*/ void unwind (void)
           }
         else {
          #ifdef HAVE_SAVED_REGISTERS
-          if ((frame_info & bit(callback_bit_t)) == 0) {
+          if ((frame_info & fbit(callback_bit_t)) == 0) {
             /* CALLBACK_FRAME */
             var gcv_object_t* new_STACK = topofframe(STACK_0); /* Pointer to Frame */
             /* set callback_saved_registers: */
@@ -480,7 +480,7 @@ global /*maygc*/ void unwind (void)
           {
             /* VAR_FRAME or FUN_FRAME */
             var gcv_object_t* new_STACK = topofframe(STACK_0); /* Pointer to Frame */
-            if (frame_info & bit(fun_bit_t)) {
+            if (frame_info & fbit(fun_bit_t)) {
               /* for functions: do nothing */
             } else {
               /* VAR_FRAME, bindingptr iterates over the bindings */
@@ -504,7 +504,7 @@ global /*maygc*/ void unwind (void)
         }
       } else {
         /* DYNBIND_FRAME or CALLBACK_FRAME or ENV_FRAME */
-        if (frame_info & bit(envbind_bit_t)) {
+        if (frame_info & fbit(envbind_bit_t)) {
           /* ENV_FRAME */
           var gcv_object_t* ptr = &STACK_1;
           switch (frame_info & envbind_case_mask_t) {
@@ -577,7 +577,7 @@ global _GL_NORETURN_FUNC void reset (uintL count) {
               __FILE__,__LINE__,(unsigned long long)SP_anchor,(unsigned long long)SP());
       abort();
     }
-    if (framecode(STACK_0) & bit(frame_bit_t)) {
+    if (framecode(STACK_0) & fbit(frame_bit_t)) {
       /* at STACK_0: beginning of a frame */
       if (framecode(STACK_0) == DRIVER_frame_info) { /* DRIVER_FRAME ? */
         last_driver_frame = STACK; /* save the frame */
@@ -668,7 +668,7 @@ global _GL_NORETURN_FUNC /*maygc*/ void unwind_upto (gcv_object_t* upto_frame) {
   unwind_protect_to_save.fun        = &unwind_upto;
   unwind_protect_to_save.upto_frame = upto_frame;
   while (STACK != upto_frame) { /* arrived at target-frame? */
-    if (framecode(STACK_0) & bit(frame_bit_t)) { /* is it a frame? */
+    if (framecode(STACK_0) & fbit(frame_bit_t)) { /* is it a frame? */
       unwind(); /* yes -> unwind */
       /* (if this is a Unwind-Protect-Frame, then
          unwind_upto(upto_frame) is called again, and we are again here.) */
@@ -690,7 +690,7 @@ global void throw_to (object tag) {
                  for a CATCH-Frame with the same Tag: */
     if (eq(FRAME_(0),nullobj)) /* end of Stack? */
       return; /* yes -> no suitable Catch there -> jump back */
-    if (framecode(FRAME_(0)) & bit(frame_bit_t)) {
+    if (framecode(FRAME_(0)) & fbit(frame_bit_t)) {
       /* found frame */
       if ((framecode(FRAME_(0)) == CATCH_frame_info) /* Catch-Frame? */
           && eq(FRAME_(frame_tag),tag)) /* with the same tag? */
@@ -725,7 +725,7 @@ global maygc void invoke_handlers (object cond) {
       other_ranges = other_ranges->next;
     } else if (eq(FRAME_(0),nullobj)) { /* End of Stack? */
       break; /* yes -> finised, jump back */
-    } else if (framecode(FRAME_(0)) & bit(frame_bit_t)) {
+    } else if (framecode(FRAME_(0)) & fbit(frame_bit_t)) {
       /* found frame */
       var fcint frame_info = framecode(FRAME_(0));
       if (frame_info == HANDLER_frame_info || frame_info == C_HANDLER_frame_info) { /* Handler-Frame? */
@@ -1293,7 +1293,7 @@ global maygc gcv_environment_t* nest_env (gcv_environment_t* env5)
         /* env is a pointer into the STACK to a ITAGBODY-frame. */
         check_STACK();
         FRAME = TheFramepointer(env);
-        if (framecode(FRAME_(0)) & bit(nested_bit_t)) { /* frame already nested? */
+        if (framecode(FRAME_(0)) & fbit(nested_bit_t)) { /* frame already nested? */
           env = FRAME_(frame_next_env); /* yes -> fetch former Alist */
         } else {
           pushSTACK(env); /* save env */
@@ -1354,7 +1354,7 @@ global maygc gcv_environment_t* nest_env (gcv_environment_t* env5)
         /* env is a pointer into the STACK to a IBLOCK-Frame. */
         check_STACK();
         FRAME = TheFramepointer(env);
-        if (framecode(FRAME_(0)) & bit(nested_bit_t)) { /* Frame already nested? */
+        if (framecode(FRAME_(0)) & fbit(nested_bit_t)) { /* Frame already nested? */
           env = FRAME_(frame_next_env); /* yes -> fetch previous Alist */
         } else {
           pushSTACK(env); /* save env */
@@ -3262,7 +3262,7 @@ local maygc Values eval_fsubr (object fun, object args)
     error_toofew:       /* argument-list args is an atom, prematurely */
       if (!nullp(args)) goto error_dotted;
       /* clean up STACK up to the calling EVAL-Frame: */
-      while (!(framecode(STACK_0) & bit(frame_bit_t))) {
+      while (!(framecode(STACK_0) & fbit(frame_bit_t))) {
         skipSTACK(1);
       }
       {
@@ -3275,7 +3275,7 @@ local maygc Values eval_fsubr (object fun, object args)
     error_toomany:       /* argument-list args is not NIL at the tail */
       if (atomp(args)) goto error_dotted;
       /* clean up STACK up to the calling EVAL-Frame: */
-      while (!(framecode(STACK_0) & bit(frame_bit_t))) {
+      while (!(framecode(STACK_0) & fbit(frame_bit_t))) {
         skipSTACK(1);
       }
       {
@@ -3287,7 +3287,7 @@ local maygc Values eval_fsubr (object fun, object args)
       }
     error_dotted:         /* argument-list args ends with Atom /= NIL */
       /* clean up STACK up to the calling EVAL-Frame: */
-      while (!(framecode(STACK_0) & bit(frame_bit_t))) {
+      while (!(framecode(STACK_0) & fbit(frame_bit_t))) {
         skipSTACK(1);
       }
       {

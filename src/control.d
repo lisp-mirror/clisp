@@ -1,6 +1,6 @@
 /*
  * Special Forms, Control Structures, Evaluator Related Stuff for CLISP
- * Bruno Haible 1990-2005, 2016-2017
+ * Bruno Haible 1990-2005, 2016-2026
  * Sam Steingold 1998-2009, 2011
  * German comments translated into English: Stefan Kain 2002-09-28
  */
@@ -1349,7 +1349,7 @@ LISPSPECFORM(return_from, 1,1,nobody)
   while (framepointerp(env)) {
     /* env is a frame-pointer to a IBLOCK-frame in the stack. */
     FRAME = TheFramepointer(env);
-    if (framecode(FRAME_(0)) & bit(nested_bit_t)) {
+    if (framecode(FRAME_(0)) & fbit(nested_bit_t)) {
       /* frame already nested */
       env = FRAME_(frame_next_env); break;
     }
@@ -1680,7 +1680,7 @@ LISPSPECFORM(go, 1,0,nobody)
   while (framepointerp(env)) {
     /* env is a frame-pointer to a ITAGBODY-frame in the stack. */
     FRAME = uTheFramepointer(env);
-    if (framecode(FRAME_(0)) & bit(nested_bit_t)) {
+    if (framecode(FRAME_(0)) & fbit(nested_bit_t)) {
       /* frame already nested */
       env = FRAME_(frame_next_env); break;
     }

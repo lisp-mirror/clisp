@@ -4383,7 +4383,7 @@ global _GL_NORETURN_FUNC void quit (void) {
   VALUES0; /* do not save values for UNWIND-PROTECT-frames */
   unwind_protect_to_save.fun = (restartf_t)&quit;
   while (!(eq(STACK_0,nullobj) && eq(STACK_1,nullobj)))
-    if (framecode(STACK_0) & bit(frame_bit_t))
+    if (framecode(STACK_0) & fbit(frame_bit_t))
       /* At STACK_0 a frame starts */
       { unwind(); }             /* unwind frame */
     else

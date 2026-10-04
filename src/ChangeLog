@@ -1,3 +1,12 @@
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
+	Adapt types, macros, and variables for 64-bit mingw, part 2.
+	* spvw.d (quit): Use fbit instead of bit.
+	* eval.d (unwind, reset, unwind_upto, throw_to, invoke_handlers,
+	nest_env, eval_fsubr): Likewise.
+	* control.d (RETURN-FROM, GO): Likewise.
+	* debug.d (evalapply_frame_p, apply_frame_p): Likewise.
+
 2026-10-02  Bruno Haible  <bruno@clisp.org>
 
 	build: Tweak POT file generation.
