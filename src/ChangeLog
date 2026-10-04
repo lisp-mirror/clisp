@@ -1,5 +1,10 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Basic port to mingw/arm64.
+	* win32aux.d (do_sigintwait): Update for ARM64.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	clisp-link: Avoid spurious output.
 	* clisp-link.in (add): Discard output from lncp_some or lnscp_some.
 

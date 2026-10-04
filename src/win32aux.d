@@ -252,7 +252,9 @@ local DWORD WINAPI do_sigintwait (LPVOID arg)
           var CONTEXT context;
           context.ContextFlags = CONTEXT_CONTROL | CONTEXT_INTEGER;
           GetThreadContext(main_thread,&context);
-          #if defined(AMD64)
+          #if defined(ARM64)
+          context.Pc = hyperjump_dest;
+          #elif defined(AMD64)
           context.Rip = hyperjump_dest;
           #else
           context.Eip = hyperjump_dest;
