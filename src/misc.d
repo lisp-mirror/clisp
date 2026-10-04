@@ -141,6 +141,8 @@ LISPFUNN(machinetype,0)
         ret = coerce_imm_ss(ascii_to_string("PC/386"));
       } else if (info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
         ret = coerce_imm_ss(ascii_to_string("X86_64"));
+      } else if (info.wProcessorArchitecture == 12 /* PROCESSOR_ARCHITECTURE_ARM64 */) {
+        ret = coerce_imm_ss(ascii_to_string("ARM64"));
       }
     }
   #else
@@ -197,6 +199,8 @@ LISPFUNN(machine_version,0)
         ret = coerce_imm_ss(ret);
       } else if (info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
         ret = coerce_imm_ss(ascii_to_string("X86_64"));
+      } else if (info.wProcessorArchitecture == 12 /* PROCESSOR_ARCHITECTURE_ARM64 */) {
+        ret = coerce_imm_ss(ascii_to_string("ARM64"));
       }
     }
   #else
