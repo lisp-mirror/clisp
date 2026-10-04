@@ -1,5 +1,11 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Update memory mapping on FreeBSD/x86_64.
+	* lispbibl.d [UNIX_FREEBSD && AMD64]: Increase
+	MAPPABLE_ADDRESS_RANGE_START. Choose new values for SINGLEMAP_*.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Mark mingw/arm64 as a supported platform.
 	* NEWS: Add Windows/arm64 to the supported platforms list.
 
