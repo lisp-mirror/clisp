@@ -407,10 +407,10 @@ case "$1" in
       case '@build_os@,@host_os@' in
         cygwin*,mingw*)
            # Native Windows clisp does not understand the Cygwin symlinks.
-           lncp_some  "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem ;;
-        *) lnscp_some "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem ;;
+           lncp_some  "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem >/dev/null ;;
+        *) lnscp_some "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem >/dev/null ;;
       esac
-      lnscp_some "$sourcedir" "$destinationdir" modules.h modules.o makevars ${FILES}
+      lnscp_some "$sourcedir" "$destinationdir" modules.h modules.o makevars ${FILES} >/dev/null
     else
       cp "$sourcedir"/modules.h "$destinationdir"/modules.h
       FILES=`lnscp_some "$sourcedir" "$destinationdir" ${FILES}`
