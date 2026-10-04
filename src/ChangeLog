@@ -1,5 +1,12 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Fix directory pathname handling on Windows, part 2.
+	* pathname.d (assure_dir_exists) [WIN32_NATIVE]: Finish Sam's commit
+	from 2011-09-16 (commit 4458942cecd3a871a98149096be3234c9f722710):
+	Call MERGE-PATHNAMES also when the pathname is a directory.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Fix directory pathname handling on Windows, part 1.
 	* pathname.d (assure_dir_exists) [WIN32_NATIVE]: Finish Sam's commit
 	from 2008-03-10 (commit 22e40d97b8ad00027ffa271196582e3d10f9f973):

@@ -5204,10 +5204,8 @@ local inline void file_status_init(struct file_status *fs,gcv_object_t *path) {
 local maygc void assure_dir_exists (struct file_status *fs,
                                     bool links_resolved, bool tolerantp) {
   var bool nnullp = namenullp(*(fs->fs_pathname));
-  if (nnullp && links_resolved) {
-    fs->fs_namestring = directory_namestring(*(fs->fs_pathname));
-    return;
-  }
+  if (nnullp && links_resolved)
+    goto dir_exists;
   with_sstring_0(whole_namestring(*(fs->fs_pathname)),O(pathname_encoding),
                  path, {
     var char resolved[MAX_PATH];
@@ -5275,6 +5273,7 @@ local maygc void assure_dir_exists (struct file_status *fs,
       nnullp = namenullp(*(fs->fs_pathname));
     }
   });
+ dir_exists:
   /* merge in *DEFAULT-PATHNAME-DEFAULTS* & :VERSION :NEWEST:
      for cross-platform consistency, either all or no versions of
      assure_dir_exists() must call MERGE-PATHNAMES  */
