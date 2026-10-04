@@ -663,8 +663,11 @@ UNKNOWN
 ;; https://sourceforge.net/p/clisp/bugs/677/
 (compile-file-pathname (logical-pathname "clocc:clocc.lisp")
                        :output-file "/tmp/Bug677/file-TEMP01.fas")
-#+CLISP
+#+(and CLISP (not win32))
 #S(PATHNAME :HOST NIL :DEVICE NIL :DIRECTORY (:ABSOLUTE "tmp" "Bug677")
+            :NAME "file-TEMP01" :TYPE "fas" :VERSION :NEWEST)
+#+(and CLISP win32)
+#S(PATHNAME :HOST NIL :DEVICE "C" :DIRECTORY (:ABSOLUTE "tmp" "Bug677")
             :NAME "file-TEMP01" :TYPE "fas" :VERSION :NEWEST)
 #-CLISP
 UNKNOWN
@@ -1225,7 +1228,9 @@ NIL
     (delete-file f2)
     #+clisp (ext:delete-directory wd)
     #-clisp (delete-file wd)))
-(("bug-724/file" "bug-724/file.txt") T T)
+(#-win32 ("bug-724/file" "bug-724/file.txt")
+ #+win32 ("bug-724\\file" "bug-724\\file.txt")
+ T T)
 
 (let (lp) ; https://sourceforge.net/p/clisp/bugs/584/: bind *load-pathname* to the original arg
   (setf (logical-pathname-translations "FOO") '(("*" "./*")))
