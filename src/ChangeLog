@@ -1,5 +1,11 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Normalize the result of MACHINE-TYPE and MACHINE-VERSION.
+	* misc.d (MACHINE-TYPE, MACHINE-VERSION): Canonicalize "aarch64" to
+	"arm64".
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Change MACHINE-TYPE to return a read-only string.
 	* misc.d (MACHINE-TYPE): Return a read-only string.
 

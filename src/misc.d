@@ -121,7 +121,14 @@ LISPFUNN(machinetype,0)
     begin_system_call();
     if (uname(&utsname) < 0) { end_system_call(); OS_error(); }
     end_system_call();
-    pushSTACK(asciz_to_string(utsname.machine,O(misc_encoding)));
+    var const char* arch = utsname.machine;
+    #ifdef ARM64
+    /* Convert "aarch64", a term used only by gcc and binutils people,
+       to "arm64", the term used by everyone else. */
+    if (asciz_equal(arch,"aarch64"))
+      arch = "arm64";
+    #endif
+    pushSTACK(asciz_to_string(arch,O(misc_encoding)));
     funcall(L(nstring_upcase),1); /* convert to uppercase */
     ret = coerce_imm_ss(value1);
   #elif defined(WIN32_NATIVE)
@@ -154,7 +161,14 @@ LISPFUNN(machine_version,0)
     begin_system_call();
     if (uname(&utsname) < 0) { end_system_call(); OS_error(); }
     end_system_call();
-    pushSTACK(asciz_to_string(utsname.machine,O(misc_encoding)));
+    var const char* arch = utsname.machine;
+    #ifdef ARM64
+    /* Convert "aarch64", a term used only by gcc and binutils people,
+       to "arm64", the term used by everyone else. */
+    if (asciz_equal(arch,"aarch64"))
+      arch = "arm64";
+    #endif
+    pushSTACK(asciz_to_string(arch,O(misc_encoding)));
     funcall(L(nstring_upcase),1); /* convert to uppercase */
     ret = coerce_imm_ss(value1);
   #elif defined(WIN32_NATIVE)
