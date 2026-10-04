@@ -1,5 +1,13 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Fix directory pathname handling on Windows, part 1.
+	* pathname.d (assure_dir_exists) [WIN32_NATIVE]: Finish Sam's commit
+	from 2008-03-10 (commit 22e40d97b8ad00027ffa271196582e3d10f9f973):
+	Don't expect the pathname in STACK_0. Don't store the result in STACK_0.
+	Optimize.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Update memory mapping on mingw/x86_64.
 	* lispbibl.d [WIN32_NATIVE && AMD64]: Set
 	TYPECODES_WITH_TRIVIALMAP_WORKS, TYPECODES_WITH_MALLOC_WORKS to 1.

@@ -5192,9 +5192,10 @@ struct file_status {
   object fs_namestring; /* usually returned by assure_dir_exists() */
   DWORD fs_fileattr;
 };
-local inline bool file_status_is_dir (struct file_status *fs)
-{ return fs->fs_fileattr == 0xFFFFFFFF
-    || !(fs->fs_fileattr & FILE_ATTRIBUTE_DIRECTORY); }
+local inline bool file_status_is_dir (struct file_status *fs) {
+  return fs->fs_fileattr == 0xFFFFFFFF
+         || !(fs->fs_fileattr & FILE_ATTRIBUTE_DIRECTORY);
+}
 local inline void file_status_init(struct file_status *fs,gcv_object_t *path) {
   fs->fs_pathname = path;
   fs->fs_namestring = nullobj;
@@ -5244,12 +5245,12 @@ local maygc void assure_dir_exists (struct file_status *fs,
                turn it into a pathname and use it with old name: */
               pushSTACK(coerce_pathname(STACK_0));
               /* save old pathname name and type components */
-              pushSTACK(ThePathname(STACK_2)->pathname_name);
-              pushSTACK(ThePathname(STACK_3)->pathname_type);
-              *(fs->fs_pathname) = STACK_2;
-              ThePathname(*(fs->fs_pathname))->pathname_name = STACK_1;
-              ThePathname(*(fs->fs_pathname))->pathname_type = STACK_0;
-              skipSTACK(4);
+              var object old_name = ThePathname(*(fs->fs_pathname))->pathname_name;
+              var object old_type = ThePathname(*(fs->fs_pathname))->pathname_type;
+              *(fs->fs_pathname) = STACK_0;
+              ThePathname(*(fs->fs_pathname))->pathname_name = old_name;
+              ThePathname(*(fs->fs_pathname))->pathname_type = old_type;
+              skipSTACK(2);
               error = false;
             }
           }
@@ -5277,13 +5278,16 @@ local maygc void assure_dir_exists (struct file_status *fs,
   /* merge in *DEFAULT-PATHNAME-DEFAULTS* & :VERSION :NEWEST:
      for cross-platform consistency, either all or no versions of
      assure_dir_exists() must call MERGE-PATHNAMES  */
-  funcall(L(merge_pathnames),1); pushSTACK(value1);
+  pushSTACK(*(fs->fs_pathname));
+  funcall(L(merge_pathnames),1);
+  *(fs->fs_pathname) = value1;
   { var object dns = directory_namestring(*(fs->fs_pathname));
-    fs->fs_namestring = nnullp ? dns : OSnamestring(dns); }
+    fs->fs_namestring = nnullp ? dns : OSnamestring(dns);
+  }
 }
 #endif
 
-#endif
+#endif /* PATHNAME_WIN32 */
 
 #ifdef PATHNAME_UNIX
 
@@ -5366,8 +5370,9 @@ struct file_status {
   bool fs_stat_validp;
   struct stat fs_stat;
 };
-local inline bool file_status_is_dir (struct file_status *fs)
-{ return S_ISDIR(fs->fs_stat.st_mode); }
+local inline bool file_status_is_dir (struct file_status *fs) {
+  return S_ISDIR(fs->fs_stat.st_mode);
+}
 local inline void file_status_init(struct file_status *fs,gcv_object_t *path) {
   fs->fs_pathname = path;
   fs->fs_namestring = nullobj;
