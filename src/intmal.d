@@ -47,6 +47,12 @@ local _Noreturn void mal_ueberlauf (void) {
 # empfindlicher reagieren als auf eine Überschreitung des Optimums,
 # sind wir vorsichtig und wählen einen Wert etwas über dem Optimum:
 #define karatsuba_threshold  16
+# clang 22.1.7 on Windows/arm64 apparently miscompiles the Karatsuba
+# multiplication code. Therefore disable this optimization on this platform.
+#if defined(ARM64) && defined(__clang__)
+  #undef karatsuba_threshold
+  #define karatsuba_threshold ((uintC)~(uintC)0)
+#endif
 
 # Quadriert eine Unsigned-Digit-sequence.
 # UDS_square_UDS(len1,LSDptr1, MSDptr=,len=,LSDptr=);

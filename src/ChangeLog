@@ -1,5 +1,11 @@
 2026-10-04  Bruno Haible  <bruno@clisp.org>
 
+	Work around clang bug on mingw/arm64.
+	* intmal.d (karatsuba_threshold): Define to a large value on arm64 with
+	clang.
+
+2026-10-04  Bruno Haible  <bruno@clisp.org>
+
 	Basic port to mingw/arm64.
 	* win32aux.d (do_sigintwait): Update for ARM64.
 
