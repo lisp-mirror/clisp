@@ -574,8 +574,8 @@ NIL
 (socket-server-close *server*) NIL
 
 (progn
-  (setq *server* (show (socket-server 9090))
-        *socket-1* (show (socket-connect 9090 "localhost" :timeout 0
+  (setq *server* (show (socket-server 9094))
+        *socket-1* (show (socket-connect 9094 "localhost" :timeout 0
                                          :buffered nil))
         *socket-2* (show (socket-accept *server* :buffered nil)))
   (write-char #\a *socket-1*))
