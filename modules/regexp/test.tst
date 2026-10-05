@@ -47,7 +47,7 @@
 
 ;;; note also that some original tests had empty alternatives in grouping
 ;;; which is forbidden by POSIX
-;;; http://opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html:
+;;; https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap09.html:
 ;;; "A <vertical-line> appearing first or last in an ERE, or immediately
 ;;;  following a <vertical-line> or a <left-parenthesis>, or immediately
 ;;;  preceding a <right-parenthesis>, produces undefined results."

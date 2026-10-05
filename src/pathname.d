@@ -29,7 +29,7 @@
 
 /* We need the realpath() function in two variants:
    (1) The POSIX function, declared in <stdlib.h>.
-       <http://opengroup.org/onlinepubs/9699919799/functions/realpath.html>
+       <https://pubs.opengroup.org/onlinepubs/9799919799/functions/realpath.html>
    (2) Our own implementation that returns information about the missing
        directory component, in case of ENOENT return.
    We need (1) because on some systems, notably on Cygwin,

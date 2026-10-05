@@ -17353,7 +17353,7 @@ modexp maygc off_t handle_length (gcv_object_t *stream_, Handle fd) {
      the file position was modified but not restored.
      However, this would indicate a bug in the underlying lseek()
      implementation, see the list of ERRORS in
-     http://opengroup.org/onlinepubs/9699919799/functions/lseek.html */
+     https://pubs.opengroup.org/onlinepubs/9799919799/functions/lseek.html */
   fd_lseek(stream_,fd,pos,SEEK_SET,); /* restore the original location */
   return len;
 }

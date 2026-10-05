@@ -427,7 +427,7 @@
 (defconstant stderr (%stdio 2))
 ;;;--------------------------------------------------------------------------
 (defun ffs (n) (integer-length (logand n (- n))))
-;; http://opengroup.org/onlinepubs/9699919799/functions/ffs.html
+;; https://pubs.opengroup.org/onlinepubs/9799919799/functions/ffs.html
 ;; this lisp implementation is about 10% faster than using FFI:
 ;; (ffi:def-call-out ffs (:name "ffs") (:arguments (i ffi:int))
 ;;   (:return-type ffi:int) (:language :stdc) (:library :default))
