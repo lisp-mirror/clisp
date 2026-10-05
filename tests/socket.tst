@@ -704,9 +704,10 @@ T
                   (t (os-error-code c)))))))
       (socket:socket-server-close se))))
 #-CYGWIN
-(:OUTPUT "foo" NIL #-win32 :APPEND #+win32 :OUTPUT
+(:OUTPUT "foo" NIL
+ #-win32 :APPEND #+win32 :OUTPUT  ; sometimes :OUTPUT also on Alma Linux or OpenBSD
  T T
- #.(if (equal (ext:operating-system-type) "OpenBSD") ':ERROR ':APPEND))
+ :APPEND)
 
 ;; https://sourceforge.net/p/clisp/feature-requests/46/
 (check-os-error (socket:socket-connect 0)
