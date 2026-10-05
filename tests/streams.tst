@@ -1280,8 +1280,8 @@ T
 (or (null s) (not (search "#P" (prin1-to-string s))) (pathnamep (truename s))) T
 (or (null s) (handler-case (write-line "foo" s)
                (stream-error (c) (princ-error c) t))) T
-#-win32 (or (null s) (with-open-file (copy s) (streamp copy)))
-#-win32 #.(if (member (ext:operating-system-type) '("AIX" "Haiku" "Minix" "Windows") :test #'equal) 'ERROR 'T)
+#-(or win32 cygwin) (or (null s) (with-open-file (copy s) (streamp copy)))
+#-(or win32 cygwin) #.(if (member (ext:operating-system-type) '("AIX" "Haiku" "Minix" "Windows") :test #'equal) 'ERROR 'T)
 (streamp (setq s (make-stream :output))) T
 (or (not (search "#P" (prin1-to-string s))) (pathnamep (truename s))) T
 (write-line "foo" s) "foo"
