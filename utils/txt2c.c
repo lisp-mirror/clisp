@@ -125,11 +125,7 @@ int main (int argc, char* argv[]) {
       fprintf(stderr,"Bad option.\n"); exit(1);
     }
   }
-#ifdef CROSS
-  printf("#include \"lispbibl.h\"\n");
-#else
   printf("#include \"lispbibl.c\"\n");
-#endif
   printf("#include <stdio.h>\n");
   printf("#ifdef __cplusplus\n");
   printf("extern \"C\" void exit(int);\n");

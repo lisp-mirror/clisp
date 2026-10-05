@@ -1,5 +1,25 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system: Remove option for cross-compilation.
+	The cross-compilation ability was last used in 1991, for memory-starved
+	machines like Atari ST.
+	* makemake.in (CROSS): Remove variable.
+	(TSYS): Remove variable. Use HSYS instead.
+	(TOS): Remove variable. Use HOS instead.
+	(A_XCPPFLAGS): Remove variable. Use A_CPPFLAGS instead.
+	(Z_XCPPFLAGS): Remove variable. Use Z_CPPFLAGS instead.
+	(A_XCFLAGS): Remove variable. Use A_CFLAGS instead.
+	(Z_XCFLAGS): Remove variable. Use Z_CFLAGS instead.
+	(A_XLDFLAGS): Remove variable. Use A_LDFLAGS instead.
+	(Z_XLDFLAGS): Remove variable. Use Z_LDFLAGS instead.
+	(XCC_GCC): Remove variable. Use CC_GCC instead.
+	(XCC_NEED_DEEMA): Remove variable. Use CC_NEED_DEEMA instead.
+	(XCC_SUNPRO): Remove variable. Use CC_SUNPRO instead.
+	(XCC_BRAND): Remove variable. Use CC_BRAND instead.
+	* utils/txt2c: Don't test the CROSS macro.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	syscalls: Don't define the POSIX:GETDATE function on NetBSD.
 	NetBSD getdate() is broken: The unit test fails with "getdate error 7".
 	* modules/syscalls/calls.c (POSIX:GETDATE): Don't define on NetBSD.
