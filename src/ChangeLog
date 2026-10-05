@@ -1,5 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	syscalls: Don't define the POSIX:GETDATE function on NetBSD.
+	NetBSD getdate() is broken: The unit test fails with "getdate error 7".
+	* modules/syscalls/calls.c (POSIX:GETDATE): Don't define on NetBSD.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Update memory mapping on OpenBSD/x86_64.
 	* lispbibl.d [UNIX_OPENBSD && AMD64]: Increase
 	MAPPABLE_ADDRESS_RANGE_START. Choose new values for SINGLEMAP_*.
