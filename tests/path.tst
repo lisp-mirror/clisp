@@ -663,11 +663,9 @@ UNKNOWN
 ;; https://sourceforge.net/p/clisp/bugs/677/
 (compile-file-pathname (logical-pathname "clocc:clocc.lisp")
                        :output-file "/tmp/Bug677/file-TEMP01.fas")
-#+(and CLISP (not win32))
-#S(PATHNAME :HOST NIL :DEVICE NIL :DIRECTORY (:ABSOLUTE "tmp" "Bug677")
-            :NAME "file-TEMP01" :TYPE "fas" :VERSION :NEWEST)
-#+(and CLISP win32)
-#S(PATHNAME :HOST NIL :DEVICE "C" :DIRECTORY (:ABSOLUTE "tmp" "Bug677")
+#+CLISP
+#S(PATHNAME :HOST NIL :DEVICE #.(pathname-device *default-pathname-defaults*)
+            :DIRECTORY (:ABSOLUTE "tmp" "Bug677")
             :NAME "file-TEMP01" :TYPE "fas" :VERSION :NEWEST)
 #-CLISP
 UNKNOWN

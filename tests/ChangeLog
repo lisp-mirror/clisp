@@ -1,5 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Avoid some test failures on mingw.
+	* path.tst: Update some expected results for win32.
+	* streams.tst: Disable some tests on win32.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Avoid a test failure on macOS.
 	* streams.tst: Update an expected result on macOS.
 
