@@ -1071,6 +1071,12 @@ OS_INCLUDES=''
 if [ $HSYS = master -o $HOS = unix ] ; then
   OS_INCLUDES=$OS_INCLUDES' unix'
   LIBS=$LIBS" $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
+  if [ "$host_os" = solaris2.11 ] \
+     && uname -X 2>/dev/null | grep '^KernelID = omnios'; then
+    # On Solaris 11 OmniOS, gethostbyaddr and gethostbyname are in libnsl,
+    # not in libc.
+    LIBS=$LIBS" -lnsl"
+  fi
 fi
 if [ $HSYS = master -o $HOS = win32 ] ; then
   OS_INCLUDES=$OS_INCLUDES' win32'

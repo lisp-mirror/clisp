@@ -1,5 +1,10 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Fix a link error on Solaris 11 OmniOS.
+	* makemake.in (LIBS): On Solaris 11 OmniOS, add '-lnsl'.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system: Remove option for cross-compilation.
 	The cross-compilation ability was last used in 1991, for memory-starved
 	machines like Atari ST.
