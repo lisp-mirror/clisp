@@ -1,5 +1,15 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Make SAVEINITMEM work in and beyond the year 2036.
+	Reported by Bernhard M. Wiedemann at
+	<https://gitlab.com/gnu-clisp/clisp/-/work_items/59>.
+	* spvw_memfile.d (memflags): Add bit 23.
+	(memdump_header_t): Change _dumptime from 32-bit to 64-bit.
+	(savemem): Call I_to_UQ instead of I_to_UL.
+	(memfile_handle_do_operation): Print the dump time as a 64-bit integer.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Fix a link error on Solaris 11 OmniOS.
 	* makemake.in (LIBS): On Solaris 11 OmniOS, add '-lnsl'.
 

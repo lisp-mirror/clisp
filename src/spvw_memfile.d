@@ -143,6 +143,9 @@ local const uint32 memflags =
  #ifdef MFIH_LEN
   bit(22) |
  #endif
+ #if 1 /* _dumptime is 64-bit */
+  bit(23) |
+ #endif
   0;
 
 /* Maximum length of (machine-instance) return value: */
@@ -185,7 +188,7 @@ typedef struct {
  #ifndef SPVW_MIXED_BLOCKS_OPPOSITE
   uintC _heapcount;
  #endif
-  uintL _dumptime;
+  uint64 _dumptime;
   char _dumphost[DUMPHOST_LEN+1];
 } memdump_header_t;
 /* then the module names,
@@ -659,7 +662,7 @@ global maygc off_t savemem (object stream, uintL executable)
   /* GET-UNIVERSAL-TIME and MACHINE-INSTANCE cons,
      so they should be called before gar_col() */
   funcall(L(get_universal_time),0);
-  var uintL universal_time = I_to_UL(value1);
+  var uint64 universal_time = I_to_UQ(value1);
   funcall(L(machine_instance),0);
   var char hostname[DUMPHOST_LEN+1];
   memset(hostname,'\0',DUMPHOST_LEN+1);
@@ -2012,7 +2015,7 @@ local bool memfile_handle_do_operation (Handle handle, const char* filename, mem
               (uintL)posfixnum_to_V(header._dumptime.seconds));
     #endif
     char memdumptime[10+1];
-    sprintf(memdumptime,"%lu",(unsigned long)header._dumptime);
+    sprintf(memdumptime,"%llu",(unsigned long long)header._dumptime);
     O(memory_image_timestamp) = ascii_to_string(memdumptime);
     O(memory_image_host) = asciz_to_string(header._dumphost,
                                            Symbol_value(S(utf_8)));
