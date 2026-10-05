@@ -806,9 +806,9 @@ type-error
 (oddp 3.5)
 type-error
 
-#+(and UNIX (not BeOS))
+#+(and UNIX (not CYGWIN))
 (progn (open "/etc/passwd" :direction :input :if-exists :error) (/ 0))
-#+(and UNIX (not BeOS))
+#+(and UNIX (not CYGWIN))
 division-by-zero
 
 #+UNIX

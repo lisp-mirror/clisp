@@ -1,6 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
 	Avoid a test failure on Cygwin.
+	* excepsit.tst: On Cygwin, don't assume that /etc/passwd exists.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
+	Avoid a test failure on Cygwin.
 	* path.tst: On Cygwin, don't assume that non-ASCII characters in
 	file names work.
 
