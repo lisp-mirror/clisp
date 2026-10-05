@@ -1,5 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Make LISP-IMPLEMENTATION-VERSION work in and beyond the year 2036.
+	* misc.d (LISP-IMPLEMENTATION-VERSION): Print the universal time as a
+	64-bit integer.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Make SAVEINITMEM work in and beyond the year 2036.
 	Reported by Bernhard M. Wiedemann at
 	<https://gitlab.com/gnu-clisp/clisp/-/work_items/59>.

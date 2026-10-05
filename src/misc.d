@@ -69,7 +69,7 @@ LISPFUN(lisp_implementation_version,seclass_no_se,0,0,norest,nokey,0,NIL)
             pushSTACK(fixnum(mo));
             pushSTACK(fixnum(ye));
             funcall(S(encode_universal_time),6);
-            sprintf(build_time,"%u", (unsigned int) I_to_UL(value1));
+            sprintf(build_time,"%llu", (unsigned long long) I_to_UQ(value1));
           }
           O(lisp_implementation_version_built_string) =
             ascii_to_string(build_time);
