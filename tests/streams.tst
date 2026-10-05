@@ -1290,7 +1290,7 @@ T
 (write-line "foo" s) "foo"
 (let ((*reopen-open-file* nil)) ; stdout can be a file, it will be detected!
   (with-open-file (copy s :direction :output) (streamp copy)))
-#.(if (member (ext:operating-system-type) '("AIX" "Haiku" "Minix" "Windows") :test #'equal) 'ERROR 'T)
+#.(if (member (ext:operating-system-type) '("AIX" "Darwin" "Haiku" "Minix" "Windows") :test #'equal) 'ERROR 'T)
 
 #+clisp
 (progn
