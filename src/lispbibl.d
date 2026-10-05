@@ -2548,12 +2548,12 @@ typedef enum {
        STACK_ADDRESS_RANGE  = 0x00000000UL
        There is room from 0x21000000UL to 0x5D000000UL
        (from which addresses < 0x38000000UL cannot be allocated)
-       and from 0x80000000UL to 0xFF000000UL. */
+       and from 0x81000000UL to 0xFF000000UL. */
     #if 0 /* both are possible */
       #define MAPPABLE_ADDRESS_RANGE_START 0x38000000UL
       #define MAPPABLE_ADDRESS_RANGE_END   0x57FFFFFFUL
     #else
-      #define MAPPABLE_ADDRESS_RANGE_START 0x80000000UL
+      #define MAPPABLE_ADDRESS_RANGE_START 0x81000000UL
       #define MAPPABLE_ADDRESS_RANGE_END   0xFEFFFFFFUL
     #endif
   #endif

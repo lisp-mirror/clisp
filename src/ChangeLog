@@ -1,5 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	Update memory mapping on Cygwin/i386.
+	* lispbibl.d [UNIX_CYGWIN && I80386]: Increase
+	MAPPABLE_ADDRESS_RANGE_START.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Make LISP-IMPLEMENTATION-VERSION work in and beyond the year 2036.
 	* misc.d (LISP-IMPLEMENTATION-VERSION): Print the universal time as a
 	64-bit integer.
