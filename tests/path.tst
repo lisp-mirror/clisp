@@ -1339,7 +1339,7 @@ NIL
                                              (ext:default-directory)))))
 #+(and clisp win32) T
 
-#+(and clisp unicode (not macos))
+#+(and clisp unicode (not macos) (not cygwin))
 (block test-weird-pathnames
   (handler-bind ((parse-error
                   ;; https://sourceforge.net/p/clisp/mailman/message/20057056/
@@ -1363,7 +1363,7 @@ NIL
                       (equal (directory "weird*") dir))
                     (eq custom:*pathname-encoding* charset:iso-8859-1))))
         (delete-file weird)))))
-#+(and clisp unicode (not macos)) (T NIL T T)
+#+(and clisp unicode (not macos) (not cygwin)) (T NIL T T)
 
 ;; DOS attack: bad pathnames in search can break LOAD
 ;; http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=443520

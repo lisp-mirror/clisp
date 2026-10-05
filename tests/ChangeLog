@@ -1,6 +1,12 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
 	Avoid a test failure on Cygwin.
+	* path.tst: On Cygwin, don't assume that non-ASCII characters in
+	file names work.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
+	Avoid a test failure on Cygwin.
 	* streams.tst: Disable some test on Cygwin.
 
 2026-10-05  Bruno Haible  <bruno@clisp.org>
