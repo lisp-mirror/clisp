@@ -1,5 +1,11 @@
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
+	syscalls: Don't define the POSIX:GETDATE function on macOS.
+	macOS getdate() is broken: It misparses "10/1/87 4 PM".
+	* modules/syscalls/calls.c (POSIX:GETDATE): Don't define on macOS.
+
+2026-10-05  Bruno Haible  <bruno@clisp.org>
+
 	Update memory mapping on Cygwin/i386.
 	* lispbibl.d [UNIX_CYGWIN && I80386]: Increase
 	MAPPABLE_ADDRESS_RANGE_START.

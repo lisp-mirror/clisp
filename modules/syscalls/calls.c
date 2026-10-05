@@ -616,7 +616,7 @@ DEFUN(POSIX:STRING-TIME, format &optional datum timezone)
   } else error_string_integer(STACK_1);
 }
 
-#if defined(HAVE_GETDATE) && defined(HAVE_DECL_GETDATE_ERR) && !defined(UNIX_NETBSD)
+#if defined(HAVE_GETDATE) && defined(HAVE_DECL_GETDATE_ERR) && !(defined(UNIX_MACOSX) || defined(UNIX_NETBSD))
 DEFUN(POSIX:GETDATE, timespec &optional timezone)
 { /* https://pubs.opengroup.org/onlinepubs/9799919799/functions/getdate.html */
   struct tm *tm;
