@@ -2871,17 +2871,17 @@ typedef enum {
        CODE_ADDRESS_RANGE   = 0x000000xxxx000000UL ... 0x00001Fxxxx000000UL
        MALLOC_ADDRESS_RANGE = 0x000000xxxx000000UL ... 0x00001Fxxxx000000UL
        SHLIB_ADDRESS_RANGE  = 0x000001xxxx000000UL ... 0x00001Fxxxx000000UL
-       STACK_ADDRESS_RANGE  = 0x00007F7FFx000000UL
+       STACK_ADDRESS_RANGE  = 0x00006Fxxxx000000UL ... 0x00007Fxxxx000000UL
        The allocated ranges are randomized across the range
        from 0x000000000000UL to 0x200000000000UL.
-       There is room from 0x200000000000UL to 0x7F0000000000UL. */
+       There is room from 0x200000000000UL to 0x6F0000000000UL. */
     /* Force the same CODE_ADDRESS_RANGE across platforms. */
     #if (CODE_ADDRESS_RANGE <= 0x00001FFFFF000000UL)
       #undef CODE_ADDRESS_RANGE
       #define CODE_ADDRESS_RANGE 0x00001FFFFF000000UL
     #endif
     #define MAPPABLE_ADDRESS_RANGE_START 0x200000000000UL
-    #define MAPPABLE_ADDRESS_RANGE_END   0x7EFFFFFFFFFFUL
+    #define MAPPABLE_ADDRESS_RANGE_END   0x5FFFFFFFFFFFUL
   #endif
   #if defined(UNIX_MACOSX) && defined(AMD64)
     /* On Mac OS X 10.5.8/x86_64:
@@ -3599,10 +3599,10 @@ Long-Float, Ratio and Complex (only if SPVW_MIXED).
   #endif
   #if defined(UNIX_OPENBSD) && defined(AMD64) /* OpenBSD/x86_64 */
     #define SINGLEMAP_ADDRESS_BASE 0x200000000000UL
-    #define SINGLEMAP_TYPE_MASK    0x5F0000000000UL
-    #define SINGLEMAP_oint_type_shift 40
+    #define SINGLEMAP_TYPE_MASK    0x1F8000000000UL
+    #define SINGLEMAP_oint_type_shift 39
     /* Actually no such configuration works, because the CODE_ADDRESS_RANGE
-       consumes so many bits that we have at most 2+1 bits for the typecode. */
+       consumes so many bits that we have at most 1+1 bits for the typecode. */
     #define SINGLEMAP_WORKS 0
   #endif
   #if defined(UNIX_MACOSX) && defined(AMD64) /* Mac OS X/x86_64 */
