@@ -1,5 +1,12 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Fix some "make check-fresh-line" or "make check-script" failures.
+	* makemake.in (locale, check-fresh-line, check-script, clean-subdirs,
+	distclean-subdirs): Don't rely on the exit code of a shell 'if'
+	statement without an 'else' branch.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Fix a compilation error of the syscalls module on Solaris 11.4.
 	* Makefile.devel (GNULIB_CORE): Add getdomainname.
 	* modules/syscalls/configure.in: Don't test for getdomainname.
