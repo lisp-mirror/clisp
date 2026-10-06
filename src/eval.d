@@ -2691,7 +2691,7 @@ local maygc Values funcall_iclosure (object closure, gcv_object_t* args_pointer,
         /* yes -> collect residual arguments in a list: */
         pushSTACK(NIL); /* start of list */
         if (argcount>0) {
-          var gcv_object_t* ptr = args_pointer STACKop -(uintP)argcount;
+          var gcv_object_t* ptr = args_pointer STACKop -(sintP)argcount;
           var uintC count;
           dotimespC(count,argcount, {
             var object new_cons = allocate_cons();
@@ -4417,7 +4417,7 @@ local maygc Values apply_subr (object fun, uintC args_on_stack, object args)
     argcount = args_on_stack;
     get_space_on_STACK(sizeof(gcv_object_t) * (uintL)key_count);
     {
-      var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(uintP)key_count;
+      var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(sintP)key_count;
       var gcv_object_t* ptr1 = args_end_pointer;
       var gcv_object_t* ptr2 = new_args_end_pointer;
       var uintC count;
@@ -4787,7 +4787,7 @@ local maygc Values apply_closure (object closure, uintC args_on_stack, object ar
           shift++;              /* poss. 1 more for Rest-Parameter */
         argcount = args_on_stack;
         get_space_on_STACK(sizeof(gcv_object_t) * shift);
-        var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(uintP)shift;
+        var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(sintP)shift;
         var gcv_object_t* ptr1 = args_end_pointer;
         var gcv_object_t* ptr2 = new_args_end_pointer;
         var uintC count;
@@ -5234,7 +5234,7 @@ local maygc Values funcall_subr (object fun, uintC args_on_stack)
     argcount = args_on_stack;                 /* (> 0) */
     get_space_on_STACK(sizeof(gcv_object_t) * (uintL)key_count);
     {
-      var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(uintP)key_count;
+      var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(sintP)key_count;
       var gcv_object_t* ptr1 = args_end_pointer;
       var gcv_object_t* ptr2 = new_args_end_pointer;
       var uintC count;
@@ -5629,7 +5629,7 @@ local maygc Values funcall_closure (object closure, uintC args_on_stack)
           shift++;              /* poss. 1 more for Rest-Parameter */
         argcount = args_on_stack;
         get_space_on_STACK(sizeof(gcv_object_t) * shift);
-        var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(uintP)shift;
+        var gcv_object_t* new_args_end_pointer = args_end_pointer STACKop -(sintP)shift;
         var gcv_object_t* ptr1 = args_end_pointer;
         var gcv_object_t* ptr2 = new_args_end_pointer;
         var uintC count;

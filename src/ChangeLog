@@ -1,5 +1,27 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Fix build with clang's undefined-behaviour sanitizer.
+	* intparam.c (NO_SANITIZE): New macro.
+	(main3, main4, main5): Use it.
+	* lispbibl.d: Include malloca.h, needed for DYNAMIC_ARRAY with not
+	GCC-compatible compilers.
+	(DYNAMIC_ARRAY): Don't use the array syntax if SANITIZE_UNDEFINED is
+	defined.
+	(fixnum_inc): Don't use objectplus, since it may use pointerplus in its
+	expansion.
+	(class_): New type.
+	(Class): Define in terms of class_.
+	(defined_class_length): Use offsetof.
+	* spvw.d (init_symbol_tab_2): For STACKop, cast small integers to sintP,
+	not uintP.
+	* eval.d (funcall_iclosure, apply_subr, apply_closure, funcall_subr,
+	funcall_closure): Likewise.
+	* hashtabl.d (hashcode_tuple, equal_tuple): Likewise.
+	* sort.d (SORT(SORTID,sort)): Test for n being 0 before defining w.
+	* intbyte.d (mkf_extract): Shift an unsigned long, not a signed long.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Don't write pointer[-(uintP)offset].
 	Reported by clang's undefined-behaviour sanitizer.
 	* intlog.d (I_I_logbitp): Write 'pointer-(uintP)offset' instead of

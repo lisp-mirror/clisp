@@ -1628,7 +1628,7 @@ local void init_symbol_tab_2 (void) {
       pname_ptr++;
       var uintB this_index = *index_ptr++;
       var gcv_object_t* package_ = /* pointer to the package */
-        &STACK_(package_count-1) STACKop -(uintP)this_index;
+        &STACK_(package_count-1) STACKop -(sintP)this_index;
       pushSTACK(symbol_tab_ptr_as_object(ptr)); /* Symbol */
       import(&STACK_0,package_);                /* import normally */
       switch (this_index) {

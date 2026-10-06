@@ -27,6 +27,16 @@
    For literal strings, use print. */
 #define print(string) fputs(string,stdout)
 
+/* Allow left-shifts of signed integers that may "overflow" (undefined behaviour
+   according to ISO C).  */
+#if __GNUC__ + (__GNUC_MINOR__ >= 9) > 4 && !defined __clang__
+# define NO_SANITIZE __attribute__ ((__no_sanitize_undefined__))
+#elif defined __clang__ && __clang_major__ >= 4
+# define NO_SANITIZE __attribute__ ((__no_sanitize__ ("undefined")))
+#else
+# define NO_SANITIZE
+#endif
+
 /* Boolean type.  */
 /* Not a typedef because AIX <sys/types.h> already defines boolean_t.  */
 #define boolean_t int
@@ -186,7 +196,7 @@ void main2(void) {
     where1 = x1; where2 = x2;                   \
   }
 
-void main3(void) {
+NO_SANITIZE void main3(void) {
 #define compare_integer_representation(type1,type2,typestr1,typestr2,type1_bitsize,type2_bitsize,where)  \
   { if ((type1_bitsize>=0) && (type2_bitsize>=0)                        \
         && (type1_bitsize==type2_bitsize)) {                            \
@@ -221,7 +231,7 @@ void main3(void) {
   print("\n");
 }
 
-void main4(void) {
+NO_SANITIZE void main4(void) {
 #define test_integer_ushift(type,typestr,type_bitsize)                  \
   if (type_bitsize >= 0) {                                              \
     int i,j,shc;                                                        \
@@ -302,7 +312,7 @@ void main4(void) {
   test_integer_sshift(longlong,"long long",longlong_bitsize);
 }
 
-void main5(void) {
+NO_SANITIZE void main5(void) {
 #define test_integer_casts(type1,type2,typestr1,typestr2,type1_bitsize,type2_bitsize,want) \
   if (type1_bitsize <= type2_bitsize) {                                 \
     int i,j;                                                            \

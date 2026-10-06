@@ -1,6 +1,6 @@
 /*
  * Hash-Tables in CLISP
- * Bruno Haible 1990-2005, 2016-2019, 2025
+ * Bruno Haible 1990-2005, 2016-2019, 2025-2026
  * Sam Steingold 1998-2011
  * German comments translated into English: Stefan Kain 2002-01-29
  */
@@ -2617,7 +2617,7 @@ local uint32 hashcode_tuple (uintC n, const gcv_object_t* args_pointer,
     var uintC n1 = tuple_half_1[n];
     var uintC n2 = tuple_half_2[n]; /* n1 + n2 = n */
     var uint32 code1 = hashcode_tuple(n1,args_pointer,depth+1);
-    var uint32 code2 = hashcode_tuple(n2,args_pointer STACKop -(uintP)n1,
+    var uint32 code2 = hashcode_tuple(n2,args_pointer STACKop -(sintP)n1,
                                       depth+1);
     switch (depth) {
       case 0: code1 = rotate_left(16,code1); break;
@@ -2653,7 +2653,7 @@ local bool equal_tuple (object obj, uintC n, const gcv_object_t* args_pointer) {
       var uintC n1 = tuple_half_1[n];
       var uintC n2 = tuple_half_2[n]; /* n1 + n2 = n */
       if (equal_tuple(Car(obj),n1,args_pointer)
-          && equal_tuple(Cdr(obj),n2,args_pointer STACKop -(uintP)n1)
+          && equal_tuple(Cdr(obj),n2,args_pointer STACKop -(sintP)n1)
           )
         return true;
     }

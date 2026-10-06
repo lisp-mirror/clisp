@@ -1139,6 +1139,8 @@
 #include <string.h> /* declares strlen() et al */
 #include <noreturn.h>      /* defines _GL_NORETURN_FUNC, _GL_NORETURN_FUNCPTR */
 #include "attribute.h"     /* defines FALLTHROUGH */
+#include "malloca.h"       /* defines malloca, freea */
+%% puts("#include \"malloca.h\"");
 
 /* Storage-Class-Specifier for identifiers only visible in the file. */
 /* Can't define this earlier, because <sys/types.h> on Haiku uses the
@@ -1436,7 +1438,7 @@ typedef signed int  signean;
      FREE_DYNAMIC_ARRAY(my_array);
  Attention: depending on your implementation my_array is either the array
  itself or a pointer to the array! Always use my_array only as expression! */
-#if defined(GNU)
+#if defined(GNU) && !defined(SANITIZE_UNDEFINED)
   /* can deal with dynamically allocated arrays in the machine stack
    { var uintL my_array[n]; ... } */
   #define DYNAMIC_ARRAY(arrayvar,arrayeltype,arraysize)  \
@@ -8037,7 +8039,7 @@ typedef unsigned_int_with_n_bits(char_int_len)  cint;
  > delta: a constant
  < result: incremented fixnum */
 #define fixnum_inc(obj,delta)                                           \
-    objectplus(obj, (soint)(delta) << oint_data_shift)
+    as_object(as_oint(obj)+((soint)(delta)<<oint_data_shift))
 %% export_def(fixnum_inc(obj,delta));
 
 /* posfixnum(x) is a fixnum with value x>=0. */
@@ -9307,10 +9309,11 @@ typedef struct {
   gcv_object_t prototype                _attribute_aligned_object_; /* class prototype - an instance or NIL */
   /* from here on only for subclasses of <standard-class> */
   gcv_object_t other[unspecified]       _attribute_aligned_object_;
-} *  Class;
+} class_;
+typedef class_*  Class;
 
 /* Length of a <defined-class>. */
-#define defined_class_length ((((aint)&((Class)0)->initialized-offsetofa(record_,recdata))/sizeof(gcv_object_t))+1)
+#define defined_class_length (((offsetof(class_,initialized)-offsetofa(record_,recdata))/sizeof(gcv_object_t))+1)
 /* Length of a <built-in-class>. */
 #define built_in_class_length  (defined_class_length+1) /* = clos::*<built-in-class>-instance-size* */
 
@@ -13662,7 +13665,7 @@ extern struct symbol_tab_ {
          as initializer of static variables.
          We have to assist: */
     #undef S_help_
-    #define S_help_(name)  (as_object( (char*)(&((struct symbol_tab_ *)0)->name) + (uintP)symbol_tab_addr ))
+    #define S_help_(name)  (as_object( (char*)(offsetof(struct symbol_tab_,name)) + (uintP)symbol_tab_addr ))
   #endif
 #endif
 /* is used by all modules */
