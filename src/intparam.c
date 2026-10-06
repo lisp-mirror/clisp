@@ -539,6 +539,9 @@ void main9(void) {
   print("\n");
 }
 
+#if __GNUC__ + (__GNUC_MINOR__ >= 1) > 3 || defined(__clang__)
+__attribute__((__noinline__))
+#endif
 long get_stack_direction(void)
 {
   char dummy;
