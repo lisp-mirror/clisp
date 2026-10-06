@@ -4378,10 +4378,13 @@ local _Noreturn void quit_instantly (int exitcode)
 global int final_exitcode = 0;
 global bool quit_on_signal_in_progress = false;
 local int quit_retry = 0;
+local _GL_NORETURN_FUNCPTR void quit_restartf (gcv_object_t* upto_frame) {
+  quit();
+}
 global _GL_NORETURN_FUNC void quit (void) {
   /* first "unwind" the STACK downto STACK-end: */
   VALUES0; /* do not save values for UNWIND-PROTECT-frames */
-  unwind_protect_to_save.fun = (restartf_t)&quit;
+  unwind_protect_to_save.fun = &quit_restartf;
   while (!(eq(STACK_0,nullobj) && eq(STACK_1,nullobj)))
     if (framecode(STACK_0) & fbit(frame_bit_t))
       /* At STACK_0 a frame starts */
