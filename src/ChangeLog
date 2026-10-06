@@ -2,6 +2,13 @@
 
 	Fix confusion between different function types.
 	Caught by clang's undefined-behaviour sanitizer.
+	* eval.d (reset_restartf): New function.
+	(reset): Use it.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
+	Fix confusion between different function types.
+	Caught by clang's undefined-behaviour sanitizer.
 	* spvw.d (quit_restartf): New function.
 	(quit): Use it.
 

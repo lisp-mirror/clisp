@@ -555,12 +555,15 @@ global /*maygc*/ void unwind (void)
 /* UP: "unwinds" the STACK up to the next DRIVER_FRAME and
  jumps into the corresponding top-level-loop.
  if count=0, unwind to TOP; otherwise reset that many times */
+local _GL_NORETURN_FUNCPTR void reset_restartf (gcv_object_t* upto_frame) {
+  reset(0);
+}
 global _GL_NORETURN_FUNC void reset (uintL count) {
   /* when unwinding UNWIND-PROTECT-frames, don't save values: */
   bool top_p = (count==0);
   gcv_object_t *last_driver_frame = NULL;
   VALUES0;
-  unwind_protect_to_save.fun = (restartf_t)&reset;
+  unwind_protect_to_save.fun = &reset_restartf;
   unwind_protect_to_save.upto_frame = NULL;
   while (1) {
     /* does STACK end here? */
