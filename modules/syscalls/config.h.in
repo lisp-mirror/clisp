@@ -80,9 +80,6 @@
 /* Define to 1 if you have the 'getdate' function. */
 #undef HAVE_GETDATE
 
-/* Define to 1 if you have the 'getdomainname' function. */
-#undef HAVE_GETDOMAINNAME
-
 /* Define to 1 if you have the 'getegid' function. */
 #undef HAVE_GETEGID
 

@@ -405,7 +405,7 @@ GNULIB_CORE = no-c++ stdint-h bool attribute havelib gettext localcharset stdlib
 	host-cpu-c-abi socklen sockets fd-hook setenv unsetenv errno-h ioctl \
 	arpa_inet-h netinet_in-h inet_ntop inet_pton socketlib strerror_r-posix \
 	nocrash libsigsegv gnu-make gettimeofday getpagesize sys_time-h sys_wait-h \
-	localtime time_r tzsanitize vma-iter c-strtod noreturn \
+	localtime time_r tzsanitize vma-iter c-strtod noreturn getdomainname \
 	libunistring-optional \
 	crypto/sha1
 GNULIB_SYSCALLS = mktime strftime strptime strverscmp uname fnmatch-gnu

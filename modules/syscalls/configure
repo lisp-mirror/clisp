@@ -7706,12 +7706,6 @@ then :
   printf '%s\n' "#define HAVE_SETHOSTID 1" >>confdefs.h
 
 fi
-ac_fn_c_check_func "$LINENO" "getdomainname" "ac_cv_func_getdomainname"
-if test "x$ac_cv_func_getdomainname" = xyes
-then :
-  printf '%s\n' "#define HAVE_GETDOMAINNAME 1" >>confdefs.h
-
-fi
 ac_fn_c_check_func "$LINENO" "setdomainname" "ac_cv_func_setdomainname"
 if test "x$ac_cv_func_setdomainname" = xyes
 then :

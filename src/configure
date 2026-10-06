@@ -1250,6 +1250,7 @@ NETINET_IN_H
 HAVE_NETINET_IN_H
 NEXT_AS_FIRST_DIRECTIVE_NETINET_IN_H
 NEXT_NETINET_IN_H
+GL_GNULIB_GETADDRINFO
 GL_COND_OBJ_MSVC_NOTHROW_FALSE
 GL_COND_OBJ_MSVC_NOTHROW_TRUE
 GL_COND_OBJ_MSVC_INVAL_FALSE
@@ -1966,6 +1967,18 @@ GL_COND_OBJ_GETHOSTNAME_TRUE
 GETHOSTNAME_LIB
 GL_COND_OBJ_GETDTABLESIZE_FALSE
 GL_COND_OBJ_GETDTABLESIZE_TRUE
+GL_COND_OBJ_GETDOMAINNAME_FALSE
+GL_COND_OBJ_GETDOMAINNAME_TRUE
+HAVE_NETDB_H
+NEXT_AS_FIRST_DIRECTIVE_NETDB_H
+NEXT_NETDB_H
+REPLACE_GETADDRINFO
+REPLACE_GAI_STRERROR
+HAVE_DECL_GETNAMEINFO
+HAVE_DECL_GETADDRINFO
+HAVE_DECL_GAI_STRERROR
+HAVE_DECL_FREEADDRINFO
+HAVE_STRUCT_ADDRINFO
 GL_GNULIB_MDA_UMASK
 GL_GNULIB_MDA_MKDIR
 GL_GNULIB_MDA_CHMOD
@@ -5083,9 +5096,9 @@ as_fn_append ac_header_c_list " fnmatch.h fnmatch_h HAVE_FNMATCH_H"
 as_fn_append ac_func_c_list " fnmatch HAVE_FNMATCH"
 as_fn_append ac_func_c_list " mbsrtowcs HAVE_MBSRTOWCS"
 gl_fnmatch_required=GNU
+as_fn_append ac_header_c_list " netdb.h netdb_h HAVE_NETDB_H"
 as_fn_append ac_func_c_list " getdtablesize HAVE_GETDTABLESIZE"
 as_fn_append ac_header_c_list " sys/param.h sys_param_h HAVE_SYS_PARAM_H"
-as_fn_append ac_header_c_list " netdb.h netdb_h HAVE_NETDB_H"
 as_fn_append ac_header_c_list " sys/time.h sys_time_h HAVE_SYS_TIME_H"
 as_fn_append ac_func_c_list " gettimeofday HAVE_GETTIMEOFDAY"
 as_fn_append ac_header_c_list " threads.h threads_h HAVE_THREADS_H"
@@ -8961,6 +8974,7 @@ esac
   # Code from module free-posix:
   # Code from module fstat:
   # Code from module gen-header:
+  # Code from module getdomainname:
   # Code from module getdtablesize:
   # Code from module gethostname:
   # Code from module getloadavg:
@@ -9038,6 +9052,7 @@ esac
   # Code from module msvc-inval:
   # Code from module msvc-nothrow:
   # Code from module multiarch:
+  # Code from module netdb-h:
   # Code from module netinet_in-h:
   # Code from module nl_langinfo:
   # Code from module no-c++:
@@ -24489,6 +24504,109 @@ fi
 
 
 
+    HAVE_STRUCT_ADDRINFO=1;
+  HAVE_DECL_FREEADDRINFO=1;
+  HAVE_DECL_GAI_STRERROR=1;
+  HAVE_DECL_GETADDRINFO=1;
+  HAVE_DECL_GETNAMEINFO=1;
+  REPLACE_GAI_STRERROR=0;
+  REPLACE_GETADDRINFO=0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+     if test $gl_cv_have_include_next = yes; then
+       gl_cv_next_netdb_h='<'netdb.h'>'
+     else
+       { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking absolute name of <netdb.h>" >&5
+printf %s "checking absolute name of <netdb.h>... " >&6; }
+if test ${gl_cv_next_netdb_h+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e)
+             if test $ac_cv_header_netdb_h = yes; then
+
+
+
+
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <netdb.h>
+_ACEOF
+                case "$host_os" in
+    aix*) gl_absname_cpp="$ac_cpp -C" ;;
+    *)    gl_absname_cpp="$ac_cpp" ;;
+  esac
+
+  case "$host_os" in
+    mingw* | windows*)
+                                          gl_dirsep_regex='[/\\]'
+      ;;
+    *)
+      gl_dirsep_regex='\/'
+      ;;
+  esac
+      gl_make_literal_regex_sed='s,[]$^\\.*/[],\\&,g'
+  gl_header_literal_regex=`echo 'netdb.h' \
+                           | sed -e "$gl_make_literal_regex_sed"`
+  gl_absolute_header_sed="/${gl_dirsep_regex}${gl_header_literal_regex}/"'{
+      s/.*"\(.*'"${gl_dirsep_regex}${gl_header_literal_regex}"'\)".*/\1/
+      s|^/[^/]|//&|
+      p
+      q
+    }'
+
+        gl_cv_absolute_netdb_h=`(eval "$gl_absname_cpp conftest.$ac_ext") 2>&5 |
+  sed -n "$gl_absolute_header_sed"`
+
+          gl_header=$gl_cv_absolute_netdb_h
+          gl_cv_next_netdb_h='"'$gl_header'"'
+          else
+               gl_cv_next_netdb_h='<'netdb.h'>'
+             fi
+
+          ;;
+esac
+fi
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_next_netdb_h" >&5
+printf '%s\n' "$gl_cv_next_netdb_h" >&6; }
+     fi
+     NEXT_NETDB_H=$gl_cv_next_netdb_h
+
+     if test $gl_cv_have_include_next = yes || test $gl_cv_have_include_next = buggy; then
+       # INCLUDE_NEXT_AS_FIRST_DIRECTIVE='include_next'
+       gl_next_as_first_directive='<'netdb.h'>'
+     else
+       # INCLUDE_NEXT_AS_FIRST_DIRECTIVE='include'
+       gl_next_as_first_directive=$gl_cv_next_netdb_h
+     fi
+     NEXT_AS_FIRST_DIRECTIVE_NETDB_H=$gl_next_as_first_directive
+
+
+
+
+  if test $ac_cv_header_netdb_h = yes; then
+    HAVE_NETDB_H=1
+  else
+    HAVE_NETDB_H=0
+  fi
+
+
+
+
+
+
+
 ac_fn_check_decl "$LINENO" "getdtablesize" "ac_cv_have_decl_getdtablesize" "$ac_includes_default" "$ac_c_undeclared_builtin_options$ac_c_future_darwin_options" "CFLAGS"
 if test "x$ac_cv_have_decl_getdtablesize" = xyes
 then :
@@ -24498,7 +24616,6 @@ else case e in #(
 esac
 fi
 printf '%s\n' "#define HAVE_DECL_GETDTABLESIZE $ac_have_decl" >>confdefs.h
-
 
 
 
@@ -24799,8 +24916,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:24802: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:24803: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:24919: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:24920: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -24829,7 +24946,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:24832: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:24949: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -25081,7 +25198,7 @@ fi
 fi
 
 fi
-      echo "$as_me:25084: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:25201: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -33418,8 +33535,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:33421: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:33422: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:33538: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:33539: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -33448,7 +33565,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:33451: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:33568: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -33700,7 +33817,7 @@ fi
 fi
 
 fi
-      echo "$as_me:33703: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:33820: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -33990,8 +34107,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
         LIBS="$saved_LIBS"
         test $gl_pthread_api = yes && break
       done
-      echo "$as_me:33993: gl_pthread_api=$gl_pthread_api" >&5
-      echo "$as_me:33994: LIBPTHREAD=$LIBPTHREAD" >&5
+      echo "$as_me:34110: gl_pthread_api=$gl_pthread_api" >&5
+      echo "$as_me:34111: LIBPTHREAD=$LIBPTHREAD" >&5
 
       gl_pthread_in_glibc=no
       # On Linux with glibc >= 2.34, libc contains the fully functional
@@ -34020,7 +34137,7 @@ rm -rf conftest*
   *) :
      ;;
 esac
-      echo "$as_me:34023: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
+      echo "$as_me:34140: gl_pthread_in_glibc=$gl_pthread_in_glibc" >&5
 
       # Test for libpthread by looking for pthread_kill.
       if test $gl_pthread_api = yes && test -z "$LIBPTHREAD"
@@ -34272,7 +34389,7 @@ fi
 fi
 
 fi
-      echo "$as_me:34275: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
+      echo "$as_me:34392: LIBPMULTITHREAD=$LIBPMULTITHREAD" >&5
 
 fi
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether POSIX threads API is available" >&5
@@ -35912,6 +36029,12 @@ fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_func_working_mktime" >&5
 printf '%s\n' "$gl_cv_func_working_mktime" >&6; }
 
+
+
+
+
+
+  GL_GNULIB_GETADDRINFO=0
 
 
 
@@ -44108,6 +44231,261 @@ printf '%s\n' "#define GNULIB_FSTAT 1" >>confdefs.h
 
 
 
+
+
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for getdomainname" >&5
+printf %s "checking for getdomainname... " >&6; }
+if test ${gl_cv_onwards_func_getdomainname+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e)
+  exec 9>&6 6>/dev/null
+
+       case "$host_os" in
+
+         linux*-android*)
+           ac_fn_check_decl "$LINENO" "getdomainname" "ac_cv_have_decl_getdomainname" "#include <unistd.h>
+" "$ac_c_undeclared_builtin_options$ac_c_future_darwin_options" "CFLAGS"
+if test "x$ac_cv_have_decl_getdomainname" = xyes
+then :
+
+fi
+           if test $ac_cv_have_decl_getdomainname = yes; then
+             ac_fn_c_check_func "$LINENO" "getdomainname" "ac_cv_func_getdomainname"
+if test "x$ac_cv_func_getdomainname" = xyes
+then :
+
+fi
+
+             if test $ac_cv_func_getdomainname = yes; then
+               gl_cv_onwards_func_getdomainname=yes
+             else
+                                                            gl_cv_onwards_func_getdomainname='future OS version'
+             fi
+           else
+             gl_cv_onwards_func_getdomainname='future OS version'
+           fi
+           ;;
+
+
+         *)
+           ac_fn_c_check_func "$LINENO" "getdomainname" "ac_cv_func_getdomainname"
+if test "x$ac_cv_func_getdomainname" = xyes
+then :
+
+fi
+
+           gl_cv_onwards_func_getdomainname=$ac_cv_func_getdomainname
+           ;;
+
+       esac
+
+  exec 6>&9 9>&-
+
+     ;;
+esac
+fi
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_onwards_func_getdomainname" >&5
+printf '%s\n' "$gl_cv_onwards_func_getdomainname" >&6; }
+
+  case "$gl_cv_onwards_func_getdomainname" in
+    future*) ac_cv_func_getdomainname=no ;;
+    *)       ac_cv_func_getdomainname=$gl_cv_onwards_func_getdomainname ;;
+  esac
+  if test $ac_cv_func_getdomainname = yes; then
+
+printf '%s\n' "#define HAVE_GETDOMAINNAME 1" >>confdefs.h
+
+  fi
+
+
+  if test $ac_cv_func_getdomainname = no; then
+    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for getdomainname in -lnsl" >&5
+printf %s "checking for getdomainname in -lnsl... " >&6; }
+if test ${gl_cv_func_getdomainname_in_libnsl+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) gl_cv_func_getdomainname_in_libnsl=no
+       gl_saved_LIBS="$LIBS"
+       LIBS="$LIBS -lnsl"
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <stddef.h>
+              extern
+              #ifdef __cplusplus
+              "C"
+              #endif
+              int getdomainname (char *, size_t);
+
+int
+main (void)
+{
+getdomainname(NULL, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  gl_cv_func_getdomainname_in_libnsl=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+       LIBS="$gl_saved_LIBS"
+       ;;
+esac
+fi
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_func_getdomainname_in_libnsl" >&5
+printf '%s\n' "$gl_cv_func_getdomainname_in_libnsl" >&6; }
+  fi
+
+        ac_fn_check_decl "$LINENO" "getdomainname" "ac_cv_have_decl_getdomainname" "#include <sys/types.h>
+      #ifdef HAVE_SYS_SOCKET_H
+      #include <sys/socket.h>
+      #endif
+      #ifdef HAVE_NETDB_H
+      #include <netdb.h>
+      #endif
+      #include <unistd.h>
+
+" "$ac_c_undeclared_builtin_options$ac_c_future_darwin_options" "CFLAGS"
+if test "x$ac_cv_have_decl_getdomainname" = xyes
+then :
+  ac_have_decl=1
+else case e in #(
+  e) ac_have_decl=0 ;;
+esac
+fi
+printf '%s\n' "#define HAVE_DECL_GETDOMAINNAME $ac_have_decl" >>confdefs.h
+
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for getdomainname's second argument type" >&5
+printf %s "checking for getdomainname's second argument type... " >&6; }
+if test ${gl_cv_decl_getdomainname_argtype2+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) if test $ac_cv_have_decl_getdomainname; then
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+              #ifdef HAVE_SYS_SOCKET_H
+              #include <sys/socket.h>
+              #endif
+              #ifdef HAVE_NETDB_H
+              #include <netdb.h>
+              #endif
+              #include <unistd.h>
+              extern
+              #ifdef __cplusplus
+              "C"
+              #endif
+              int getdomainname (char *, int);
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  gl_cv_decl_getdomainname_argtype2='int'
+else case e in #(
+  e) gl_cv_decl_getdomainname_argtype2='size_t' ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+     else
+       gl_cv_decl_getdomainname_argtype2='int'
+     fi
+     ;;
+esac
+fi
+{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $gl_cv_decl_getdomainname_argtype2" >&5
+printf '%s\n' "$gl_cv_decl_getdomainname_argtype2" >&6; }
+
+  if test $ac_cv_have_decl_getdomainname = no; then
+    HAVE_DECL_GETDOMAINNAME=0
+  fi
+
+  if { test $ac_cv_func_getdomainname = yes \
+       && test $gl_cv_decl_getdomainname_argtype2 != size_t; \
+     } \
+     || case "$gl_cv_onwards_func_getdomainname" in \
+          future*) true ;; \
+          *) false ;; \
+        esac \
+     || test "$gl_cv_func_getdomainname_in_libnsl" = yes; then
+    REPLACE_GETDOMAINNAME=1
+  fi
+
+
+     if test $HAVE_DECL_GETDOMAINNAME = 0 || test $REPLACE_GETDOMAINNAME = 1; then
+  GL_COND_OBJ_GETDOMAINNAME_TRUE=
+  GL_COND_OBJ_GETDOMAINNAME_FALSE='#'
+else
+  GL_COND_OBJ_GETDOMAINNAME_TRUE='#'
+  GL_COND_OBJ_GETDOMAINNAME_FALSE=
+fi
+:
+    if test -z "${GL_COND_OBJ_GETDOMAINNAME_TRUE}" && test -z "${GL_COND_OBJ_GETDOMAINNAME_FALSE}"; then
+    GL_COND_OBJ_GETDOMAINNAME_TRUE='#'
+    GL_COND_OBJ_GETDOMAINNAME_FALSE='#'
+  fi
+
+  if test -z "$GL_COND_OBJ_GETDOMAINNAME_TRUE"; then :
+
+
+  if test $ac_cv_func_getdomainname = yes; then
+
+printf '%s\n' "#define HAVE_GETDOMAINNAME 1" >>confdefs.h
+
+  fi
+  ac_fn_c_check_header_compile "$LINENO" "sys/systeminfo.h" "ac_cv_header_sys_systeminfo_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_systeminfo_h" = xyes
+then :
+  printf '%s\n' "#define HAVE_SYS_SYSTEMINFO_H 1" >>confdefs.h
+
+fi
+
+  ac_fn_c_check_func "$LINENO" "sysinfo" "ac_cv_func_sysinfo"
+if test "x$ac_cv_func_sysinfo" = xyes
+then :
+  printf '%s\n' "#define HAVE_SYSINFO 1" >>confdefs.h
+
+fi
+
+
+
+fi
+
+
+
+
+
+
+
+
+
+          GL_GNULIB_GETDOMAINNAME=1
+
+
+
+
+
+printf '%s\n' "#define GNULIB_TEST_GETDOMAINNAME 1" >>confdefs.h
+
+
+
+
+
+
+
+
   if test $ac_cv_func_getdtablesize = yes &&
      test $ac_cv_have_decl_getdtablesize = yes; then
     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether getdtablesize works" >&5
@@ -52083,6 +52461,13 @@ fi
 
 
 printf '%s\n' "#define GNULIB_MSVC_NOTHROW 1" >>confdefs.h
+
+
+
+
+
+
+
 
 
 

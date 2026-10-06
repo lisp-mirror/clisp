@@ -442,6 +442,9 @@
 /* Define to 1 when the gnulib module fstat should be tested. */
 #undef GNULIB_TEST_FSTAT
 
+/* Define to 1 when the gnulib module getdomainname should be tested. */
+#undef GNULIB_TEST_GETDOMAINNAME
+
 /* Define to 1 when the gnulib module getdtablesize should be tested. */
 #undef GNULIB_TEST_GETDTABLESIZE
 
@@ -762,6 +765,10 @@
    */
 #undef HAVE_DECL_GCVT
 
+/* Define to 1 if you have the declaration of 'getdomainname', and to 0 if you
+   don't. */
+#undef HAVE_DECL_GETDOMAINNAME
+
 /* Define to 1 if you have the declaration of 'getdtablesize', and to 0 if you
    don't. */
 #undef HAVE_DECL_GETDTABLESIZE
@@ -925,6 +932,9 @@
 
 /* Define to 1 if you have the 'getcwd' function. */
 #undef HAVE_GETCWD
+
+/* Define if the getdomainname() function is present and can be used. */
+#undef HAVE_GETDOMAINNAME
 
 /* Define to 1 if you have the 'getdtablesize' function. */
 #undef HAVE_GETDTABLESIZE
@@ -1408,6 +1418,9 @@
 /* Define to 1 if you have the 'sysconf' function. */
 #undef HAVE_SYSCONF
 
+/* Define to 1 if you have the 'sysinfo' function. */
+#undef HAVE_SYSINFO
+
 /* Define to 1 if you have the <sys/bitypes.h> header file. */
 #undef HAVE_SYS_BITYPES_H
 
@@ -1440,6 +1453,9 @@
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/systeminfo.h> header file. */
+#undef HAVE_SYS_SYSTEMINFO_H
 
 /* Define to 1 if you have the <sys/time.h> header file. */
 #undef HAVE_SYS_TIME_H

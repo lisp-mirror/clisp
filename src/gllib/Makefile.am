@@ -48,6 +48,7 @@
 #  errno-h \
 #  fd-hook \
 #  fnmatch-gnu \
+#  getdomainname \
 #  getloadavg \
 #  getpagesize \
 #  getpeername \
@@ -799,6 +800,14 @@ SED_HEADER_TO_AT_t = $(SED_HEADER_STDOUT) -n -e 'w $@-t'
 gl_V_at = $(AM_V_GEN)
 
 ## end   gnulib module gen-header
+
+## begin gnulib module getdomainname
+
+if GL_COND_OBJ_GETDOMAINNAME
+libgnu_a_SOURCES += getdomainname.c
+endif
+
+## end   gnulib module getdomainname
 
 ## begin gnulib module getdtablesize
 
@@ -1852,6 +1861,39 @@ endif
 EXTRA_DIST += msvc-nothrow.h
 
 ## end   gnulib module msvc-nothrow
+
+## begin gnulib module netdb-h
+
+BUILT_SOURCES += netdb.h
+
+# We need the following in order to create <netdb.h> when the system
+# doesn't have one that works with the given compiler.
+netdb.h: netdb.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
+	$(gl_V_at)$(SED_HEADER_STDOUT) \
+	      -e 's|@''GUARD_PREFIX''@|GL|g' \
+	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
+	      -e 's|@''PRAGMA_COLUMNS''@|@PRAGMA_COLUMNS@|g' \
+	      -e 's|@''NEXT_NETDB_H''@|$(NEXT_NETDB_H)|g' \
+	      -e 's|@''HAVE_NETDB_H''@|$(HAVE_NETDB_H)|g' \
+	      -e 's/@''GNULIB_GETADDRINFO''@/$(GL_GNULIB_GETADDRINFO)/g' \
+	      -e 's|@''HAVE_STRUCT_ADDRINFO''@|$(HAVE_STRUCT_ADDRINFO)|g' \
+	      -e 's|@''HAVE_DECL_FREEADDRINFO''@|$(HAVE_DECL_FREEADDRINFO)|g' \
+	      -e 's|@''HAVE_DECL_GAI_STRERROR''@|$(HAVE_DECL_GAI_STRERROR)|g' \
+	      -e 's|@''HAVE_DECL_GETADDRINFO''@|$(HAVE_DECL_GETADDRINFO)|g' \
+	      -e 's|@''HAVE_DECL_GETNAMEINFO''@|$(HAVE_DECL_GETNAMEINFO)|g' \
+	      -e 's|@''REPLACE_GAI_STRERROR''@|$(REPLACE_GAI_STRERROR)|g' \
+	      -e 's|@''REPLACE_GETADDRINFO''@|$(REPLACE_GETADDRINFO)|g' \
+	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
+	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
+	      $(srcdir)/netdb.in.h > $@-t
+	$(AM_V_at)mv $@-t $@
+MOSTLYCLEANFILES += netdb.h netdb.h-t
+
+EXTRA_DIST += netdb.in.h
+
+## end   gnulib module netdb-h
 
 ## begin gnulib module netinet_in-h
 

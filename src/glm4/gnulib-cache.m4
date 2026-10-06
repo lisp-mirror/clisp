@@ -53,6 +53,7 @@
 #  errno-h \
 #  fd-hook \
 #  fnmatch-gnu \
+#  getdomainname \
 #  getloadavg \
 #  getpagesize \
 #  getpeername \
@@ -135,6 +136,7 @@ gl_MODULES([
   errno-h
   fd-hook
   fnmatch-gnu
+  getdomainname
   getloadavg
   getpagesize
   getpeername

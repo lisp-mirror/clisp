@@ -1,5 +1,19 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Fix a compilation error of the syscalls module on Solaris 11.4.
+	* Makefile.devel (GNULIB_CORE): Add getdomainname.
+	* modules/syscalls/configure.in: Don't test for getdomainname.
+	* modules/syscalls/calls.c (POSIX:DOMAINNAME): Define always.
+	Then update to the newest gnulib.
+	Ran "make -f Makefile.devel build-aux-update gnulib-imported \
+	&& make -f Makefile.devel build-prerequisites".
+	* gllib/*: Update from gnulib.
+	* glm4/*: Likewise.
+	* aclocal.m4, src/configure, src/config.h.in: Regenerated.
+	* modules/*/configure, modules/*/config.h.in: Regenerated.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Fix stack_grows_down/up macro, when determined by gcc >= 10 with -O2.
 	* intparam.c (get_stack_direction): Mark with attribute '__noinline__'.
 

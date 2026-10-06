@@ -1853,7 +1853,6 @@ DEFUN(POSIX::%SETHOSTID, hostid) {
 #ifndef MAXHOSTNAMELEN          /* see unix.d */
 # define MAXHOSTNAMELEN 256     /* see <sys/param.h> */
 #endif
-#if defined(HAVE_GETDOMAINNAME)
 DEFUN(POSIX:DOMAINNAME,) {
   char domain[MAXHOSTNAMELEN];
   int e;
@@ -1863,7 +1862,6 @@ DEFUN(POSIX:DOMAINNAME,) {
   if (e) ANSIC_error();
   VALUES1(asciz_to_string(domain,GLO(misc_encoding)));
 }
-#endif
 #if defined(HAVE_SETDOMAINNAME)
 DEFUN(POSIX::%SETDOMAINNAME, domain) {
   int e;

@@ -109,6 +109,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module free-posix:
   # Code from module fstat:
   # Code from module gen-header:
+  # Code from module getdomainname:
   # Code from module getdtablesize:
   # Code from module gethostname:
   # Code from module getloadavg:
@@ -186,6 +187,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module msvc-inval:
   # Code from module msvc-nothrow:
   # Code from module multiarch:
+  # Code from module netdb-h:
   # Code from module netinet_in-h:
   # Code from module nl_langinfo:
   # Code from module no-c++:
@@ -546,6 +548,13 @@ AC_DEFUN([gl_INIT],
   ])
   gl_SYS_STAT_MODULE_INDICATOR([fstat])
   gl_MODULE_INDICATOR([fstat])
+  gl_FUNC_GETDOMAINNAME
+  gl_CONDITIONAL([GL_COND_OBJ_GETDOMAINNAME],
+                 [test $HAVE_DECL_GETDOMAINNAME = 0 || test $REPLACE_GETDOMAINNAME = 1])
+  AM_COND_IF([GL_COND_OBJ_GETDOMAINNAME], [
+    gl_PREREQ_GETDOMAINNAME
+  ])
+  gl_UNISTD_MODULE_INDICATOR([getdomainname])
   gl_FUNC_GETDTABLESIZE
   gl_CONDITIONAL([GL_COND_OBJ_GETDTABLESIZE],
                  [test $HAVE_GETDTABLESIZE = 0 || test $REPLACE_GETDTABLESIZE = 1])
@@ -846,6 +855,9 @@ AC_DEFUN([gl_INIT],
                  [test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1])
   gl_MODULE_INDICATOR([msvc-nothrow])
   gl_MULTIARCH
+  gl_NETDB_H
+  gl_NETDB_H_REQUIRE_DEFAULTS
+  AC_PROG_MKDIR_P
   gl_HEADER_NETINET_IN
   gl_CONDITIONAL_HEADER([netinet/in.h])
   AC_PROG_MKDIR_P
@@ -1465,6 +1477,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fnmatch_loop.c
   lib/free.c
   lib/fstat.c
+  lib/getdomainname.c
   lib/getdtablesize.c
   lib/gethostname.c
   lib/getloadavg.c
@@ -1564,6 +1577,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/msvc-inval.h
   lib/msvc-nothrow.c
   lib/msvc-nothrow.h
+  lib/netdb.in.h
   lib/netinet_in.in.h
   lib/nl_langinfo-lock.c
   lib/nl_langinfo.c
@@ -1770,6 +1784,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fpieee.m4
   m4/free.m4
   m4/fstat.m4
+  m4/getdomainname.m4
   m4/getdtablesize.m4
   m4/gethostname.m4
   m4/getloadavg.m4
@@ -1850,6 +1865,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/msvc-nothrow.m4
   m4/multiarch.m4
   m4/musl.m4
+  m4/netdb_h.m4
   m4/netinet_in_h.m4
   m4/nl_langinfo.m4
   m4/nls.m4
