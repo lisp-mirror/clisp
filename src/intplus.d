@@ -163,7 +163,7 @@ modexp maygc object I_I_plus_I (object x, object y)
           }
           # y_ zu den oberen pFN_maxlength Digits von x addieren:
           {
-            var uintD* midptr = &LSDptr[-(uintP)pFN_maxlength];
+            var uintD* midptr = LSDptr-(uintP)pFN_maxlength;
             var uintV x_ = pFN_maxlength_digits_at(midptr);
             var uintV x_new = x_+(uintV)y_;
             set_pFN_maxlength_digits_at(midptr,x_new);
@@ -337,7 +337,7 @@ modexp maygc object I_I_minus_I (object x, object y)
           # MSDigit ist nun = 0x0000 oder = 0xFFFF
           # x_ zu den oberen pFN_maxlength Digits von -y addieren:
           {
-            var uintD* midptr = &LSDptr[-(uintP)pFN_maxlength];
+            var uintD* midptr = LSDptr-(uintP)pFN_maxlength;
             var uintV y_ = pFN_maxlength_digits_at(midptr);
             var uintV y_new = y_+(uintV)x_;
             set_pFN_maxlength_digits_at(midptr,y_new);
@@ -379,7 +379,7 @@ modexp maygc object I_I_minus_I (object x, object y)
           }
           # y_ von den oberen pFN_maxlength Digits von x subtrahieren:
           {
-            var uintD* midptr = &LSDptr[-(uintP)pFN_maxlength];
+            var uintD* midptr = LSDptr-(uintP)pFN_maxlength;
             var uintV x_ = pFN_maxlength_digits_at(midptr);
             var uintV x_new = x_-(uintV)y_;
             set_pFN_maxlength_digits_at(midptr,x_new);

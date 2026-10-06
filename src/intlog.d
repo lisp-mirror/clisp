@@ -514,7 +514,7 @@ local bool I_I_logbitp (object x, object y)
       I_to_NDS_nocopy(y, _EMA_,ylen=,yLSDptr=); /* DS for y */
       if (x_ < intDsize*(uintL)ylen) {
         /* x is a fixnum >=0, < intDsize*ylen */
-        if (yLSDptr[-(uintP)floor(x_,intDsize)-1] & bit(x_%intDsize))
+        if (*(yLSDptr-(uintP)floor(x_,intDsize)-1) & bit(x_%intDsize))
           return true;
         else
           return false;

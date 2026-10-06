@@ -1,5 +1,19 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Don't write pointer[-(uintP)offset].
+	Reported by clang's undefined-behaviour sanitizer.
+	* intlog.d (I_I_logbitp): Write 'pointer-(uintP)offset' instead of
+	'&pointer[-(uintP)offset]'.
+	* intplus.d (I_I_plus_I, I_I_minus_I): Likewise.
+	* intmal.d (square_2bigloop_down, mulu_2bigloop_down, DS_DS_mult_DS):
+	Likewise.
+	* intdiv.d (UDS_divide_): Likewise.
+	* intgcd.d (I_I_gcd_I, partial_gcd, NUDS_likobi0_NUDS,
+	NUDS_likobi1_NUDS, NUDS_likobi2_NUDS, I_I_xgcd_I_I_I): Likewise.
+	* intsqrt.d (I_rootp): Likewise.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Fix confusion between different function types.
 	Caught by clang's undefined-behaviour sanitizer.
 	* eval.d (reset_restartf): New function.

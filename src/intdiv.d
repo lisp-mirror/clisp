@@ -164,7 +164,7 @@
       }
       # Nun r = r_MSDptr/a_len+1/r_LSDptr.
       var uintC j = a_len-b_len; # m-n
-      var uintD* r_ptr = &r_LSDptr[-(uintP)j]; # Pointer oberhalb von r[j]
+      var uintD* r_ptr = r_LSDptr-(uintP)j; # Pointer oberhalb von r[j]
       var uintD* q_MSDptr = r_MSDptr;
       var uintC q_len = j = j+1; # q wird m-n+1 Digits haben
       var uintD b_msd = b_MSDptr[0]; # b[n-1]

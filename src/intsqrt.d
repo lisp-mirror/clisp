@@ -585,7 +585,7 @@
           var uintD* zz_LSDptr = z2_LSDptr;
           var uintD* z_LSDptr;
           # Ab jetzt {zz_LSDptr,free_LSDptr} = {z1_LSDptr,z2_LSDptr}.
-          clear_loop_down(&y_LSDptr[-(uintP)k],k2-k); # y auf k2 Digits erweitern
+          clear_loop_down(y_LSDptr-(uintP)k,k2-k); # y auf k2 Digits erweitern
           copy_loop_down(y_LSDptr,zz_LSDptr,k2); # zz:=y
           do {
             var uintD* new_zz_LSDptr = free_LSDptr;
@@ -615,16 +615,16 @@
             zz_LSDptr = z3_LSDptr; # zz ist jetzt auch frei
           mulu_2loop_down(z_LSDptr,k2,y_LSDptr,k2,free_LSDptr); # y^n
           sub_loop_down(x_LSDptr,free_LSDptr,zz_LSDptr,k2); # zz:=x-y^n
-          ASSERT(!test_loop_up(&zz_LSDptr[-(uintP)k],k)); # zz == 0 mod beta^k
+          ASSERT(!test_loop_up(zz_LSDptr-(uintP)k,k)); # zz == 0 mod beta^k
           mulu_2loop_down(z_LSDptr,k2-k,n_LSDptr,n_len,free_LSDptr); # n*y^(n-1)
           # Quotienten mod beta^(k2-k) bilden und an y mod beta^k ankleben:
-          UDS_UDS_div2adic_UDS(k2-k,&zz_LSDptr[-(uintP)k],free_LSDptr,&y_LSDptr[-(uintP)k]);
+          UDS_UDS_div2adic_UDS(k2-k,zz_LSDptr-(uintP)k,free_LSDptr,y_LSDptr-(uintP)k);
           k = k2; # jetzt gilt y^n == x sogar mod beta^k2.
         }
         end_arith_call();
       }
       # y mit y^n == x mod beta^m ist gefunden.
-      var object y = UDS_to_I(&y_LSDptr[-(uintP)m],m); # y als Integer >=0
+      var object y = UDS_to_I(y_LSDptr-(uintP)m,m); # y als Integer >=0
       RESTORE_NUM_STACK # num_stack zurück
       pushSTACK(y);
     # Stackaufbau: x, y.

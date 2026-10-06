@@ -176,7 +176,7 @@ local _Noreturn void mal_ueberlauf (void) {
         add_loop_down(sourceptr-k_lo,sourceptr,sum_LSDptr,k_hi);
       if (!(k_lo==k_hi)) {
         # noch k_lo-k_hi = 1 Digits abzulegen
-        sum_MSDptr[0] = sourceptr[-(uintP)k_lo]; # = sourceptr[-(uintP)k_hi-1]
+        sum_MSDptr[0] = *(sourceptr-(uintP)k_lo); # = *(sourceptr-(uintP)k_hi-1)
         if (!(carry==0)) {
           if (++(sum_MSDptr[0]) == 0)
             carry=1;
@@ -224,7 +224,7 @@ local _Noreturn void mal_ueberlauf (void) {
         # Falls Carry: Produkt beansprucht 2*k_lo+1 Digits.
         # Carry um maximal 1 Digit weitertragen:
         if (!(carry==0))
-          prodmid_LSDptr[-2*(uintP)k_lo-1] -= 1;
+          *(prodmid_LSDptr-2*(uintP)k_lo-1) -= 1;
       }
       # prodmid_LSDptr[-prodmid_len..-1] enthält nun 2*x0*x1.
       # Dies ist < 2 * b^k_lo * b^k_hi = 2 * b^len,
@@ -441,10 +441,10 @@ local _Noreturn void mal_ueberlauf (void) {
       sum1_MSDptr++; # 1 Digit vorne als Reserve
       {
         var uintD carry = # Hauptteile von x1 und x0 addieren:
-          add_loop_down(&sourceptr1[-(uintP)k_lo],sourceptr1,sum1_LSDptr,k_lo);
+          add_loop_down(sourceptr1-(uintP)k_lo,sourceptr1,sum1_LSDptr,k_lo);
         if (!(k_lo==k_hi)) {
           # noch k_hi-k_lo = 1 Digits abzulegen
-          sum1_MSDptr[0] = sourceptr1[-(uintP)len1]; # = sourceptr1[-2*(uintP)k_lo-1]
+          sum1_MSDptr[0] = *(sourceptr1-(uintP)len1); # = *(sourceptr1-2*(uintP)k_lo-1)
           if (!(carry==0)) {
             if (++(sum1_MSDptr[0]) == 0)
               carry=1;
@@ -466,7 +466,7 @@ local _Noreturn void mal_ueberlauf (void) {
       var uintD* prod_LSDptr;
       var uintD* prodhi_LSDptr;
       num_stack_need(2*(uintL)len1,prod_MSDptr=,prod_LSDptr=);
-      prodhi_LSDptr = &prod_LSDptr[-2*(uintP)k_lo];
+      prodhi_LSDptr = prod_LSDptr-2*(uintP)k_lo;
       # prod_MSDptr/2*len1/prod_LSDptr wird zuerst die beiden
       # Produkte x1*y1 in prod_MSDptr/2*k_hi/prodhi_LSDptr
       #      und x0*y0 in prodhi_LSDptr/2*k_lo/prod_LSDptr,
@@ -480,17 +480,17 @@ local _Noreturn void mal_ueberlauf (void) {
         # Produkt x0*y0 berechnen:
         mulu_2loop_down(sourceptr1,k_lo,sourceptr2,k_lo,prod_LSDptr);
         # Produkt x1*y1 berechnen:
-        mulu_2loop_down(&sourceptr1[-(uintP)k_lo],k_hi,&sourceptr2[-(uintP)k_lo],k_hi,prodhi_LSDptr);
+        mulu_2loop_down(sourceptr1-(uintP)k_lo,k_hi,sourceptr2-(uintP)k_lo,k_hi,prodhi_LSDptr);
         # Summe y1+y0 berechnen:
         {
           var uintC sum2_len = k_hi; # = max(k_lo,k_hi)
-          var uintD* sum2_MSDptr = &sum2_LSDptr[-(uintP)sum2_len];
+          var uintD* sum2_MSDptr = sum2_LSDptr-(uintP)sum2_len;
           {
             var uintD carry = # Hauptteile von y1 und y0 addieren:
-              add_loop_down(&sourceptr2[-(uintP)k_lo],sourceptr2,sum2_LSDptr,k_lo);
+              add_loop_down(sourceptr2-(uintP)k_lo,sourceptr2,sum2_LSDptr,k_lo);
             if (!(k_lo==k_hi)) {
               # noch k_hi-k_lo = 1 Digits abzulegen
-              sum2_MSDptr[0] = sourceptr2[-(uintP)len1]; # = sourceptr2[-2*(uintP)k_lo-1]
+              sum2_MSDptr[0] = *(sourceptr2-(uintP)len1); # = sourceptr2[-2*(uintP)k_lo-1]
               if (!(carry==0)) {
                 if (++(sum2_MSDptr[0]) == 0)
                   carry=1;
@@ -514,7 +514,7 @@ local _Noreturn void mal_ueberlauf (void) {
             # Falls Carry: Produkt beansprucht 2*k_hi+1 Digits.
             # Carry um maximal 1 Digit weitertragen:
             if (!(carry==0))
-              prodmid_LSDptr[-2*(uintP)k_hi-1] -= 1;
+              *(prodmid_LSDptr-2*(uintP)k_hi-1) -= 1;
           }
           # Und x0*y0 abziehen:
           {
@@ -522,16 +522,16 @@ local _Noreturn void mal_ueberlauf (void) {
               subfrom_loop_down(prod_LSDptr,prodmid_LSDptr,2*k_lo);
             # Carry um maximal prodmid_len-2*k_lo Digits weitertragen:
             if (!(carry==0))
-              dec_loop_down(&prodmid_LSDptr[-2*(uintP)k_lo],prodmid_len-2*k_lo);
+              dec_loop_down(prodmid_LSDptr-2*(uintP)k_lo,prodmid_len-2*k_lo);
           }
           # prodmid_LSDptr[-prodmid_len..-1] enthält nun x0*y1+x1*y0.
           # Dies wird zu prod = x1*y1*b^(2*k) + x0*y0 addiert:
           {
             var uintD carry =
-              addto_loop_down(prodmid_LSDptr,&prod_LSDptr[-(uintP)k_lo],prodmid_len);
+              addto_loop_down(prodmid_LSDptr,prod_LSDptr-(uintP)k_lo,prodmid_len);
               # (Benutze dabei k_lo+prodmid_len <= k_lo+2*(k_hi+1) = 2*len1-k_lo+2 <= 2*len1 .)
             if (!(carry==0))
-              inc_loop_down(&prod_LSDptr[-(uintP)(k_lo+prodmid_len)],2*len1-(k_lo+prodmid_len));
+              inc_loop_down(prod_LSDptr-(uintP)(k_lo+prodmid_len),2*len1-(k_lo+prodmid_len));
           }
         }
         # Das Teilprodukt zum Gesamtprodukt addieren:
@@ -543,7 +543,7 @@ local _Noreturn void mal_ueberlauf (void) {
           var uintD carry =
             addto_loop_down(prod_LSDptr,destptr,len1);
           destptr -= len1;
-          copy_loop_down(&prod_LSDptr[-(uintP)len1],destptr,len1);
+          copy_loop_down(prod_LSDptr-(uintP)len1,destptr,len1);
           if (!(carry==0))
             inc_loop_down(destptr,len1);
         }
@@ -572,11 +572,11 @@ local _Noreturn void mal_ueberlauf (void) {
         sum1_MSDptr++; # 1 Digit vorne als Reserve
         {
           var uintD carry = # x1 und unteren Teil von x0 addieren:
-            add_loop_down(&sourceptr1[-(uintP)k_lo],sourceptr1,sum1_LSDptr,x1_len);
+            add_loop_down(sourceptr1-(uintP)k_lo,sourceptr1,sum1_LSDptr,x1_len);
           # und den oberen Teil von x0 dazu:
-          copy_loop_down(&sourceptr1[-(uintP)x1_len],&sum1_LSDptr[-(uintP)x1_len],k_lo-x1_len);
+          copy_loop_down(sourceptr1-(uintP)x1_len,sum1_LSDptr-(uintP)x1_len,k_lo-x1_len);
           if (!(carry==0)) {
-            carry = inc_loop_down(&sum1_LSDptr[-(uintP)x1_len],k_lo-x1_len);
+            carry = inc_loop_down(sum1_LSDptr-(uintP)x1_len,k_lo-x1_len);
             if (carry) {
               *--sum1_MSDptr = 1;
               sum1_len++;
@@ -591,10 +591,10 @@ local _Noreturn void mal_ueberlauf (void) {
         sum2_MSDptr++; # 1 Digit vorne als Reserve
         {
           var uintD carry = # Hauptteile von y1 und y0 addieren:
-            add_loop_down(&sourceptr2[-(uintP)k_lo],sourceptr2,sum2_LSDptr,k_hi);
+            add_loop_down(sourceptr2-(uintP)k_lo,sourceptr2,sum2_LSDptr,k_hi);
           if (!(k_lo==k_hi)) {
             # noch k_lo-k_hi = 1 Digits abzulegen
-            sum2_MSDptr[0] = sourceptr2[-(uintP)k_lo]; # = sourceptr2[-(uintP)k_hi-1]
+            sum2_MSDptr[0] = *(sourceptr2-(uintP)k_lo); # = *(sourceptr2-(uintP)k_hi-1)
             if (!(carry==0)) {
               if (++(sum2_MSDptr[0]) == 0)
                 carry=1;
@@ -609,7 +609,7 @@ local _Noreturn void mal_ueberlauf (void) {
         }
         # Platz für Produkte x0*y0, x1*y1:
         var uintC prodhi_len = x1_len+k_hi;
-        var uintD* prodhi_LSDptr = &prod_LSDptr[-2*(uintP)k_lo];
+        var uintD* prodhi_LSDptr = prod_LSDptr-2*(uintP)k_lo;
         # prod_MSDptr/len1+len2/prod_LSDptr wird zuerst die beiden
         # Produkte x1*y1 in prod_MSDptr/x1_len+k_hi/prodhi_LSDptr
         #      und x0*y0 in prodhi_LSDptr/2*k_lo/prod_LSDptr,
@@ -626,14 +626,14 @@ local _Noreturn void mal_ueberlauf (void) {
         mulu_2loop_down(sourceptr1,k_lo,sourceptr2,k_lo,prod_LSDptr);
         # Produkt x1*y1 berechnen:
         if (!(x1_len==0)) {
-          mulu_2loop_down(&sourceptr1[-(uintP)k_lo],x1_len,&sourceptr2[-(uintP)k_lo],k_hi,prodhi_LSDptr);
+          mulu_2loop_down(sourceptr1-(uintP)k_lo,x1_len,sourceptr2-(uintP)k_lo,k_hi,prodhi_LSDptr);
           # Und x1*y1 abziehen:
           {
             var uintD carry =
               subfrom_loop_down(prodhi_LSDptr,prodmid_LSDptr,prodhi_len);
             # Carry um maximal prodmid_len-prodhi_len Digits weitertragen:
             if (!(carry==0))
-              dec_loop_down(&prodmid_LSDptr[-(uintP)prodhi_len],prodmid_len-prodhi_len);
+              dec_loop_down(prodmid_LSDptr-(uintP)prodhi_len,prodmid_len-prodhi_len);
           }
         } else {
           # Produkt x1*y1=0, nichts abzuziehen
@@ -646,7 +646,7 @@ local _Noreturn void mal_ueberlauf (void) {
           # Falls Carry: Produkt beansprucht 2*k_lo+1 Digits.
           # Carry um maximal 1 Digit weitertragen:
           if (!(carry==0))
-            prodmid_LSDptr[-2*(uintP)k_lo-1] -= 1;
+            *(prodmid_LSDptr-2*(uintP)k_lo-1) -= 1;
         }
         # prodmid_LSDptr[-prodmid_len..-1] enthält nun x0*y1+x1*y0.
         # Dies ist < b^k_lo * b^k_hi + b^x1_len * b^k_lo
@@ -672,9 +672,9 @@ local _Noreturn void mal_ueberlauf (void) {
         # prodmid*b^k = (x0*y1+x1*y0)*b^k zu prod = x1*y1*b^(2*k) + x0*y0 addieren:
         {
           var uintD carry =
-            addto_loop_down(prodmid_LSDptr,&prod_LSDptr[-(uintP)k_lo],prodmid_len);
+            addto_loop_down(prodmid_LSDptr,prod_LSDptr-(uintP)k_lo,prodmid_len);
           if (!(carry==0))
-            inc_loop_down(&prod_LSDptr[-(uintP)(k_lo+prodmid_len)],prod_len-(k_lo+prodmid_len));
+            inc_loop_down(prod_LSDptr-(uintP)(k_lo+prodmid_len),prod_len-(k_lo+prodmid_len));
         }
       }
       # Das Teilprodukt zum Gesamtprodukt addieren:
@@ -684,7 +684,7 @@ local _Noreturn void mal_ueberlauf (void) {
         var uintD carry =
           addto_loop_down(prod_LSDptr,destptr,len1);
         destptr -= len1;
-        copy_loop_down(&prod_LSDptr[-(uintP)len1],destptr,len2);
+        copy_loop_down(prod_LSDptr-(uintP)len1,destptr,len2);
         if (!(carry==0))
           inc_loop_down(destptr,len2);
       }
@@ -714,10 +714,10 @@ local _Noreturn void mal_ueberlauf (void) {
       UDS_UDS_mult_UDS(len1,LSDptr1,len2,LSDptr2, MSDptr_assignment,len_assignment,LSDptr_assignment LSDptr0 = ); \
       if ((sintD)(MSDptr1[0]) < 0) # n<0 ?                        \
         # muss m bzw. m+b^l subtrahieren, um k Digits verschoben: \
-        subfrom_loop_down(LSDptr2,&LSDptr0[-(uintP)len1],len2);   \
+        subfrom_loop_down(LSDptr2,LSDptr0-(uintP)len1,len2);      \
       if ((sintD)(MSDptr2[0]) < 0) # m<0 ?                        \
         # muss n bzw. n+b^k subtrahieren, um l Digits verschoben: \
-        subfrom_loop_down(LSDptr1,&LSDptr0[-(uintP)len2],len1);   \
+        subfrom_loop_down(LSDptr1,LSDptr0-(uintP)len2,len1);      \
     }
 
 # (* x y), wo x und y Integers sind. Ergebnis Integer.
