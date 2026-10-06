@@ -1,5 +1,11 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Fix a random build failure on 32-bit Cygwin.
+	* makemake.in (marc.out): Ignore a failure of "./lisp.exe -marc" on
+	Cygwin.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Fix build with clang's undefined-behaviour sanitizer.
 	* intparam.c (NO_SANITIZE): New macro.
 	(main3, main4, main5): Use it.
