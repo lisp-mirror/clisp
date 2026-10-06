@@ -1,5 +1,10 @@
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
+	Fix "make check-script" failure on native Windows.
+	* makemake.in (check-script): Remove CR characters from some output.
+
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
 	Fix some "make check-fresh-line" or "make check-script" failures.
 	* makemake.in (locale, check-fresh-line, check-script, clean-subdirs,
 	distclean-subdirs): Don't rely on the exit code of a shell 'if'

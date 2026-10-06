@@ -3362,7 +3362,7 @@ echotab "test \"\`echo '(+ foo bar)' | \$(RUN) -q -M lispinit.mem -x '(setq foo 
 echotab "\$(RM) script.lisp; echo '(error \"loading script.lisp\")' > script.lisp"
 echotab "if \$(RUN) -q -M lispinit.mem -x '(load \"script.lisp\")' -repl < /dev/null; then exit 1; else :; fi"
 echotab "\$(RM) script.lisp; echo '(eval-when (:compile-toplevel) (princ *args*))' > script.lisp"
-echotab "output=\`\$(RUN) -q -q -M lispinit.mem -c script.lisp foo bar\`; test \"\$\$output\" = '(foo bar)' || exit 1"
+echotab "output=\`\$(RUN) -q -q -M lispinit.mem -c script.lisp foo bar ${TRCR}\`; test \"\$\$output\" = '(foo bar)' || exit 1"
 if [ "$HOS" != win32 ]; then # woe32 has unpredictable exit codes
   # https://sourceforge.net/p/clisp/mailman/message/20318073/
   echotab "(echo '(progn (setf (stream-element-type *standard-input*) (quote (unsigned-byte 8))) (exit 42))' | \$(RUN) -q -M lispinit.mem -; test \$\$? = 42) || exit 1"
