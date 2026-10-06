@@ -670,14 +670,14 @@ T
     (ext:run-program run
                      :arguments (append args
                                   (list "-q" "-q" "-x"
-                                        (format nil "(close (prog1 (socket:socket-connect ~D) (sleep 0.01s0)))" (socket:socket-server-port se))))
+                                        (format nil "(close (prog1 (socket:socket-connect ~D) (sleep 0.1s0)))" (socket:socket-server-port se))))
                      :wait nil :input nil :output nil)
     (unwind-protect
         (with-open-stream (so (socket:socket-accept se))
           (list
             (socket:socket-status so)
             (write-line "foo" so)
-            (sleep 0.02s0)
+            (sleep 0.2s0)
             (handler-case (socket:socket-status so)
               (os-error (c)
                 (princ 'socket-status-2) (princ-error c)
@@ -705,7 +705,7 @@ T
       (socket:socket-server-close se))))
 #-CYGWIN
 (:OUTPUT "foo" NIL
- #-win32 :APPEND #+win32 :OUTPUT  ; sometimes :OUTPUT also on Alma Linux or OpenBSD
+ :APPEND  ; If you sometimes get :OUTPUT here, increase the sleep durations above.
  T T
  :APPEND)
 

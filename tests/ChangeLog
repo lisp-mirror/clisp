@@ -1,3 +1,8 @@
+2026-10-06  Bruno Haible  <bruno@clisp.org>
+
+	Avoid an occasional test failure on Alma Linux, OpenBSD, Windows, etc.
+	* socket.tst: Increase some sleep durations.
+
 2026-10-05  Bruno Haible  <bruno@clisp.org>
 
 	Avoid a test failure on Cygwin.
