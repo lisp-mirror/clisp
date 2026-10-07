@@ -8,6 +8,10 @@
 
  Flags that may be set through CFLAGS:
 
+   Flags that reflect properties of the C compiler:
+     Set if an undefined-behaviour sanitizer is in use:
+       SANITIZE_UNDEFINED
+
    Flags that enable/disable features:
 
      Flags that enable features:
@@ -1139,8 +1143,6 @@
 #include <string.h> /* declares strlen() et al */
 #include <noreturn.h>      /* defines _GL_NORETURN_FUNC, _GL_NORETURN_FUNCPTR */
 #include "attribute.h"     /* defines FALLTHROUGH */
-#include "malloca.h"       /* defines malloca, freea */
-%% puts("#include \"malloca.h\"");
 
 /* Storage-Class-Specifier for identifiers only visible in the file. */
 /* Can't define this earlier, because <sys/types.h> on Haiku uses the
@@ -1425,7 +1427,7 @@ typedef signed int  signean;
 
 /* An alloca() replacement, used for DYNAMIC_ARRAY and SAVE_NUM_STACK.
  See spvw_alloca.d. */
-#if !(defined(GNU) || (defined(UNIX) && !defined(NO_ALLOCA) && !defined(SPARC)) || defined(MICROSOFT))
+#if !((defined(GNU) && !defined(SANITIZE_UNDEFINED)) || (defined(UNIX) && !defined(NO_ALLOCA) && !defined(SPARC)) || defined(MICROSOFT))
   #define NEED_MALLOCA
   extern void* malloca (size_t size);
   extern void freea (void* ptr);

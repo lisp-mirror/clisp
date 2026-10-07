@@ -1,3 +1,10 @@
+2026-10-07  Bruno Haible  <bruno@clisp.org>
+
+	Fix build with clang's undefined-behaviour sanitizer, part 2.
+	* lispbibl.d: Document the SANITIZE_UNDEFINED macro.
+	Don't include malloca.h.
+	(NEED_MALLOCA): Consider the SANITIZE_UNDEFINED macro.
+
 2026-10-06  Bruno Haible  <bruno@clisp.org>
 
 	Fix "make check-script" failure on native Windows.
