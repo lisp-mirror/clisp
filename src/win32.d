@@ -59,11 +59,6 @@ extern void* malloc (size_t size);
 extern void free (void* memblock);
 /* used by spvw.d */
 
-/* Abrupt program termination */
-/* win32aux.d overwrites abort() */
-extern _Noreturn void abort (void);
-/* used by spvw.d, debug.d, eval.d, io.d */
-
 /* Type of a file handle */
 #define Handle  HANDLE
 #define INVALID_HANDLE  INVALID_HANDLE_VALUE

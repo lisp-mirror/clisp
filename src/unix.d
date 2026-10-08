@@ -72,11 +72,6 @@ extern_C _Noreturn void _exit (int status); /* EXIT(2V) */
 extern_C _Noreturn void exit (int status); /* EXIT(2V) */
 /* used by SPVW, PATHNAME, STREAM */
 
-/* Immediate abnormal termination, jump into the debugger */
-/* #include <stdlib.h> - see above */
-/* extern_C [volatile] void abort (void); */ /* ABORT(3) */
-/* used by SPVW, DEBUG, EVAL, IO */
-
 /* signal handling */
 #include <signal.h>
 /* a signal handler is a non-returning function. */

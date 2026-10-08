@@ -555,15 +555,6 @@ global signal_handler_t install_signal_handler (int sig,
 #define ULONG     OS_ULONG
 #undef unused
 
-/* ------------------------------------------------------------------------ */
-
-/* The library's abort() function just makes the program exit.
- But I want to see a backtrace! */
-int abort_dummy;
-global void abort() {
-  abort_dummy = 1/0;
-}
-
 /* ----------------------------------------------------------------------- */
 
 /* Cygwin internal in <src/winsup/cygwin/times.cc>

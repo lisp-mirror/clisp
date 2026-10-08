@@ -1094,21 +1094,6 @@ global BOOL MyCreateProcess (LPTSTR CommandLine, HANDLE StdInput,
                        NULL, NULL, &sinfo, ProcessInformation);
 }
 
-/* I want to see a backtrace! */
-int abort_dummy;
-global _Noreturn void abort (void)
-{
-#ifdef MICROSOFT
-  /* This hack is necessary because if you write  1/0  the MSVC compiler
-     signals an error at compilation time!! */
-  var volatile int zero = 0;
-  abort_dummy = 1/zero;
-#else
-  abort_dummy = 1/0;
-#endif
-  exit(-1);                     /* to turn off warning */
-}
-
 
 /* Print out the memory map of the process. */
 global void DumpProcessMemoryMap (FILE* out)
