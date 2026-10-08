@@ -1,5 +1,15 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system.
+	* makemake.in (OS_INCLUDES): Include xthread always.
+	(CPARTS): Include socket always.
+	(flags): Remove obsolete -I../ffcall option. (The ffcall subdirectory
+	was removed on 2008-01-05.)
+	(cygwin_finish): Reenable and simplify the cygcheck command. (lisp.exe
+	is not a symlink any more since 2017-10-28.)
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Improve indentation around MULTITHREAD code.
 	* lispbibl.d: Move MULTITHREAD && !SOCKET_STREAMS error to here...
 	* constsym.d: ... from here.

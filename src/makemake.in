@@ -1089,9 +1089,7 @@ if [ $HSYS = master -o $HOS = win32 ] ; then
     LIBS=$LIBS' ole32.lib shell32.lib'
   fi
 fi
-if [ $HSYS = master -o $HOS = unix -o $HOS = win32 ] ; then
-  OS_INCLUDES=$OS_INCLUDES' xthread'
-fi
+OS_INCLUDES=$OS_INCLUDES' xthread'
 
 # TEXE = extension for executable files on target
 # LEXE = extension for executable file LISP on target
@@ -1961,8 +1959,7 @@ FILES='lisp.a '$FILES
 
 CPARTS='        spvw spvwtabf spvwtabs spvwtabo'
 CPARTS=$CPARTS' eval control'
-CPARTS=$CPARTS' encoding pathname stream'
-test $HSYS = master -o $HOS = unix -o $HOS = win32 && CPARTS=$CPARTS' socket'
+CPARTS=$CPARTS' encoding pathname stream socket'
 CPARTS=$CPARTS' io funarg'
 CPARTS=$CPARTS' array hashtabl list package record weak sequence'
 CPARTS=$CPARTS' charstrg debug error misc time predtype symbol lisparit i18n'
@@ -2863,7 +2860,6 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
   # Sun cc doesn't look for include files in the current directory
   # any more after a preprocessor directive '#line 1 "../src/file.d"'.
   flags=$flags" -I."
-  test $f = foreign -a $HOS = win32 && flags=$flags" -I${SRCTOPDIR}ffcall"
   test $f = genclisph && flags=$flags" -DCOMPILE_STANDALONE"
   if [ $f = modules ] ; then
     c=${SRCDIR}${c}
@@ -3731,10 +3727,9 @@ make_modules MODULES base fullmodule
 
 cygwin_finish() {
   # make sure no cygwin libraries crept into the mingw distribution
-  if [ "$host_os" = cygwin -a "${HSYS}" = win32gcc ]; then
-    # cygcheck can fail with symlinks so resolve them
+  if [ "$build_os" = cygwin -a "${HSYS}" = win32gcc ]; then
     # 'cyg[^/\\\\]*\$\$' here should look as 'cyg[^/\]*$' for grep
-    echotab "if cygcheck \`realpath $1/lisp.exe | cygpath --windows -f -\` | grep 'cyg[^/\\\\]*\$\$'; then false; else true; fi"
+    echotab "if cygcheck $1/lisp.exe | grep 'cyg[^/\\\\]*\$\$'; then false; else true; fi"
   fi
   finish_runtime $1/lisp${LEXE}
 }
