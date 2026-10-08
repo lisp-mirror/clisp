@@ -1,5 +1,13 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Stop distributing outdated Makefiles.
+	* win32msvc/makefile.msvc6: Remove file.
+	* win32msvc/makefile.msvc7: Remove file.
+	* Makefile.devel (makefiles, win32msvc/makefile.msvc[67]): Remove
+	targets.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Modernize: Assume a working abort() function.
 	* unix.d, win32.d (abort): Remove declaration.
 	* unixaux.d (abort): Remove function.

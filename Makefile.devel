@@ -23,7 +23,7 @@ CTAGS = ctags
 CURDIR=$(shell pwd)
 
 # List of targets that do not correspond to files on disk.
-.PHONY : all build-prerequisites htmldoc makefiles configures check-configures \
+.PHONY : all build-prerequisites htmldoc configures check-configures \
 	update-ansi-tests update-asdf update-gmalloc potfiles fixperms \
 	view-man view-html check-sbcl install-gcc \
 	multibuild-linux-x86 multibuild-darwin-powerpc \
@@ -35,7 +35,7 @@ CURDIR=$(shell pwd)
 # ==============================================================================
 # Targets that create files for use in the distribution. Run at any moment.
 
-all : build-prerequisites makefiles potfiles htmldoc
+all : build-prerequisites potfiles htmldoc
 
 # ------------------------------------------------------------------------------
 # Create files that are necessary for building CLISP.
@@ -335,30 +335,6 @@ src/sp_asm_x86_64-macro.c : src/sp_asm_x86_64.d src/asm-x86_64.sh
 	  && rm -f sp_asm_x86_64-linux.s
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# ------------------------------------------------------------------------------
-# Create Makefiles for Windows platform.
-
-MAKEMAKE_TMP=src/makemake
-
-makefiles : win32msvc/makefile.msvc7 win32msvc/makefile.msvc6
-	$(RM) $(MAKEMAKE_TMP)
-
-win32msvc/makefile.msvc6 : $(MAKEMAKE_TMP)
-	cd src && ./makemake --with-dynamic-ffi --without-dynamic-modules \
-		win32msvc msvc6 > ../win32msvc/makefile.msvc6
-
-win32msvc/makefile.msvc7 : $(MAKEMAKE_TMP)
-	cd src && ./makemake --with-dynamic-ffi --without-dynamic-modules \
-		win32msvc msvc7 > ../win32msvc/makefile.msvc7
-
-$(MAKEMAKE_TMP) : src/makemake.in version.sh
-	. ./version.sh; \
-	  sed -e "s/@PACKAGE_VERSION@/$${VERSION_NUMBER}/g" \
-	      -e "s/@CLISP_DECOLONIZE@/echo $$x/" src/makemake.in  \
-	      -e "s/@module_configure_flags@/--disable-option-checking/" \
-	      -e "s,@SHELL@,/bin/sh," > $(MAKEMAKE_TMP)
-	chmod a+x $(MAKEMAKE_TMP)
 
 # ------------------------------------------------------------------------------
 # Internationalization: Create the POT and PO files.
