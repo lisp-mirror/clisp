@@ -2058,22 +2058,11 @@ OBSOLETE=''
 
 # echotab line
 # outputs a line, preceding it with a tab. cat is needed to output tabs.
-if [ $HSYS != win32msvc ] ; then
 echotab () {
 cat <<!!
 	$1
 !!
 }
-else
-# Win32 "nmake" stupidly passes the command lines through `printf', thus
-# interpreting % characters.
-echotab () {
-cmd=`echol "$1" | sed -e 's,%,%%,g'`
-cat <<!!
-	$cmd
-!!
-}
-fi
 
 # echolist prefix list suffix prefix
 # outputs a list of items, prefixed by backslashes and newlines to break long
@@ -2114,17 +2103,6 @@ echol "srcdir = ${srcdir}"
 # cannot do this: "Circular ../src/build-aux <- ../src/build-aux dependency dropped."
 #echol "VPATH = ${srcdir}"
 echol
-if [ $HSYS = win32msvc ] ; then
-  echol "# Flags that can be set on the nmake command line:"
-  echol "#   MFLAGS={-ML|-MT|-MD} for defining the compilation model"
-  echol "#     MFLAGS=-ML (the default)  Single-threaded, statically linked - libc.lib"
-  echol "#     MFLAGS=-MT                Multi-threaded, statically linked  - libcmt.lib"
-  echol "#     MFLAGS=-MD                Multi-threaded, dynamically linked - msvcrt.lib"
-  echol '!if !defined(MFLAGS)'
-  echol 'MFLAGS='
-  echol '!endif'
-  echol
-fi
 
 PACKAGE_VERSION="@PACKAGE_VERSION@"
 VERSION_NUMBER=`echo "${PACKAGE_VERSION}" | sed -e 's, .*,,'`
@@ -2239,11 +2217,7 @@ else
 fi
 echol
 if [ $HOS = win32 -a $HSYS != win32gcc ] ; then
-  if [ $HSYS = win32msvc ] ; then
-    echol "MAKE = nmake"
-  else
-    echol "MAKE = amake"
-  fi
+  echol "MAKE = make"
   echol "RM = -${RM}"
   echol "RMRF = -${RMRF}"
   echol "TOUCH = -${TOUCH}"
