@@ -664,10 +664,6 @@ BENCHDIR=benchmarks
 
 # Main host OS dependencies:
 
-# DOS-style filenames
-H_DOS="false"
-test $HOS = win32 -a $HSYS != win32gcc && H_DOS="true"
-
 # HEXE = extension for executable files on host
 if [ $HOS = win32 ] ; then
   HEXE='.exe'
@@ -715,65 +711,40 @@ else
   EXEC_PREFIX='$(prefix)'
 fi
 
-# PARENT = piece of path for parent directory
-# NEXT = piece of path for next subdirectory
-# PARENT, NEXT: For interpretation by CLISP.
-# PARENT_, NEXT_: For interpretation by the system's shell (called by make).
-# PARENT_M, NEXT_M: For interpretation by the make program.
-PARENT='../'
-NEXT='/'
-if [ $H_DOS = "true" ] ; then
-  # Replace '/' with '\':
-  PARENT_=`echol $PARENT | sed -e 's,/,\\\\,g'`
-  NEXT_=`echol $NEXT | sed -e 's,/,\\\\,g'`
-else
-  PARENT_=$PARENT
-  NEXT_=$NEXT
-fi
-# Replace '\' with '\\':
-#PARENT_2=`echol $PARENT_ | sed -e 's,\\\\,\\\\\\\\,g'`
-if [ $HSYS = win32gcc ] ; then
-  PARENT_M="$PARENT"
-  NEXT_M="$NEXT"
-else
-  PARENT_M="$PARENT_"
-  NEXT_M="$NEXT_"
-fi
-
 # Various other installation directories.
 if [ $HOS = unix ] ; then
   test -n "$bindir" || bindir='@bindir@' # usually '${exec_prefix}/bin'
   BINDIR=`echo "$bindir" | sed -e "$brace_to_paren"`
 else
-  bindir="\$(exec_prefix)${NEXT_}bin"
+  bindir="\$(exec_prefix)/bin"
   BINDIR="$bindir"
 fi
 if [ $HOS = unix ] ; then
   test -n "$libdir" || libdir='@libdir@' # usually '${exec_prefix}/lib'
   LIBDIR=`echo "$libdir" | sed -e "$brace_to_paren"`
 else
-  libdir="\$(exec_prefix)${NEXT_}lib"
+  libdir="\$(exec_prefix)/lib"
   LIBDIR="$libdir"
 fi
 if [ $HOS = unix ] ; then
   test -n "$includedir" || includedir='@includedir@' # '${prefix}/include'
   INCLUDEDIR=`echo "$includedir" | sed -e "$brace_to_paren"`
 else
-  includedir="\$(prefix)${NEXT_}include"
+  includedir="\$(prefix)/include"
   INCLUDEDIR="$includedir"
 fi
 if [ $HOS = unix ] ; then
   test -n "$datarootdir" || datarootdir='@datarootdir@' # '${prefix}/share'
   DATAROOTDIR=`echo "$datarootdir" | sed -e "$brace_to_paren"`
 else
-  datarootdir="\$(prefix)${NEXT_}share"
+  datarootdir="\$(prefix)/share"
   DATAROOTDIR="$datarootdir"
 fi
 if [ $HOS = unix ] ; then
   test -n "$localedir" || localedir='@localedir@' # '${datarootdir}/locale'
   LOCALEDIR=`echo "$localedir" | sed -e "$brace_to_paren"`
 else
-  localedir="\$(datarootdir)${NEXT_}locale"
+  localedir="\$(datarootdir)/locale"
   LOCALEDIR="$localedir"
 fi
 if [ -z "$fsstnd" ]; then       # default fsstnd depends on the OS
@@ -815,13 +786,13 @@ if [ -z "$docdir" ] ; then
   if [ -z "$docdir" ] ; then
     case "$fsstnd" in
       suse)
-        docdir="\$(datarootdir)${NEXT_}doc${NEXT_}packages${NEXT_}clisp"
+        docdir="\$(datarootdir)/doc/packages/clisp"
         ;;
       redhat)
-        docdir="\$(datarootdir)${NEXT_}doc${NEXT_}\$(TOPDIR)"
+        docdir="\$(datarootdir)/doc/\$(TOPDIR)"
         ;;
       debian | gnu_ext | *bsd)
-        docdir="\$(datarootdir)${NEXT_}doc${NEXT_}clisp"
+        docdir="\$(datarootdir)/doc/clisp"
         ;;
     esac
     DOCDIR="$docdir"
@@ -833,7 +804,7 @@ if [ $HOS = unix ] ; then
   test -n "$mandir" || mandir='@mandir@' # usually '${datarootdir}/man'
   MANDIR=`echo "$mandir" | sed -e "$brace_to_paren"`
 else
-  mandir="\$(datarootdir)${NEXT_}man"
+  mandir="\$(datarootdir)/man"
   MANDIR="$mandir"
 fi
 if [ $HOS = unix ] ; then
@@ -888,38 +859,9 @@ else
   ACLOCALDIR="$aclocaldir"
 fi
 
-if [ $H_DOS = "true" ] ; then
-  # Replace '/' with '\':
-  SRCTOPDIR_=`echol ${SRCTOPDIR} | sed -e 's,/,\\\\,g'`
-  PARENT_SRCTOPDIR_=`echol ${PARENT_SRCTOPDIR} | sed -e 's,/,\\\\,g'`
-else
-  SRCTOPDIR_=$SRCTOPDIR
-  PARENT_SRCTOPDIR_=${PARENT_SRCTOPDIR}
-fi
-if [ $HSYS = win32gcc ] ; then
-  SRCTOPDIR_M="$SRCTOPDIR"
-  PARENT_SRCTOPDIR_M="${PARENT_SRCTOPDIR}"
-else
-  SRCTOPDIR_M="$SRCTOPDIR_"
-  PARENT_SRCTOPDIR_M="${PARENT_SRCTOPDIR_}"
-fi
-UTILDIR="${SRCTOPDIR}utils${NEXT}"
-UTILDIR_="${SRCTOPDIR_}utils${NEXT_}"
-UTILDIR_M="${SRCTOPDIR_M}utils${NEXT_M}"
-SRCDOCDIR="${SRCTOPDIR}doc${NEXT}"
-SRCDOCDIR_="${SRCTOPDIR_}doc${NEXT_}"
-SRCDOCDIR_M="${SRCTOPDIR_M}doc${NEXT_M}"
-MODULESDIR="${SRCTOPDIR}modules${NEXT}"
-MODULESDIR_="${SRCTOPDIR_}modules${NEXT_}"
-MODULESDIR_M="${SRCTOPDIR_M}modules${NEXT_M}"
-
-if [ $HSYS = win32msvc ] ; then
-  NEXT_CC="$NEXT_"
-  UTILDIR_CC="$UTILDIR_"
-else
-  NEXT_CC="$NEXT"
-  UTILDIR_CC="$UTILDIR"
-fi
+UTILDIR="${SRCTOPDIR}utils/"
+SRCDOCDIR="${SRCTOPDIR}doc/"
+MODULESDIR="${SRCTOPDIR}modules/"
 
 # RM = command for deleting files; RMRF - recursively
 RM='rm -f'
@@ -1021,7 +963,7 @@ else
 fi
 HEREP=`pwd`
 test -n "${PWD_POSTPROC}" && HEREP=`${PWD_POSTPROC} ${HEREP}`
-HERE_="${HEREP}${NEXT_}"
+HERE_="${HEREP}/"
 
 # for systems that lack stdint (or have a broken stdint) (e.g., solaris[89])
 # gllib path must be absolute because CPPFLAGS is passed on to module subdirs
@@ -2110,7 +2052,7 @@ echol "htmldir = ${HTMLDIR}"
 echol "psdir   = ${PSDIR}"
 echol "pdfdir  = ${PDFDIR}"
 echol "libdir  = ${LIBDIR}"
-echol "lisplibdir = \$(libdir)${NEXT_}\$(TOPDIR)"
+echol "lisplibdir = \$(libdir)/\$(TOPDIR)"
 test -n "$USE_GETTEXT" && echol "localedir = ${LOCALEDIR}"
 echol "elispdir = ${ELISPDIR}"
 echol "vimdir = ${VIMDIR}"
@@ -2382,7 +2324,7 @@ echol
 echolist "TXTFILES =" "$TXT_DOCS" ""
 echol
 
-echolist "TESTFASFILES =" "$LPARTS config" ".fas" "${RECOMPILEDIR}${NEXT_M}"
+echolist "TESTFASFILES =" "$LPARTS config" ".fas" "${RECOMPILEDIR}/"
 echol
 
 echol
@@ -2514,8 +2456,8 @@ for parf in ${PARAMS}; do
   echol
 done
 for util in ${UTILS} ; do
-  echol "${util}${HEXE} : ${UTILDIR_M}${util}.c"
-  echotab_to_HEXE "${UTILCOMPILE}" "${UTILDIR_CC}${util}.c" "${util}"
+  echol "${util}${HEXE} : ${UTILDIR}${util}.c"
+  echotab_to_HEXE "${UTILCOMPILE}" "${UTILDIR}${util}.c" "${util}"
   echol
 done
 
@@ -2918,24 +2860,24 @@ if [ -n "$USE_GETTEXT" ] ; then
     else fail "missing ${SRCDIR}po/LINGUAS"
     fi
     for lang in ${LINGUAS}; do
-      echotab "mkdir -p locale${NEXT_}${lang}${NEXT_}LC_MESSAGES"
-      echotab "\$(LN_S) ${SRCDIR}po${NEXT_}${lang}.gmo locale${NEXT_}${lang}${NEXT_}LC_MESSAGES${NEXT_}clisp.mo"
+      echotab "mkdir -p locale/${lang}/LC_MESSAGES"
+      echotab "\$(LN_S) ${SRCDIR}po/${lang}.gmo locale/${lang}/LC_MESSAGES/clisp.mo"
     done
   fi
   echol
 fi
 
 DATA_FILES="UnicodeDataFull.txt Symbol-Table.text"
-DATA_FILES_TOP_PATH="utils${NEXT_}unicode${NEXT_}UnicodeDataFull.txt doc${NEXT_}Symbol-Table.text"
+DATA_FILES_TOP_PATH="utils/unicode/UnicodeDataFull.txt doc/Symbol-Table.text"
 data_target="data :"
 for f in ${DATA_FILES_TOP_PATH}; do
-  data_target="${data_target} ${SRCTOPDIR_}${f}"
+  data_target="${data_target} ${SRCTOPDIR}${f}"
 done
 echol "${data_target}"
 echotab "\$(RMRF) data"
 echotab "mkdir data"
 for f in ${DATA_FILES_TOP_PATH}; do
-  echotab "cd data && \$(LN_S) ${PARENT_SRCTOPDIR_}${f} ."
+  echotab "cd data && \$(LN_S) ${PARENT_SRCTOPDIR}${f} ."
 done
 echol
 
@@ -3010,7 +2952,7 @@ echol "RUN= ${HERE}lisp${LEXE} ${localeflags}${someflags}"
 echol
 
 for f in ${LUTILS} ; do
-  echol "${f}.fas : ${UTILDIR_M}${f}.lisp lisp${LEXE} lispinit.mem"
+  echol "${f}.fas : ${UTILDIR}${f}.lisp lisp${LEXE} lispinit.mem"
   echotab "\$(RUN) -M lispinit.mem -q -c ${UTILDIR}${f}.lisp -o ./"
   echol
 done
@@ -3092,16 +3034,16 @@ echotab "-mkdir ${RECOMPILEDIR}"
 echol
 
 for f in $LPARTS; do
-  echol "${RECOMPILEDIR}${NEXT_M}${f}.fas : ${SRCDIR}${f}.lisp lisp${LEXE} lispinit.mem"
-  echotab "\$(RUN) -m 1MW -M lispinit.mem -q -d -c ${SRCDIR}${f}.lisp -o ${RECOMPILEDIR}${NEXT_}"
+  echol "${RECOMPILEDIR}/${f}.fas : ${SRCDIR}${f}.lisp lisp${LEXE} lispinit.mem"
+  echotab "\$(RUN) -m 1MW -M lispinit.mem -q -d -c ${SRCDIR}${f}.lisp -o ${RECOMPILEDIR}/"
   echol
 done
-echol "${RECOMPILEDIR}${NEXT_M}config.fas : config.lisp lisp${LEXE} lispinit.mem"
-echotab "\$(RUN) -m 1MW -M lispinit.mem -q -d -c config.lisp -o ${RECOMPILEDIR}${NEXT_}"
+echol "${RECOMPILEDIR}/config.fas : config.lisp lisp${LEXE} lispinit.mem"
+echotab "\$(RUN) -m 1MW -M lispinit.mem -q -d -c config.lisp -o ${RECOMPILEDIR}/"
 echol
 
 echol "lispinit2.mem : lisp${LEXE} \$(TESTFASFILES)"
-echotab '$(RUN) -x "(and (cd \"'"${RECOMPILEDIR}${NEXT}"'\") (load \"init.fas\") (cd \"'"${PARENT}"'\") (sys::%saveinitmem) (ext::exit)) (ext::exit t)"'
+echotab '$(RUN) -x "(and (cd \"'"${RECOMPILEDIR}/"'\") (load \"init.fas\") (cd \"'"../"'\") (sys::%saveinitmem) (ext::exit)) (ext::exit t)"'
 echotab "-\$(RM) lispinit2.mem"
 echotab "\$(MV) lispimag.mem lispinit2.mem"
 echol
@@ -3230,12 +3172,12 @@ fi
 echol "${TESTSDIR} :"
 echotab "-mkdir ${TESTSDIR}"
 for f in Makefile '*.lisp' '*.tst'; do
-  echotab "cd ${TESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}tests${NEXT_}${f} ."
+  echotab "cd ${TESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR}tests/${f} ."
 done
 echol
 
 # sacla-tests are not included in the source distribution
-if test -d "${SRCTOPDIR_}sacla-tests"; then
+if test -d "${SRCTOPDIR}sacla-tests"; then
   CHECK_DEPS=${CHECK_DEPS}" check-sacla-tests"
   SACLA_CLISP="../lisp${LEXE} -ansi -B .. -M ../lispinit.mem -N ../locale ${someflags} -i tests.lisp"
   echol "check-sacla-tests : ${SACLATESTSDIR} lisp${LEXE} lispinit.mem"
@@ -3244,13 +3186,13 @@ if test -d "${SRCTOPDIR_}sacla-tests"; then
   echol "${SACLATESTSDIR} :"
   echotab "-mkdir ${SACLATESTSDIR}"
   for f in '*.lisp'; do
-    echotab "cd ${SACLATESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}sacla-tests${NEXT_}${f} ."
+    echotab "cd ${SACLATESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR}sacla-tests/${f} ."
   done
   echol
 fi
 
 # ansi-tests are not included in the source distribution
-if test -d "${SRCTOPDIR_}ansi-tests"; then
+if test -d "${SRCTOPDIR}ansi-tests"; then
   CHECK_DEPS=${CHECK_DEPS}" check-ansi-tests check-ansi-tests-compiled"
   ANSI_CLISP="../lisp${LEXE} -B .. -M ../lispinit.mem -N ../locale ${someflags} -m 30000KW -ansi -i clispload.lisp -p CL-TEST"
   echol "check-ansi-tests : ${ANSITESTSDIR} lisp${LEXE} lispinit.mem"
@@ -3273,17 +3215,17 @@ if test -d "${SRCTOPDIR_}ansi-tests"; then
 #    of failing "make check".
 # 2. 'svn' does not work on machines that are not connected to the internet.
 # 3. Makefile.devel does not work if 'make' is not GNU make.
-# echotab "cd ${SRCTOPDIR_} && \$(MAKE) -f Makefile.devel update-ansi-tests"
+# echotab "cd ${SRCTOPDIR} && \$(MAKE) -f Makefile.devel update-ansi-tests"
   echotab "-mkdir ${ANSITESTSDIR}"
   for f in Makefile '*.lsp'; do
-    echotab "cd ${ANSITESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}ansi-tests${NEXT_}${f} ."
+    echotab "cd ${ANSITESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR}ansi-tests/${f} ."
   done
-  echotab "cd ${ANSITESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}utils${NEXT_}clispload.lisp ."
+  echotab "cd ${ANSITESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR}utils/clispload.lisp ."
   echol
 fi
 
 # benchmarks are not included in the source distribution
-if [ -d "${SRCTOPDIR_}benchmarks" -a -n "${GNU_MAKE}" ]; then
+if [ -d "${SRCTOPDIR}benchmarks" -a -n "${GNU_MAKE}" ]; then
   CHECK_DEPS=${CHECK_DEPS}" bench"
   echol "bench : ${BENCHDIR}"
   echotab "CLISP=\"`pwd`/clisp -norc\"; export CLISP; cd ${BENCHDIR}; \$(MAKE) CLISP=\"\$\$CLISP\" clisp"
@@ -3291,7 +3233,7 @@ if [ -d "${SRCTOPDIR_}benchmarks" -a -n "${GNU_MAKE}" ]; then
   echol "${BENCHDIR} :"
   echotab "-mkdir ${BENCHDIR}"
   for f in Makefile '*.lisp'; do
-    echotab "cd ${BENCHDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}benchmarks${NEXT_}${f} ."
+    echotab "cd ${BENCHDIR} && \$(LN_S) ${PARENT_SRCTOPDIR}benchmarks/${f} ."
   done
   echol
 fi
@@ -3306,7 +3248,7 @@ fi
 #MYIMPROOT=http://clisp.org/beta/impnotes/
 MYIMPROOT=http://www.gnu.org/software/clisp/impnotes/
 MYTESTURL=${MYIMPROOT}id-href.map
-if test -d "${SRCTOPDIR_}.git" \
+if test -d "${SRCTOPDIR}.git" \
    && { if wget --version >/dev/null 2>/dev/null ; then \
           wget --execute netrc=off --tries=1 --timeout=10 -q ${MYTESTURL}; \
         elif lynx --version >/dev/null 2>/dev/null ; then \
@@ -3419,7 +3361,7 @@ done
 echol
 
 # scripts in build-aux
-MODULE_CONFIGURES=`find ${MODULESDIR_} -name configure`
+MODULE_CONFIGURES=`find ${MODULESDIR} -name configure`
 BUILD_AUX_ALL=`grep '$ac_aux_dir/' ${MODULE_CONFIGURES} | sed 's,.*$ac_aux_dir/\([a-z.-]*\).*,\1,' | sort -u`
 BUILD_AUX=''
 # must have build-aux in build directory because it is the lisplibdir for
@@ -3480,7 +3422,7 @@ for f in clisp-link ; do
   echol
 done
 echol "boot : modular lispinit.mem"
-echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules.o lisp${LEXE} lispinit.mem; do \$(LN_S) ${PARENT_}\$\$f .; done && (\$(GREP) -v '^FILES=' ${PARENT_}makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
+echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules.o lisp${LEXE} lispinit.mem; do \$(LN_S) ../\$\$f .; done && (\$(GREP) -v '^FILES=' ../makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
 echol
 make_modules() {
   MODULES_VAR=$1
@@ -3488,7 +3430,7 @@ make_modules() {
   MODULE_NAME=$3         # Some "make"s don't support empty target lists
   echol "${MODULE_NAME} \$(${MODULES_VAR}) : ${LINKING_SET} clisp${TEXE} linkkit force"
   echotab 'mkdir -p $@'
-  echotab "m=\`cd ${MODULESDIR_}\$@; pwd\`; \\"
+  echotab "m=\`cd ${MODULESDIR}\$@; pwd\`; \\"
   # srcdir has to be passed to ./configure because it must be able to find
   # src/build-aux/install-sh _AND_ also its own sources, thus we must
   # point it to modules/... in the original source tree.
@@ -3549,7 +3491,7 @@ echol "mod-check : base-mod-check full-mod-check"
 echol
 modcheck(){                     # $1=clisp command; $2=MODULES variable
   echotab 'for m in "" $('$2'); do test -n "$$m" && $(RM) $$m/*.erg; done'
-  echotab 'z=""; for m in "" $('$2'); do test -n "$$m" && z=$$z" \""$$m/\"; done; '"$1${someflags} -C -i ${TESTSDIR}/tests"' -x "(ext:exit (plusp (or (run-some-tests :dirlist '"'"'($$z) :srcdir \"'${MODULESDIR_}'\" :outdir \"./\") 0)))"'
+  echotab 'z=""; for m in "" $('$2'); do test -n "$$m" && z=$$z" \""$$m/\"; done; '"$1${someflags} -C -i ${TESTSDIR}/tests"' -x "(ext:exit (plusp (or (run-some-tests :dirlist '"'"'($$z) :srcdir \"'${MODULESDIR}'\" :outdir \"./\") 0)))"'
   echol
 }
 echol "base-mod-check : clisp${TEXE} ${TESTSDIR} # base"
@@ -3585,7 +3527,7 @@ done
 echol "MANUALS =${manpages1html} \$(TXTFILES) \$(IMPNOTES_FILES)"
 echol
 for f in ${IMPNOTES_FILES} ${TXT_DOCS}; do
-  link_dep "${f}" "${SRCDOCDIR_M}${f}" "${SRCDOCDIR_}${f}"
+  link_dep "${f}" "${SRCDOCDIR}${f}" "${SRCDOCDIR}${f}"
 done
 EMACS_FILES="clisp-coding.el clisp-indent.el clisp-indent.lisp clisp-ffi.el"
 VIM_FILES="lisp.vim"
@@ -3613,7 +3555,7 @@ else
 fi
 
 for f in ${TOP_DOC} ; do
-  link_dep "${f}" "${SRCTOPDIR_M}${f}" "${SRCTOPDIR_}${f}"
+  link_dep "${f}" "${SRCTOPDIR}${f}" "${SRCTOPDIR}${f}"
 done
 
 if [ -n "${SRCDIR}" ] ; then
@@ -3630,7 +3572,7 @@ fi
 
 if [ $HOS = unix ] ; then
   for f in MAGIC.add ; do
-    link_dep "${f}" "${SRCTOPDIR}unix${NEXT}${f}"
+    link_dep "${f}" "${SRCTOPDIR}unix/${f}"
   done
 fi
 
@@ -4130,7 +4072,7 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
     echotab "${HLN} clisp.c ${SRCDIR}execname.c \$(TOPDIR)/src/"
   else
     echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) -DLISPLIBDIR='\"\$(lisplibdir)\"' -DLOCALEDIR='\"\$(localedir)\"'" "clisp.c ${GLLIB_A}" "\$(TOPDIR)/clisp"
-    echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) -I." "${UTILDIR_CC}hardcode.c ${GLLIB_A}" "\$(TOPDIR)/hardcode"
+    echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) -I." "${UTILDIR}hardcode.c ${GLLIB_A}" "\$(TOPDIR)/hardcode"
   fi
   # Final packing.
   echotab "chmod a+r \$(TOPDIR) \$(TOPDIR)/* \$(TOPDIR)/*/*"
@@ -4278,7 +4220,7 @@ clean6 : clean5
 
 # clean-modules remove the copies of modules, do it if you change modprep and such
 clean-modules :
-	-\$(RMRF) \`ls -d ${MODULESDIR_}*/. | sed -e 's,/\.\$\$,,' -e 's,^.*/,,'\`
+	-\$(RMRF) \`ls -d ${MODULESDIR}*/. | sed -e 's,/\.\$\$,,' -e 's,^.*/,,'\`
 
 # clean7 lets us go back to the main "configure".
 clean7 : clean6 clean-modules distclean-subdirs

@@ -1,5 +1,18 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Assume POSIX file name syntax.
+	* makemake.in (H_DOS): Remove variable.
+	(PARENT, PARENT_, PARENT_M): Remove variables. Use '../' instead.
+	(NEXT, NEXT_, NEXT_M): Remove variables. Use '.' instead.
+	(SRCTOPDIR_, SRCTOPDIR_M): Remove variables. Use SRCTOPDIR instead.
+	(PARENT_SRCTOPDIR_, PARENT_SRCTOPDIR_M): Remove variables. Use
+	PARENT_SRCTOPDIR instead.
+	(UTILDIR_, UTILDIR_M): Remove variables. Use UTILDIR instead.
+	(SRCDOCDIR_, SRCDOCDIR_M): Remove variables. Use SRCDOCDIR instead.
+	(MODULESDIR_, MODULESDIR_M): Remove variables. Use MODULESDIR instead.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume POSIX utilities (cat, cp, rm, etc.).
 	* makemake.in (RM, RMRF, CP, LN_S, MV, CAT): Use POSIX command names.
 	Use 'cmp' instead of 'comp'.
