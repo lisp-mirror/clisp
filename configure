@@ -676,11 +676,6 @@ fi
 
 . "${ABS_DIRNAME}/config.cache"
 
-case ${ac_cv_host} in           # mingw/msys
-  *mingw32*)
-    makemake_args="${makemake_args} --with-dynamic-modules=no --win32gcc" ;;
-esac
-
 test -n "${cl_cv_have_ffcall}" || cl_cv_have_ffcall=notchecked
 cat <<EOF
 Configure findings:

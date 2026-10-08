@@ -1,5 +1,13 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system: Remove makemake option --win32gcc.
+	* configure: Remove special handling of mingw hosts here.
+	* makemake.in: Don't accept option --win32gcc.
+	(HOS, HSYS, HSYSOS, with_dynamic_modules): Do special handling of mingw
+	hosts here.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system: Remove deprecated configure options.
 	* configure: Remove options --with-mingw, --with-no-cygwin,
 	--without-cygwin, --with-cygwin=no.
