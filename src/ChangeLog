@@ -1,5 +1,14 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system: Remove advanced usage option of makemake.
+	* makemake.in: Ignore non-option arguments.
+	(TSYSOS): Remove variable. Use HSYSOS instead.
+	(TOS): Remove variable.
+	(COMPILER): Remove variable.
+	(HSYS): Remove handling of special value 'master'.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Remove the NSIS based installer.
 	It was doing too heavy modifications to the registry, see
 	<https://sourceforge.net/p/clisp/support-requests/8/>.

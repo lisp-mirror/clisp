@@ -77,33 +77,6 @@ Example:
 EOP
 }
 
-# Advanced usage:
-#        ./makemake [--with-PACKAGE] TARGET COMPILER > Makefile
-#  where PACKAGE is one of
-#        noreadline       no readline library
-#        gettext          internationalization, needs GNU gettext
-#        nogettext        static internationalization (en only)
-#        unicode          Unicode character set
-#        dynamic-ffi      a dynamic foreign language interface
-#        dynamic-modules  dynamic loading of foreign language modules
-#        module=MODULE    an add-on module
-#  where TARGET is one of
-#        master
-#        win32msvc
-#  and COMPILER is one of
-#        gcc       (GNU C under the name gcc)
-#        cc        (any other ANSI C compliant cc)
-
-# Examples:
-#   makemake > Makefile
-#   makemake --with-debug > Makefile
-#   makemake --with-noreadline --with-debug > Makefile
-#   makemake master gcc > make.gcc/makefile
-#   makemake --win32gcc gcc > make.win32gcc/makefile
-#   makemake --with-dynamic-ffi win32msvc msvc4 > make.win32msvc/makefile.msvc4
-#   makemake --with-dynamic-ffi win32msvc msvc5 > make.win32msvc/makefile.msvc5
-#   makemake --with-dynamic-ffi win32msvc msvc6 > make.win32msvc/makefile.msvc6
-
 
 # Fix the "echo" command. The SysV /bin/sh (and also ksh, and also bash if
 # built with --enable-usg-echo-default, and also GNU sh-utils-1.16) are broken:
@@ -512,7 +485,6 @@ esac
 
 # HSYS, HSYSOS = host system
 # HOS  = host operating system
-# TSYSOS = target system
 # CC, CPPFLAGS, CFLAGS, LDFLAGS, CPP = compiler
 # A_CPPFLAGS, Z_CPPFLAGS = options that we add before, after $(CPPFLAGS).
 # A_CFLAGS, Z_CFLAGS = options that we add before, after $(CFLAGS).
@@ -590,73 +562,27 @@ fi
 # feature or bug than to look at various `uname ...` results and list
 # the buggy systems explicitly. ONLY in this case!
 
-UTILCOMPILE="\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS)"
-case $# in
-  0 | 1)
-     # Assume we are on Unix (or win32gcc).
-     if [ -z "$HSYS" ]; then # not win32gcc
-       HSYS=`( (arch) 2>/dev/null || uname -m 2>/dev/null) | $tolower` # system name in lowercase
-       HSYSOS=`( (uname) 2>/dev/null || arch 2>/dev/null) | $tolower` # OS name in lowercase
-       if [ "$HSYS" = 386bsd -o "$HSYS" = sun386 -o "$HSYS" = "386/at" -o "$HSYS" = i86pc ] ; then
-         HSYS='i386'
-       fi
-       if [ "$HSYS" = sun4m ] ; then
-         HSYS='sun4'
-       fi
-       case "$HSYSOS" in
-         # Canonicalize cygwin32/nt and cygwin32/95 to plain cygwin.
-         cygwin*) HSYSOS=cygwin ;;
-       esac
-       HOS='unix'
-       COMPILER=??
-     else                       # win32gcc
-       HSYSOS=$HSYS
-       HOS=win32
-       COMPILER=gcc
-       # Compile the utils as native Windows binaries, even on Cygwin.
-       UTILCOMPILE="\$(CC) \$(CPPFLAGS)"
-     fi
-     TSYS="$HSYS"
-     TSYSOS="$HSYSOS"
-     case "$host_os" in
-       mingw*) TOS=win32 ;;
-       *)      TOS="$HOS" ;;
-     esac
-     ;;
-  *) TSYS=$1
-     COMPILER=$2
-     module_configure_flags=${module_configure_flags}" --build=${TSYS}"
-     # TSYS should be (master|win32msvc).
-     # COMPILER should be <host...>-gcc or cc
-     case ${TSYS} in
-       win32msvc ) TOS='win32' ;;
-       *)          TOS='unix' ;;
-     esac
-     TSYSOS=$TSYS
-     HOS="$TOS"
-     HSYS="$TSYS"
-     HSYSOS="$TSYSOS"
-     if [ $TSYS = win32msvc ] ; then
-       CC='cl'
-       CC_GCC=false
-       CFLAGS='$(MFLAGS)'
-       CC_NEED_DEEMA=true
-       AS_UNDERSCORE=false
-       LD='link'
-       FFCALL_LIBS='avcall.lib callback.lib'
-     else
-       CC=${COMPILER}
-       case $COMPILER in
-         *-gcc ) CC_GCC=true ;;
-         *) CC_GCC=false ;;
-       esac
-       CFLAGS='-O'
-       CPP="${CC} -E"
-       LD='ld'
-     fi
-     shift 2
-     ;;
-esac
+if [ -z "$HSYS" ]; then # not win32gcc
+  HSYS=`( (arch) 2>/dev/null || uname -m 2>/dev/null) | $tolower` # system name in lowercase
+  HSYSOS=`( (uname) 2>/dev/null || arch 2>/dev/null) | $tolower` # OS name in lowercase
+  if [ "$HSYS" = 386bsd -o "$HSYS" = sun386 -o "$HSYS" = "386/at" -o "$HSYS" = i86pc ] ; then
+    HSYS='i386'
+  fi
+  if [ "$HSYS" = sun4m ] ; then
+    HSYS='sun4'
+  fi
+  case "$HSYSOS" in
+    # Canonicalize cygwin32/nt and cygwin32/95 to plain cygwin.
+    cygwin*) HSYSOS=cygwin ;;
+  esac
+  HOS='unix'
+  UTILCOMPILE="\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS)"
+else                       # win32gcc
+  HSYSOS=$HSYS
+  HOS=win32
+  # Compile the utils as native Windows binaries, even on Cygwin.
+  UTILCOMPILE="\$(CC) \$(CPPFLAGS)"
+fi
 
 # Like WIDE_HARD in lispbibl.d
 if grep 'define pointer_bitsize 64' intparam.h > /dev/null; then
@@ -666,8 +592,6 @@ else
 fi
 
 if [ "${with_gmalloc}" = yes ]; then GMALLOC=gmalloc; else GMALLOC=""; fi
-
-TOS="$HOS"
 
 if [ "${with_dynamic_modules}" = default ]; then
   # if --with-dynamic-modules is not supplied:
@@ -701,17 +625,11 @@ if [ $HSYS = win32msvc ] ; then
   # ("-O1" and "-O2" are buggy in msvc5 ... msvc7).
   # -Zi - include debug info (-ZI for debug-and-continue)
   # -GZ - runtime debug checks
-  case $COMPILER in
-    msvc6 | msvc7)
-      if [ "${with_debug}" = no ] ; then
-        Z_CFLAGS="${Z_CFLAGS} -G5 -Os -Oy -Ob1 -Gs -Gf -Gy"
-      else
-        Z_CFLAGS="${Z_CFLAGS} -Zi -Od -GZ"
-      fi
-      ;;
-    *) fail "unsupported compiler [${COMPILER}]"
-      ;;
-  esac
+  if [ "${with_debug}" = no ] ; then
+    Z_CFLAGS="${Z_CFLAGS} -G5 -Os -Oy -Ob1 -Gs -Gf -Gy"
+  else
+    Z_CFLAGS="${Z_CFLAGS} -Zi -Od -GZ"
+  fi
 fi
 
 if [ "$srcdir" = . ] ; then
@@ -852,7 +770,7 @@ else
   LOCALEDIR="$localedir"
 fi
 if [ -z "$fsstnd" ]; then       # default fsstnd depends on the OS
-  case ${TSYSOS} in
+  case ${HSYSOS} in
     cygwin | win32gcc )  fsstnd=redhat; ;; # cygwin == redhat!
     *bsd ) fsstnd=bsd; ;;
     linux )
@@ -1068,7 +986,7 @@ fi
 # Main target OS dependencies:
 
 OS_INCLUDES=''
-if [ $HSYS = master -o $HOS = unix ] ; then
+if [ $HOS = unix ] ; then
   OS_INCLUDES=$OS_INCLUDES' unix'
   LIBS=$LIBS" $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
   if [ "$host_os" = solaris2.11 ] \
@@ -1078,7 +996,7 @@ if [ $HSYS = master -o $HOS = unix ] ; then
     LIBS=$LIBS" -lnsl"
   fi
 fi
-if [ $HSYS = master -o $HOS = win32 ] ; then
+if [ $HOS = win32 ] ; then
   OS_INCLUDES=$OS_INCLUDES' win32'
   if [ $HSYS = win32gcc ] ; then
     LIBS=$LIBS" -lole32 -luuid $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
@@ -1151,7 +1069,6 @@ test "${verbose}" = true -o "${verbose}" = yes && \
   cat <<EOF >&2
 EXPORT_DYNAMIC_FLAG_SPEC=${EXPORT_DYNAMIC_FLAG_SPEC}
 module_configure_flags=${module_configure_flags}
-# host system:
  hostname = "${hostname}"
      HSYS = "${HSYS}"
    HSYSOS = "${HSYSOS}"
@@ -1161,12 +1078,9 @@ module_configure_flags=${module_configure_flags}
       cpu = "${cpu}"
   host_os = "${host_os}"
      host = "${host}"
-# target system:
-   TSYSOS = "${TSYSOS}"
 EOF
 # e.g.:
 ### msys/mingw
-# # host system:
 #   hostname = "stnt067"
 #       HSYS = "win32gcc"
 #     HSYSOS = "win32gcc"
@@ -1175,10 +1089,7 @@ EOF
 #        cpu = "i386"
 #    host_os = "mingw32"
 #       host = "i686-pc-mingw32"
-# # target system:
-#     TSYSOS = "win32gcc"
 ### cygwin/--with-mingw
-# # host system:
 #  hostname = "nyc-qsv-term01"
 #      HSYS = "win32gcc"
 #    HSYSOS = "win32gcc"
@@ -1187,10 +1098,7 @@ EOF
 #       cpu = "i386"
 #   host_os = "cygwin"
 #      host = "i686-pc-cygwin"
-# # target system:
-#    TSYSOS = "win32gcc"
 ### cygwin
-# # host system:
 #  hostname = "nyc-qsv-term01"
 #      HSYS = "i686"
 #    HSYSOS = "cygwin"
@@ -1199,10 +1107,7 @@ EOF
 #       cpu = "i386"
 #   host_os = "cygwin"
 #      host = "i686-pc-cygwin"
-# # target system:
-#    TSYSOS = "cygwin"
 ### linux
-# # host system:
 #  hostname = "nyc-qws-005"
 #      HSYS = "x86_64"
 #    HSYSOS = "linux"
@@ -1211,8 +1116,6 @@ EOF
 #       cpu = "x86_64"
 #   host_os = "linux-gnu"
 #      host = "x86_64-unknown-linux-gnu"
-# # target system:
-#    TSYSOS = "linux"
 
 # Main compiler dependencies:
 
@@ -1386,14 +1289,6 @@ else
 
   if [ $HSYS = win32msvc ] ; then
     CPP="cl -E"
-    case ${COMPILER} in
-      msvc6) CPP="$CPP -D_MSC_VER=1200 -D_INTEGRAL_MAX_BITS=64"
-        ;;
-      msvc7) CPP="$CPP -D_MSC_VER=1300 -D_INTEGRAL_MAX_BITS=64 -I\$(MSVCDIR)/PlatformSDK/include"
-        ;;
-      *) fail "unsupported compiler [${COMPILER}]"
-        ;;
-    esac
     Z_CFLAGS="$Z_CFLAGS -U__GNUC__ -DANSI -D_M_IX86=500 -D_WIN32 -I\$(MSVCDIR)/include"
   elif "$CC_SUNPRO" ; then
     # SUNWspro cc flags:
@@ -1520,7 +1415,7 @@ then # This is necessary for g++ to handle w32shell.c:
   Z_CFLAGS=$Z_CFLAGS' -DCINTERFACE'
 fi
 
-if [ "$cpu" = i386 -a "$TSYSOS" = "sunos" ] ; then # Solaris 2
+if [ "$cpu" = i386 -a "$HSYSOS" = "sunos" ] ; then # Solaris 2
   Z_CFLAGS=$Z_CFLAGS'' # maybe add -DUSL
 fi
 
@@ -1963,9 +1858,9 @@ CPARTS=$CPARTS' encoding pathname stream socket'
 CPARTS=$CPARTS' io funarg'
 CPARTS=$CPARTS' array hashtabl list package record weak sequence'
 CPARTS=$CPARTS' charstrg debug error misc time predtype symbol lisparit i18n'
-test $HSYS = master -o "${with_dynamic_ffi}" != no && CPARTS=$CPARTS' foreign'
-test $HSYS = master -o $HOS = unix && CPARTS=$CPARTS' unixaux'
-test $HSYS = master -o $HOS = win32 && CPARTS=$CPARTS' win32aux'
+test "${with_dynamic_ffi}" != no && CPARTS=$CPARTS' foreign'
+test $HOS = unix && CPARTS=$CPARTS' unixaux'
+test $HOS = win32 && CPARTS=$CPARTS' win32aux'
 test "${with_threads}" != no && CPARTS=$CPARTS' zthread'
 CPARTS=$CPARTS' built'
 
@@ -2037,7 +1932,7 @@ if [ -n "${SRCDIR}" ] ; then
 fi
 
 ERROR_INCLUDES='errunix'
-test $HSYS = master -o $HOS = win32 && ERROR_INCLUDES=$ERROR_INCLUDES' errwin32'
+test $HOS = win32 && ERROR_INCLUDES=$ERROR_INCLUDES' errwin32'
 
 LISPARIT_SUBFILES=' aridecl arilev0 arilev1 intelem intlog intplus intcomp intbyte intmal intdiv intgcd int2adic intsqrt intprint intread intserial rational'
 LISPARIT_SUBFILES=$LISPARIT_SUBFILES' sfloat ffloat dfloat lfloat flo_konv flo_rest realelem realrand realtran compelem comptran'
@@ -2135,7 +2030,7 @@ LPARTS=$LPARTS' screen runprog query reploop dribble complete'
 LPARTS=$LPARTS' pprint describe room edit macros3 clhs inspect gray'
 test "${with_threads}" = no || LPARTS=$LPARTS' threads'
 LPARTS=$LPARTS' case-sensitive'
-test $HSYS = master -o "${with_dynamic_ffi}" != no && LPARTS=$LPARTS' foreign1'
+test "${with_dynamic_ffi}" != no && LPARTS=$LPARTS' foreign1'
 LPARTS=$LPARTS' exporting '
 test "${with_unicode}" = no -o "${with_gettext}" = no || \
   LPARTS=$LPARTS' german french spanish russian danish dutch'
@@ -2277,9 +2172,9 @@ if [ "${with_dynamic_ffi}" != no ]; then
   echol   "# netica               Netica (http://norsys.com/netica_c_api.htm)"
   echol   "# pari                 PARI/gp (http://pari.math.u-bordeaux.fr/)"
   echol   "# zlib                 ZLIB (http://www.zlib.org)"
-  test "$cpu" = i386 -a "$TSYSOS" = linux && \
+  test "$cpu" = i386 -a "$HSYSOS" = linux && \
     echol "# bindings/glibc       Linux glibc bindings (GNU libc version 2)"
-  test "$cpu" = i386 -a \( "$TSYSOS" = win32gcc -o "$TSYSOS" = cygwin \) && \
+  test "$cpu" = i386 -a \( "$HSYSOS" = win32gcc -o "$HSYSOS" = cygwin \) && \
     echol "# bindings/win32       win32 bindings"
   echol   "# gtk2                 GTK2 interface"
 fi
@@ -3118,13 +3013,6 @@ else
   # MSVC's incremental linking is buggy, avoid it.
   if [ $HSYS = win32msvc ] ; then echotab "\$(RM) lisp.ilk"; fi
   echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) ${OUT}lisp${LEXE}"
-  # With msvc4/5, need at least 1200 KB stack for creating the first
-  # interpreted.mem, but the default stack size is only 1 MB.
-  # With msvc6, need more than 2 MB for compiling compiler.lisp.
-  if [ $HSYS = win32msvc -a ${COMPILER} != msvc7 ]; then
-    # Jay Kint <jkint@icosahedron.org> says that msvc7(.NET) does not need this
-    echotab "editbin /stack:3145728 lisp${LEXE}"
-  fi
 fi
 finish_runtime lisp${LEXE}
 
@@ -3151,7 +3039,7 @@ echol "config.lisp : ${SRCDIR}${CONFIG}.lisp"
 echotab "\$(CP) ${SRCDIR}${CONFIG}.lisp config.lisp"
 echotab "chmod +w config.lisp"
 echotab "echo '(setq *clhs-root-default* \"${hyperspec}\")' >> config.lisp"
-if [ ${TSYSOS} = cygwin ]; then
+if [ ${HSYSOS} = cygwin ]; then
   # maybe convert the cygwin cygdrive pathnames
   # https://cygwin.com/ml/cygwin/2005-08/msg00460.html
   DEVPREFIX=`mount -p | sed -nr '2s,/([^ ]+) +\S+ +\S+$,\1,p'`
@@ -3171,7 +3059,7 @@ if [ "${with_unicode}" != no ] ; then
   #   this is also important for the regexp test suite.
   # The second "-E" ensures that syscalls tests pass (user names may be 8bit)
   encflags=' -E UTF-8 -Emisc 1:1'
-  if [ "${TSYSOS}" != darwin ]; then # utf-8 on Darwin is good enough
+  if [ "${HSYSOS}" != darwin ]; then # utf-8 on Darwin is good enough
     # The last "-E" ensures that we can parse all pathnames.
     encflags=${encflags}' -Epathname 1:1'
   fi
