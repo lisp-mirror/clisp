@@ -1,5 +1,10 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Assume POSIX sh as command processor.
+	* makemake.in (ARGQ, ARGQ1, QQUOT): Remove variables.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume POSIX file name syntax.
 	* makemake.in (H_DOS): Remove variable.
 	(PARENT, PARENT_, PARENT_M): Remove variables. Use '../' instead.

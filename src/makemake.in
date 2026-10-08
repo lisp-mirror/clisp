@@ -2383,19 +2383,6 @@ echol
 echol "am--refresh : config.status Makefile config.h"
 echol
 
-if [ $HSYS = win32msvc ] ; then
-  # quote for command arguments when they are unnecessary on DOS
-  ARGQ=""
-  # .. when they are mandatory
-  ARGQ1="\""
-  # quotes to pass to a command escaped
-  QQUOT="\\\""
-else
-  ARGQ="'"
-  ARGQ1="'"
-  QQUOT="\""
-fi
-
 # cf. ac_precious_vars in configure
 PRECIOUS_VARS='CC CFLAGS LDFLAGS LIBS CPPFLAGS CPP CXX CXXFLAGS X_LIBS'
 # Do not touch cflags.h when the changes to Makefile do not modify it.
@@ -2405,23 +2392,18 @@ echol "cflags.h : cflags.h.stamp"
 echodummyrule "cflags.h"
 echol
 echol "cflags.h.stamp : Makefile"
-echotab "echo $ARGQ/* generated from Makefile */$ARGQ > cflags.h.new"
+echotab "echo '/* generated from Makefile */' > cflags.h.new"
 for x in ${PRECIOUS_VARS}; do
   case $x in
     CPPFLAGS | CFLAGS | LDFLAGS)
-      echotab "echo $ARGQ#define $x \"\$(A_$x) \$($x) \$(Z_$x)\"$ARGQ >> cflags.h.new"
+      echotab "echo '#define $x \"\$(A_$x) \$($x) \$(Z_$x)\"' >> cflags.h.new"
       ;;
     *)
-      echotab "echo $ARGQ#define $x \"\$($x)\"$ARGQ >> cflags.h.new"
+      echotab "echo '#define $x \"\$($x)\"' >> cflags.h.new"
       ;;
   esac
 done
-if [ $HSYS = win32msvc ] ; then
-  echotab '$(RM) cflags.h'
-  echotab '$(MV) cflags.h.new cflags.h'
-else
-  echotab 'if cmp cflags.h.new cflags.h > /dev/null 2>&1; then $(RM) cflags.h.new; else $(MV) cflags.h.new cflags.h; fi'
-fi
+echotab 'if cmp cflags.h.new cflags.h > /dev/null 2>&1; then $(RM) cflags.h.new; else $(MV) cflags.h.new cflags.h; fi'
 echotab '$(TOUCH) cflags.h.stamp'
 echol
 
@@ -3601,11 +3583,11 @@ for f in $TXT_FILES ; do
   echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS)${flags} \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS)${CC_NOOPTFLAGS}" "${g}.c ${GLLIB_A}" "${g}"
   line="${HERE}${g}"
   test $f = clisp.1 -o $f = clisp-link.1 && \
-    line=$line" | \$(GREP) -v ${ARGQ1}^ *\$\$${ARGQ1}"
+    line=$line" | \$(GREP) -v '^ *\$\$'"
   # *-1.html is for chunked impnotes and does not depend on user hyperspec
   test \( $f = clisp.html -o $f = clisp-link.html \) \
        -a "${HSDEFAULT}" != "${hyperspec}" && \
-    line=$line" | sed -e ${ARGQ}s,=${QQUOT}${HSDEFAULT},=${QQUOT}${hyperspec},${ARGQ}"
+    line=$line" | sed -e 's,=\"${HSDEFAULT},=\"${hyperspec},'"
   test $f = distmakefile && line=$line" | sed -e \"s,@@LEXE@@,${LEXE},g\" -e \"s:@@EXPORT_DYNAMIC_FLAG_SPEC@@:${EXPORT_DYNAMIC_FLAG_SPEC}:g\""
   line=$line$platform_line
   echotab "${line} > ${f}"
