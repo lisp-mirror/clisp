@@ -544,14 +544,10 @@ Z_CFLAGS=''
 A_LDFLAGS=''
 Z_LDFLAGS=''
 
-if test -x ./libtool; then # normal autoconf-based build
-  # -rdynamic or -Wl,-E or -Wl,--export-dynamic
-  eval "`./libtool --tag=CC --config | grep '^wl='`"
-  eval "`./libtool --tag=CC --config | grep '^export_dynamic_flag_spec='`"
-  eval EXPORT_DYNAMIC_FLAG_SPEC=\"$export_dynamic_flag_spec\"
-else # generating Makefiles for MS compiler from Makefile.devel
-  :
-fi
+# -rdynamic or -Wl,-E or -Wl,--export-dynamic
+eval "`./libtool --tag=CC --config | grep '^wl='`"
+eval "`./libtool --tag=CC --config | grep '^export_dynamic_flag_spec='`"
+eval EXPORT_DYNAMIC_FLAG_SPEC=\"$export_dynamic_flag_spec\"
 
 # Important: Don't rely on this host classification.
 # 1. GNU's database config.guess is not always up to date.

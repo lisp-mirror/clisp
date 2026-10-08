@@ -1,5 +1,10 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Assume an autoconf-generated libtool file.
+	* makemake.in: Don't test for 'libtool'.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume a C compiler with Unix 'cc' like options.
 	* makemake.in (OUT): Remove variable. Use '-o ' instead.
 	(echotab_to_HEXE): Use Unix-like definition.
