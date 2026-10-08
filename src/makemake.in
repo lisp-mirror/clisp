@@ -981,10 +981,8 @@ Z_CPPFLAGS="${Z_CPPFLAGS} ${GNULIB_INCLUDE}"
 # TOBJ = extension for compiled modules on target
 if [ $HSYS = win32msvc ] ; then
   TOBJ='.obj'
-  OUT='/link /out:'
 else
   TOBJ='.o'
-  OUT='-o '
 fi
 
 # Main cpu dependencies:
@@ -2128,15 +2126,9 @@ fi
 # echotab_to_HEXE command source target
 # outputs a `make' statement that executes "command source" and creates
 # target${HEXE}.
-if [ $HSYS != win32msvc ] ; then
-  echotab_to_HEXE () {
-    echotab "$1 $2 -o $3${HEXE}"
-  }
-else
-  echotab_to_HEXE () {
-    echotab "$1 $2 /Fe$3${HEXE}"
-  }
-fi
+echotab_to_HEXE () {
+  echotab "$1 $2 -o $3${HEXE}"
+}
 echol
 SET_MAKE="@SET_MAKE@"
 test -n "${SET_MAKE}" && echol "${SET_MAKE}"
@@ -2751,10 +2743,10 @@ for f in $ARI_ASMS $SP_ASMS ; do
     echol "${f}${TOBJ} : ${SRCDIR}${f}-macro.c"
     if false; then # old
       echotab "\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) ${SRCDIR}${f}-macro.c > ${f}.i.c"
-      echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.i.c /Fo${f}${TOBJ}"
+      echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.i.c -o ${f}${TOBJ}"
       echotab "\$(RM) ${f}.i.c"
     else
-      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${SRCDIR}${f}-macro.c /Fo${f}${TOBJ}"
+      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${SRCDIR}${f}-macro.c -o ${f}${TOBJ}"
     fi
     echol
   else
@@ -2881,7 +2873,7 @@ if [ $HOS != win32 -a $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
   LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
   echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
 else
-  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) ${OUT}lisp${LEXE}"
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE}"
 fi
 finish_runtime lisp${LEXE}
 
@@ -3659,7 +3651,7 @@ if [ $HOS = win32 ]; then
   echol
 fi
 echol "clisp${TEXE} : clisp.c${DRIVER_DEP}"
-echotab "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS) -DENABLE_RELOCATABLE clisp.c${DRIVER_RES}${DRIVER_LIBS} ${OUT}clisp${TEXE}"
+echotab "\$(CC) \$(CPPFLAGS) \$(CFLAGS) \$(LDFLAGS) -DENABLE_RELOCATABLE clisp.c${DRIVER_RES}${DRIVER_LIBS} -o clisp${TEXE}"
 echol
 if [ $HOS = unix ] ; then
   echol "install : install-bin install-man install-doc"
