@@ -1794,15 +1794,8 @@ for f in $EVERY_INCLUDES ; do
   EVERY_INCLUDES_C=$EVERY_INCLUDES_C' '$f'.c'
 done
 
-# on UNIX and MINGW PACKAGE_* (and OS capabilities!) is in config.h,
-# otherwise PACKAGE_* is in version.h and OS capabilities are in win32.c
-if [ ${HOS} = unix -o ${HSYS} = win32gcc ]; then
-  EVERY_INCLUDES_H=' config.h'
-  SPVW_VERSION=''
-else
-  EVERY_INCLUDES_H=''
-  SPVW_VERSION=version.h
-fi
+# PACKAGE_* (and OS capabilities!) is in config.h.
+EVERY_INCLUDES_H=' config.h'
 
 OTHER_INCLUDES=' constpack avl sort bytecode'
 
@@ -2409,7 +2402,7 @@ PARAMS="intparam floatparam"
 PARAMS_H=""
 line="init :"
 for parf in ${PARAMS}; do
-  test ${HOS} != win32 && line=$line" "${parf}.h
+  line=$line" "${parf}.h
   PARAMS_H=${PARAMS_H}" "${parf}.h
 done
 for util in ${UTILS} ; do line=$line" ${util}${HEXE}"; done
@@ -2417,14 +2410,6 @@ line=$line" modules.h"
 echol $line
 echodummyrule init
 echol
-for parf in ${PARAMS}; do
-  echol "${parf}.h : ${SRCDIR}${parf}.c config.h"
-  echotab "{ echo '#include \"config.h\"' && cat '${SRCDIR}${parf}.c'; } > gen-${parf}.c"
-  echotab_to_HEXE "\$(CC)" "gen-${parf}.c" "${parf}"
-  echotab "${HERE}${parf}${HEXE} ${parf}.h"
-  echotab "\$($EXERM) $(exefiles ${parf}) gen-${parf}.c"
-  echol
-done
 for util in ${UTILS} ; do
   echol "${util}${HEXE} : ${UTILDIR}${util}.c"
   echotab_to_HEXE "${UTILCOMPILE}" "${UTILDIR}${util}.c" "${util}"
@@ -2592,7 +2577,6 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
     dependsc=$dependsc' '$g'.c'
   done
   dependsc=$dependsc''$EVERY_INCLUDES_H
-  test $f = spvw -a -n "${SPVW_VERSION}" && dependsc=$dependsc' '${SPVW_VERSION}
   if [ $f = pathname ] ; then
     dependsc=$dependsc" ${SRCDIR}execname.c"
     test ${HOS} = win32 && dependsc=$dependsc" ${SRCDIR}w32shell.c"

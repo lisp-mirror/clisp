@@ -1,5 +1,16 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Assume an autoconf-generated config.h file.
+	* makemake.in (EVERY_INCLUDES_H): Always include config.h.
+	Remove targets intparam.h, floatparam.h.
+	(SPVW_VERSION): Remove variable.
+	* lispbibl.d: Always include config.h, intparam.h, floatparam.h.
+	* win32.d: Update comment.
+	* version.h: Remove generated file.
+	* Makefile.devel (src/version.h): Remove target.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume an autoconf-generated libtool file.
 	* makemake.in: Don't test for 'libtool'.
 
