@@ -2688,22 +2688,6 @@ if [ -n "${SRCDIR}" ] ; then
   fi
 fi
 
-if [ ${HOS} = win32 ]; then
-  for f in env_var_update.nsh is_user_admin.nsh; do
-    link_dep "${f}" "${SRCTOPDIR_}win32msvc/nsis/${f}"
-  done
-  echol "install.nsi : ${SRCTOPDIR_}win32msvc/nsis/install.nsi config.status"
-  # comma used as separator in patterns below to allow embedded
-  # slashes in module names (e.g., bindings/win32)
-  echotab "sed -e 's/\@NAME\@/\$(PACKAGE_NAME)/g' -e 's/\@VERSION\@/\$(VERSION)/g' -e 's,\@BASE_MODULES\@,\$(BASE_MODULES),g' -e 's,\@MODULES\@,\$(MODULES),g' ${SRCTOPDIR_}win32msvc/nsis/install.nsi > install.nsi"
-  echol
-  echol "COPYRIGHT.rtf : COPYRIGHT ${SRCTOPDIR_}win32msvc/nsis/text_to_rtf.lisp config.status"
-  echotab "\$(RUN) -M lispinit.mem -q ${SRCTOPDIR_}win32msvc/nsis/text_to_rtf.lisp COPYRIGHT COPYRIGHT.tmp"
-  echotab "sed -e 's/\@NAME\@/\$(PACKAGE_NAME)/g' -e 's/\@VERSION\@/\$(VERSION)/g' COPYRIGHT.tmp > COPYRIGHT.rtf"
-  echotab '$(RM) COPYRIGHT.tmp'
-  echol
-fi
-
 echol "allc : init \$(CFILES)"
 echodummyrule allc
 echol
@@ -4351,7 +4335,7 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
   echol
 elif [ $HOS = win32 ] ; then
   echol "# Distribution, to be executed on a Unix host or using Cygwin."
-  echol "distrib : install.lisp install.bat config.lisp ${manpages_less} clisp.html COPYRIGHT.rtf env_var_update.nsh install.nsi is_user_admin.nsh force"
+  echol "distrib : install.lisp install.bat config.lisp ${manpages_less} clisp.html force"
   echotab "version=\$(VERSION) ; \\"
   echotab "distdir=clisp-\$\$version ; \\"
   echotab "rm -rf \$\$distdir; \\"
@@ -4409,7 +4393,6 @@ elif [ $HOS = win32 ] ; then
   echotab "find \$\$distdir -type f -exec chmod 664 {} ';' ; \\"
   echotab "rm -f \$\$distfile \$\$installfile ; \\"
   echotab "(echo \"\$(PACKAGE_NAME) version \$(PACKAGE_VERSION) for Win32.\"; echo \".\") | zip -r -9 -z \$\$distfile \$\$distdir ; \\"
-  echotab "cd \$\$distdir; cp ../*.ns[hi] ../COPYRIGHT.rtf .; makensis install.nsi; mv \$\$installfile .. ; cd ..; \\"
   echotab "rm -rf \$\$distdir"
   echol
 fi
@@ -4430,7 +4413,7 @@ clean1 : clean0
 	-\$(RMRF) ${ANSITESTSDIR}
 	-\$(RMRF) ${SACLATESTSDIR}
 	-\$(RMRF) boot base full linkkit dynmod
-	-\$(RM) ${TXT_FILES} ${manpages_less} ${manual_print} \$(IMPNOTES_FILES) \$(TXTFILES) COPYRIGHT.rtf install.nsi
+	-\$(RM) ${TXT_FILES} ${manpages_less} ${manual_print} \$(IMPNOTES_FILES) \$(TXTFILES)
 
 # clean2 removes everything that becomes obsolete once lisp${LEXE}
 # is recompiled without changing the bytecode format.

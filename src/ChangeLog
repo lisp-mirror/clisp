@@ -1,5 +1,14 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Remove the NSIS based installer.
+	It was doing too heavy modifications to the registry, see
+	<https://sourceforge.net/p/clisp/support-requests/8/>.
+	* win32msvc/nsis/: Remove directory.
+	* src/makemake.in (install.nsi, COPYRIGHT.rtf): Remove targets.
+	(distrib, clean1): Update.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Stop distributing outdated Makefiles.
 	* win32msvc/makefile.msvc6: Remove file.
 	* win32msvc/makefile.msvc7: Remove file.
