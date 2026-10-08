@@ -425,8 +425,8 @@ static void stream_truncate (Handle fd, file_offset_t *length) {
 DEFUN(POSIX::%SET-FILE-SIZE, file new-size) {
   /* https://pubs.opengroup.org/onlinepubs/9799919799/functions/truncate.html
      https://pubs.opengroup.org/onlinepubs/9799919799/functions/ftruncate.html
-     http://msdn.microsoft.com/en-us/library/aa365542(VS.85).aspx
-     http://msdn.microsoft.com/en-us/library/aa365531(VS.85).aspx */
+     https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/chsize
+     https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setendoffile */
   file_offset_t length;
   Handle fd;
   I_to_file_offset(STACK_0,&length);
@@ -1756,9 +1756,9 @@ DEFUN(POSIX::USER-INFO, &optional user)
 }
 #elif defined(WIN32_NATIVE)
 /* FIXME: use
- http://msdn.microsoft.com/library/en-us/netmgmt/netmgmt/user_info_1_str.asp
- http://msdn.microsoft.com/library/en-us/netmgmt/netmgmt/netusergetinfo.asp
- http://msdn.microsoft.com/library/en-us/netmgmt/netmgmt/netuserenum.asp */
+ https://learn.microsoft.com/en-us/windows/win32/api/lmaccess/ns-lmaccess-user_info_1
+ https://learn.microsoft.com/en-us/windows/win32/api/lmaccess/nf-lmaccess-netusergetinfo
+ https://learn.microsoft.com/en-us/windows/win32/api/lmaccess/nf-lmaccess-netuserenum */
 #endif  /* user-info */
 
 #if defined(HAVE_GETUSERSHELL) && defined(HAVE_ENDUSERSHELL)
@@ -1948,7 +1948,7 @@ DEFUN(POSIX::FILE-STAT, file &optional linkp)
          only an integer of an unknown nature.
          FIXME: actually, the integer is an "OS File Hangle"
          accessibe via int _open_osfhandle (intptr_t osfhandle, int flags);
-         http://msdn.microsoft.com/en-us/library/bdts1c9x.aspx
+         https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/open-osfhandle
          however, it is not clear whether this itroduces a leak:
          the osfhandle is supposed to be closed by _close, but it also closes
          the original handle which is no good */
@@ -4709,7 +4709,7 @@ DEFUN(POSIX::%STDIO, &optional which) {
 #if defined(WIN32_NATIVE) || defined(UNIX_CYGWIN)
 # include <winerror.h>
 /* http://cygwin.com/cgi-bin/cvsweb.cgi/src/winsup/w32api/include/winerror.h */
-/* http://msdn.microsoft.com/en-us/library/aa914935.aspx */
+/* https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499- */
 DEFCHECKER(check_last_error,type=DWORD,                                 \
            ERROR_INVALID_FUNCTION ERROR_FILE_NOT_FOUND ERROR_PATH_NOT_FOUND \
            ERROR_TOO_MANY_OPEN_FILES ERROR_ACCESS_DENIED \

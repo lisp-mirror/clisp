@@ -6151,8 +6151,7 @@ spaced, escaped tokens, using ESCAPER to escape."
   (defun escape-windows-command (command &optional s)
     "Escape a list of command-line arguments into a string suitable for parsing
 by CommandLineToArgv in MS Windows"
-    ;; http://msdn.microsoft.com/en-us/library/bb776391(v=vs.85).aspx
-    ;; http://msdn.microsoft.com/en-us/library/17w5ykft(v=vs.85).aspx
+    ;; https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw
     (escape-command command s 'escape-windows-token))
 
   (defun escape-sh-command (command &optional s)

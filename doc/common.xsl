@@ -182,7 +182,7 @@
 
 <!-- =========== Win32 functions ============ -->
 <xsl:template match="function[@role='win32'] | varname[@role='win32']">
- <a class="{@role}" href="https://social.msdn.microsoft.com/search/en-US/windows?query={.}"><xsl:apply-imports/></a>
+ <a class="{@role}" href="https://learn.microsoft.com/en-us/search/?terms={.}"><xsl:apply-imports/></a>
 </xsl:template>
 <!-- =========== / Win32 functions ============ -->
 

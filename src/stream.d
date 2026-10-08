@@ -10286,10 +10286,7 @@ global void resize_screen (int rows, int columns) {}
  modified on 2001-07-31
 
  The API is documented at
- http://www.msdn.microsoft.com/library/psdk/winbase/conchar_4svm.htm
- (Platform SDK documentation -> Base Services -> Files and I/O ->
-  Consoles and Character-Mode Support -> About Character Mode Support ->
-  Consoles)
+ https://learn.microsoft.com/en-us/windows/console/console-reference
 
  console is a kind of channel stream
 
@@ -14744,7 +14741,8 @@ LISPFUNN(socket_stream_shutdown,2) {
    ================== */
 
 #if defined(WIN32_NATIVE)
-/* http://msdn.microsoft.com/en-us/library/ms804359.aspx */
+/* NtQueryInformationFile
+   https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryinformationfile */
 typedef NTSTATUS (__stdcall *QueryInformationFile_t)
 (IN HANDLE FileHandle, OUT PIO_STATUS_BLOCK IoStatusBlock,
  OUT PVOID FileInformation, IN ULONG Length,

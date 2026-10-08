@@ -8423,8 +8423,7 @@ local maygc int stringlist_to_ascizlist (object stringlist,
 /* (SHELL-EXECUTE verb filename parameters defaultdir)
    ShellExecute wrapper
    See ShellExecute description at
-   http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/
-     platform/Shell/reference/functions/shellexecute.asp
+   https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea
    verb: usually nil (for default),
          "edit", "explore", "open", "print", "properties"
    filename: filename or url to open

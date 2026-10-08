@@ -1,5 +1,11 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	all: Update URLs to msdn.microsoft.com.
+	* wind32.d et al.: Update URLs after msdn.microsoft.com was moved to
+	docs.microsoft.com and then to learn.microsoft.com.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system.
 	* makemake.in (OS_INCLUDES): Include xthread always.
 	(CPARTS): Include socket always.

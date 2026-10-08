@@ -34,9 +34,9 @@
 #include <shellapi.h>
 #define unused unused_void      /* restore the unused declaration */
 
-/* NtQueryInformationFile http://msdn.microsoft.com/en-us/library/ff567052.aspx
-   It uses IO_STATUS_BLOCK http://msdn.microsoft.com/en-us/library/ff567052.aspx
-   which uses NTSTATUS https://msdn.microsoft.com/en-us/library/ff565436.aspx */
+/* NtQueryInformationFile https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryinformationfile
+   It uses IO_STATUS_BLOCK https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/ns-wdm-_io_status_block
+   which uses NTSTATUS https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/using-ntstatus-values */
 #include <winternl.h>
 #include <ntstatus.h>
 

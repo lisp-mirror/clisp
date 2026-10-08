@@ -283,7 +283,7 @@
   (minor 0 :type (integer 0) :read-only t)
   (build 0 :type (integer 0) :read-only t)
   (revision 0 :type (integer 0) :read-only t)
-  ;; http://msdn.microsoft.com/en-us/library/ms647464(v=vs.85).aspx
+  ;; https://learn.microsoft.com/en-us/windows/win32/menurc/string-str
   Comments
   Company-Name
   File-Description
