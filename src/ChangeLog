@@ -1,5 +1,11 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Assume POSIX utilities (cat, cp, rm, etc.).
+	* makemake.in (RM, RMRF, CP, LN_S, MV, CAT): Use POSIX command names.
+	Use 'cmp' instead of 'comp'.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume a POSIX 'make' utility, not 'nmake'.
 	* makemake.in (echotab): Use POSIX definition.
 	(MFLAGS): Remove; '-MD' should be given through the CFLAGS.

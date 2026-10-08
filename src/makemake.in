@@ -664,7 +664,7 @@ BENCHDIR=benchmarks
 
 # Main host OS dependencies:
 
-# DOS-style filenames and file utilities
+# DOS-style filenames
 H_DOS="false"
 test $HOS = win32 -a $HSYS != win32gcc && H_DOS="true"
 
@@ -922,32 +922,20 @@ else
 fi
 
 # RM = command for deleting files; RMRF - recursively
-if [ $H_DOS = "true" ] ; then
-  RM='del /q'
-  RMRF='del /q /s'
-else
-  RM='rm -f'
-  RMRF='rm -rf'
-fi
+RM='rm -f'
+RMRF='rm -rf'
 
 # CP = command for copying files
-if [ $H_DOS = "true" ] ; then
-  CP='copy'
-# else see above
-fi
+# Set by configure, above.
 
 # LN_S = command for copying read-only files
-if [ $H_DOS = "true" ] ; then
-  LN_S='copy'
-else
-  # Set by configure, above.
-  # On mingw in the Cygwin environment, the built native Windows programs don't
-  # understand the symlinks created by Cygwin's 'ln -s'. Therefore avoid
-  # creating such symlinks.
-  case "$host_os" in
-    mingw*) LN_S=${LN-ln} ;;
-  esac
-fi
+# Set by configure, above.
+# On mingw in the Cygwin environment, the built native Windows programs don't
+# understand the symlinks created by Cygwin's 'ln -s'. Therefore avoid
+# creating such symlinks.
+case "$host_os" in
+  mingw*) LN_S=${LN-ln} ;;
+esac
 
 # LN_HARD = command for copying files, saving disk space if possible
 LN_HARD=${LN-ln}
@@ -958,18 +946,10 @@ if [ "$HLN" = hln ] ; then
 fi
 
 # MV = command for renaming files
-if [ $H_DOS = "true" ] ; then
-  MV='ren'
-else
-  MV='mv'
-fi
+MV='mv'
 
 # CAT = command for typing files to stdout
-if [ $H_DOS = "true" ] ; then
-  CAT='type'
-else
-  CAT='cat'
-fi
+CAT='cat'
 
 # TOUCH = command for pretending files are new
 TOUCH='touch'
@@ -2216,18 +2196,11 @@ else
   }
 fi
 echol
-if [ $HOS = win32 -a $HSYS != win32gcc ] ; then
-  echol "MAKE = make"
-  echol "RM = -${RM}"
-  echol "RMRF = -${RMRF}"
-  echol "TOUCH = -${TOUCH}"
-else
-  SET_MAKE="@SET_MAKE@"
-  test -n "${SET_MAKE}" && echol "${SET_MAKE}"
-  echol "RM = ${RM}"
-  echol "RMRF = ${RMRF}"
-  echol "TOUCH = ${TOUCH}"
-fi
+SET_MAKE="@SET_MAKE@"
+test -n "${SET_MAKE}" && echol "${SET_MAKE}"
+echol "RM = ${RM}"
+echol "RMRF = ${RMRF}"
+echol "TOUCH = ${TOUCH}"
 echol "CP = ${CP}"
 echol "LN_S = ${LN_S}"
 echol "MV = ${MV}"
@@ -3108,20 +3081,11 @@ echol
 
 echol "# Test: recompile \$(LISPFILES) and compare their contents."
 echol "check-recompile : lispinit.mem ${RECOMPILEDIR} \$(TESTFASFILES)"
-if [ $HOS = unix -o $HSYS = win32gcc ] ; then
-  for f in $LPARTS config; do
-    echotab "cmp -s ${f}.fas ${RECOMPILEDIR}/${f}.fas "' || (echo "Test failed." ; exit 1)'
-  done
-  echotab 'echo "Test passed."'
-  echol
-elif [ $HSYS = win32msvc ] ; then
-  echotab "comp *.fas ${RECOMPILEDIR}"
-  echotab "echo The test passed if only GENSYM differences were found."
-  echol
-else
-  echotab 'echo "Compare the .fas files by hand."'
-  echol
-fi
+for f in $LPARTS config; do
+  echotab "cmp -s ${f}.fas ${RECOMPILEDIR}/${f}.fas "' || (echo "Test failed." ; exit 1)'
+done
+echotab 'echo "Test passed."'
+echol
 
 echol "${RECOMPILEDIR} :"
 echotab "-mkdir ${RECOMPILEDIR}"
@@ -3265,7 +3229,6 @@ if [ "${with_threads}" != no ]; then
 fi
 echol "${TESTSDIR} :"
 echotab "-mkdir ${TESTSDIR}"
-# on win32, LN_S=copy and it accepts exactly 2 arguments
 for f in Makefile '*.lisp' '*.tst'; do
   echotab "cd ${TESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}tests${NEXT_}${f} ."
 done
@@ -3280,7 +3243,6 @@ if test -d "${SRCTOPDIR_}sacla-tests"; then
   echol
   echol "${SACLATESTSDIR} :"
   echotab "-mkdir ${SACLATESTSDIR}"
-  # on win32, LN_S=copy and it accepts exactly 2 arguments
   for f in '*.lisp'; do
     echotab "cd ${SACLATESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}sacla-tests${NEXT_}${f} ."
   done
@@ -3313,7 +3275,6 @@ if test -d "${SRCTOPDIR_}ansi-tests"; then
 # 3. Makefile.devel does not work if 'make' is not GNU make.
 # echotab "cd ${SRCTOPDIR_} && \$(MAKE) -f Makefile.devel update-ansi-tests"
   echotab "-mkdir ${ANSITESTSDIR}"
-  # on win32, LN_S=copy and it accepts exactly 2 arguments
   for f in Makefile '*.lsp'; do
     echotab "cd ${ANSITESTSDIR} && \$(LN_S) ${PARENT_SRCTOPDIR_}ansi-tests${NEXT_}${f} ."
   done
@@ -3439,11 +3400,7 @@ echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) 
 echotab_to_HEXE "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) -I. -DUSE_CLISP_H=0 -DCOMPILE_STANDALONE" "clisp-test.c ${GLLIB_A}" "clisp-test-lispbibl"
 echotab "${HERE}clisp-test-clisp > clisp-test-clisp.out"
 echotab "${HERE}clisp-test-lispbibl > clisp-test-lispbibl.out"
-if [ $HOS = unix -o $HSYS = win32gcc ]; then
-  echotab  "cmp clisp-test-clisp.out clisp-test-lispbibl.out"
-else
-  echotab "comp clisp-test-clisp.out clisp-test-lispbibl.out"
-fi
+echotab "cmp clisp-test-clisp.out clisp-test-lispbibl.out"
 echotab "if grep lispbibl.d clisp.h; then false; else true; fi"
 echotab "\$($EXERM) $(exefiles genclisph) clisp.h.tmp $(exefiles clisp-test-clisp) $(exefiles clisp-test-lispbibl) clisp-test-clisp.out clisp-test-lispbibl.out"
 OBSOLETE="$OBSOLETE clisp-test.c $(exefiles genclisph)"
