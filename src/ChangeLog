@@ -1,5 +1,11 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Remove outdated code.
+	* makemake.in: Remove rule to generate lisp.bsc. Remove command to
+	delete lisp.ilk.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system: Remove makemake option --win32gcc.
 	* configure: Remove special handling of mingw hosts here.
 	* makemake.in: Don't accept option --win32gcc.

@@ -2445,9 +2445,6 @@ needs="gllib/libgnu.a init allc allo lisp${LEXE} marc.out interpreted.mem halfco
 if [ $HOS = unix -o ${HSYS} = win32gcc ] ; then
   needs=".gdbinit "$needs' modular $(BASE_MODULES) $(MODULES) '"clisp${TEXE} boot base full"
 fi
-if [ $HSYS = win32msvc -a "${with_debug}" != no ] ; then
-  needs=$needs" lisp.bsc"
-fi
 echol "all : $needs"
 echodummyrule all
 echol
@@ -3008,26 +3005,14 @@ finish_runtime () {
 fi
 
 echol "lisp${LEXE} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ} ${XCL_GETTEXTLIB} data"
-if [ $HOS != win32 ] ; then
-  if [ $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
-    # Dynamically linking on Solaris 2.[23] is a pain.
-    LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
-    echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
-  else
-    echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) ${OUT}lisp${LEXE}"
-  fi
+if [ $HOS != win32 -a $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
+  # Dynamically linking on Solaris 2.[23] is a pain.
+  LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
 else
-  # MSVC's incremental linking is buggy, avoid it.
-  if [ $HSYS = win32msvc ] ; then echotab "\$(RM) lisp.ilk"; fi
   echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) ${OUT}lisp${LEXE}"
 fi
 finish_runtime lisp${LEXE}
-
-if [ $HSYS = win32msvc -a "${with_debug}" != no ] ; then
-  echol "${SRCDIR}lisp.bsc : lisp${LEXE}"
-  echotab "bscmake /n /o lisp *.sbr"
-  echol
-fi
 
 echol "marc.out : lisp${LEXE}"
 # This sometimes fails on Cygwin/i386 and mingw/i386.
