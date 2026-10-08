@@ -9484,7 +9484,7 @@ local maygc void pr_orecord (const gcv_object_t* stream_, object obj) {
       CHECK_PRINT_READABLY(obj);
       write_sstring_case(stream_,O(printstring_internal_weak_hashed_alist));
       break;
-#ifdef MULTITHREAD
+    #ifdef MULTITHREAD
     case Rectype_Thread:
       CHECK_PRINT_READABLY(obj);
       pr_unreadably_with_prefix(stream_,TheThread(obj)->xth_name,
@@ -9504,7 +9504,7 @@ local maygc void pr_orecord (const gcv_object_t* stream_, object obj) {
       pr_unreadably(stream_,TheExemption(obj)->xco_name,
                     &O(printstring_exemption),prin_object);
       break;
-#endif
+    #endif
     default:
       pushSTACK(S(print));
       error(serious_condition,

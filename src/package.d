@@ -196,10 +196,10 @@ local maygc object rehash_symtab (object symtab) {
       if (consp(oldentry)) /* this time process only non-empty symbol-lists */
         do {
           pushSTACK(Cdr(oldentry)); /* save rest-list */
-        #ifndef MULTITHREAD
-          /* cons oldentry in front of free-conses */
-          Cdr(oldentry) = STACK_2; STACK_2 = oldentry;
-        #endif
+          #ifndef MULTITHREAD
+            /* cons oldentry in front of free-conses */
+            Cdr(oldentry) = STACK_2; STACK_2 = oldentry;
+          #endif
           /* enter symbol in the new table */
           newinsert(Car(oldentry),newsize);
           oldentry = popSTACK(); /* rest-list */
@@ -223,13 +223,13 @@ local maygc object rehash_symtab (object symtab) {
   }
   /* stack layout: tab, oldtable, free-conses, newtable. */
   { /* update tab: */
-  #ifdef MULTITHREAD
-    /* allocate new symtab. other threads may have obtained pointer to
-       the old one for lookup - do not modify it */
-    var object new_symtab = allocate_vector(3); /* vector of length 3 */
-    Symtab_count(new_symtab) = Symtab_count(STACK_3); /* set the count */
-    STACK_3 = new_symtab; /* replace symtab on the stack */
-  #endif
+    #ifdef MULTITHREAD
+      /* allocate new symtab. other threads may have obtained pointer to
+         the old one for lookup - do not modify it */
+      var object new_symtab = allocate_vector(3); /* vector of length 3 */
+      Symtab_count(new_symtab) = Symtab_count(STACK_3); /* set the count */
+      STACK_3 = new_symtab; /* replace symtab on the stack */
+    #endif
     var object newtable = popSTACK(); /* newtable */
     skipSTACK(2);
     symtab = popSTACK(); /* tab */
@@ -510,14 +510,14 @@ local maygc object make_package (object name, object nicknames,
   ThePackage(pack)->pack_docstring = NIL;
   ensure_pack_shortest_name(pack);
   pushSTACK(pack);
- #ifdef MULTITHREAD
-  /* allocate the package mutex */
-  /* mutex name is the same as the package name */
-  pushSTACK(S(Kname)); pushSTACK(ThePackage(pack)->pack_name);
-  pushSTACK(S(Krecursive_p)); pushSTACK(T); /* recursive  */
-  funcall(L(make_mutex),4);
-  ThePackage(STACK_0)->pack_mutex = value1;
- #endif
+  #ifdef MULTITHREAD
+    /* allocate the package mutex */
+    /* mutex name is the same as the package name */
+    pushSTACK(S(Kname)); pushSTACK(ThePackage(pack)->pack_name);
+    pushSTACK(S(Krecursive_p)); pushSTACK(T); /* recursive  */
+    funcall(L(make_mutex),4);
+    ThePackage(STACK_0)->pack_mutex = value1;
+  #endif
   /* and insert in ALL_PACKAGES: */
   pushSTACK(allocate_cons()); /* new_cons */
   WITH_OS_MUTEX_LOCK(2,&all_packages_lock, {
@@ -2774,13 +2774,13 @@ LISPFUNN(delete_package,1) {
 local maygc void delete_package_aux (void* data, object sym) {
   var gcv_object_t* localptr = (gcv_object_t*)data; /* pointer to pack */
   pushSTACK(sym); unintern(&STACK_0,localptr);
-#if defined(MULTITHREAD)
-  /* clear per thread symvalues if any.
-     FIXME: The symvalue cell pointed from clisp_thread_t will remain
-     as a memory leak !!! It is possible with exhaustive scan of all
-     symbols to "compact" the threads symvalues cells. */
-  clear_per_thread_symvalues(STACK_0);
-#endif
+  #if defined(MULTITHREAD)
+    /* clear per thread symvalues if any.
+       FIXME: The symvalue cell pointed from clisp_thread_t will remain
+       as a memory leak !!! It is possible with exhaustive scan of all
+       symbols to "compact" the threads symvalues cells. */
+    clear_per_thread_symvalues(STACK_0);
+  #endif
   skipSTACK(1);
 }
 
@@ -2887,17 +2887,17 @@ LISPFUNN(map_external_symbols,2) {
  applies the function fun to all symbols present in any package. */
 LISPFUNN(map_all_symbols,1)
 {
-#ifdef MULTITHREAD
-  {
-    pushSTACK(NIL);
-    var gcv_object_t *ap_ = &STACK_0;
-    WITH_OS_MUTEX_LOCK(0,&all_packages_lock, {
-      *ap_ = copy_list(O(all_packages));  /* traverse copy of package-list */
-    });
-  }
-#else
-  pushSTACK(O(all_packages)); /* traverse package-list */
-#endif
+  #ifdef MULTITHREAD
+    {
+      pushSTACK(NIL);
+      var gcv_object_t *ap_ = &STACK_0;
+      WITH_OS_MUTEX_LOCK(0,&all_packages_lock, {
+        *ap_ = copy_list(O(all_packages));  /* traverse copy of package-list */
+      });
+    }
+  #else
+    pushSTACK(O(all_packages)); /* traverse package-list */
+  #endif
   while (mconsp(STACK_0)) {
     var object pack = Car(STACK_0); /* next package */
     STACK_0 = Cdr(STACK_0);

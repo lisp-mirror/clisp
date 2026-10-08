@@ -213,9 +213,9 @@ local void* mymalloc (uintM need)
     modexp uintL alloccount = 1;
     #define inc_alloccount()  (void)(alloccount++)
   #else
-     /* the following is really slow. more appropriate implementation
-        should use heap (like) structure and modified GCTRIGGER()
-        macros. for now it is ok.*/
+    /* the following is really slow. more appropriate implementation
+       should use heap (like) structure and modified GCTRIGGER()
+       macros. for now it is ok.*/
     inline void inc_alloccount()  {
       /* find out the max alloccount among all threads and increase it.
          Also set all others threads alloccount to this one.*/

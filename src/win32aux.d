@@ -325,13 +325,13 @@ global void init_win32 (void)
   stdin_handle = GetStdHandle(STD_INPUT_HANDLE);
   stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
   stderr_handle = GetStdHandle(STD_ERROR_HANDLE);
-#ifndef MULTITHREAD
+ #ifndef MULTITHREAD
   /* What to do if one of these is == INVALID_HANDLE_VALUE ?? */
   /* Auxiliary events. */
   aux_event = CreateEvent(NULL, true, false, NULL);
   sigint_event = CreateEvent(NULL, true, false, NULL);
   sigbreak_event = CreateEvent(NULL, true, false, NULL);
-#endif
+ #endif
  #ifndef ENABLE_UNICODE
   { /* Translation table for console input. */
     var int i;
@@ -688,11 +688,11 @@ modexp ssize_t fd_write
     return 0;
   }
   /* in MT builds the heap protection is managed by pin_varobject() */
-#if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
+ #if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
   handle_fault_range(PROT_READ,(aint)b,(aint)b+nbyte);
-#endif
+ #endif
   var const char* buf = (const char*) b;
-#ifndef ENABLE_UNICODE
+ #ifndef ENABLE_UNICODE
   /* Possibly translate characters. */
   if (nbyte > 0) {
     var int i;
@@ -715,7 +715,7 @@ modexp ssize_t fd_write
       }
     }
   }
-#endif
+ #endif
   var int done = 0;
   do {
     /* Possibly check for Ctrl-C here ?? */
@@ -820,9 +820,9 @@ local int lowlevel_sock_read (SOCKET fd, void* b, size_t nbyte, perseverance_t p
     return 0;
   }
   /* in MT builds the heap protection is managed by pin_varobject() */
-#if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
+ #if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
   handle_fault_range(PROT_READ_WRITE,(aint)b,(aint)b+nbyte);
-#endif
+ #endif
   var char* buf = (char*) b;
   var int done = 0;
   do {
@@ -932,9 +932,9 @@ local int lowlevel_sock_write (SOCKET fd, const void* b, size_t nbyte, persevera
     return 0;
   }
   /* in MT builds the heap protection is managed by pin_varobject() */
-#if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
+ #if defined(GENERATIONAL_GC) && defined(SPVW_MIXED) && !defined(MULTITHREAD)
   handle_fault_range(PROT_READ,(aint)b,(aint)b+nbyte);
-#endif
+ #endif
   var const char* buf = (const char*) b;
   var int done = 0;
   do {

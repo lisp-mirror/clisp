@@ -15159,9 +15159,9 @@ global maygc void init_streamvars (bool batch_p) {
     define_variable(sym,val);                                           \
     current_thread()->_ptr_symvalues[TheSymbol(sym)->tls_index]=SYMVALUE_EMPTY;\
   } while(0)
-  #else
+ #else
   #define def_var(sym,val) define_variable(sym,val)
-  #endif
+ #endif
   {
     var object stream = make_terminal_io();
     def_var(S(terminal_io),stream);  /* *TERMINAL-IO* */

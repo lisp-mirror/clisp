@@ -214,7 +214,7 @@ local _Noreturn void signal_and_debug (object condition) {
  (when start_driver_p is true)
  can trigger GC */
 local maygc void end_error (gcv_object_t* stackptr, bool start_driver_p) {
-#ifdef MULTITHREAD
+ #ifdef MULTITHREAD
   /* NB: just for debugging - but for now in the release as well.
      this code is for checking whether there is no part of the runtime
      that will signal an error while it is considered to be in safe for GC
@@ -233,7 +233,7 @@ local maygc void end_error (gcv_object_t* stackptr, bool start_driver_p) {
     fprint(stderr,"*** thread is going into lisp land while GC in progress.\n");
     abort();
   }
-#endif
+ #endif
   elastic_newline(&STACK_0);
   if (nullp(STACK_1)) {
     /* *ERROR-HANDER* = NIL, SYS::*USE-CLCS* = NIL */
@@ -827,7 +827,7 @@ LISPFUNN(invoke_debugger,1)
  changes STACK, can trigger GC */
 global maygc void tast_break (void)
 {
-#if !defined(MULTITHREAD)
+ #if !defined(MULTITHREAD)
   cancel_interrupts();
   STOP_WRITING_TO_SUBPROCESS;
   if (!nullpSv(error_handler) || nullpSv(use_clcs)) {
@@ -848,13 +848,13 @@ global maygc void tast_break (void)
     funcall(L(cerror_of_type),4); /* (SYS::CERROR-OF-TYPE "..." 'SYSTEM::[SIMPLE-]INTERRUPT-CONDITION "..." caller) */
     skipSTACK(1);
   }
-#else
+ #else
   /* in MT - just clear the STACK */
   /* it will be very rare to get called here - since the interruptp()
      does not expand to anything in MT and most use of tast_break() was
      from it.*/
   skipSTACK(1);
-#endif
+ #endif
 }
 
 LISPFUN(clcs_signal,seclass_default,1,0,rest,nokey,0,NIL)

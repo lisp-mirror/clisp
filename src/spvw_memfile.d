@@ -681,8 +681,8 @@ global maygc off_t savemem (object stream, uintL executable)
   memcpy(&header._dumphost[0],&hostname[0],DUMPHOST_LEN+1);
   WRITE(&header,sizeof(header));
   #if !defined(OLD_GC) && defined(MULTITHREAD)
-   /* save per thread special variables symvalues.
-      currently just a single thread. instead of:
+    /* save per thread special variables symvalues.
+       currently just a single thread. instead of:
     for_all_threads({
       WRITE(thread->_ptr_symvalues,num_symvalues*sizeof(gcv_object_t));
     });

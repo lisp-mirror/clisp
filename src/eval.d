@@ -621,12 +621,12 @@ global maygc void progv (object symlist, object vallist) {
       }
       Car(STACK_0) = sym;
     }
-  #ifdef MULTITHREAD
-    /* allocate per thread value cell for the symbol if it does not have */
-    if (TheSymbol(sym)->tls_index == SYMBOL_TLS_INDEX_NONE) {
-      add_per_thread_special_var(sym);
-    }
-  #endif
+    #ifdef MULTITHREAD
+      /* allocate per thread value cell for the symbol if it does not have */
+      if (TheSymbol(sym)->tls_index == SYMBOL_TLS_INDEX_NONE) {
+        add_per_thread_special_var(sym);
+      }
+    #endif
   }
   skipSTACK(1); vallist = popSTACK(); symlist = popSTACK();
   /* demand room on STACK: */
@@ -6463,15 +6463,15 @@ local /*maygc*/ Values interpret_bytecode_ (object closure_in, Sbvector codeptr,
     CASE cod_bind: {            /* (BIND n) */
       var uintL n;
       U_operand(n);
-    #if defined(MULTITHREAD)
-      var object symbol = TheCclosure(closure)->clos_consts[n];
-      if (TheSymbol(symbol)->tls_index == SYMBOL_TLS_INDEX_NONE) {
-        var uintC mvc = mv_count;
-        mv_to_STACK(); /* save mv_space */
-        with_saved_context({add_per_thread_special_var(symbol); /* maygc */});
-        STACK_to_mv(mvc); /* restore mv_space */
-      }
-    #endif
+      #if defined(MULTITHREAD)
+        var object symbol = TheCclosure(closure)->clos_consts[n];
+        if (TheSymbol(symbol)->tls_index == SYMBOL_TLS_INDEX_NONE) {
+          var uintC mvc = mv_count;
+          mv_to_STACK(); /* save mv_space */
+          with_saved_context({add_per_thread_special_var(symbol); /* maygc */});
+          STACK_to_mv(mvc); /* restore mv_space */
+        }
+      #endif
       dynamic_bind(TheCclosure(closure)->clos_consts[n],value1);
     } goto next_byte;
     CASE cod_unbind1:           /* (UNBIND1) */
@@ -6594,9 +6594,9 @@ local /*maygc*/ Values interpret_bytecode_ (object closure_in, Sbvector codeptr,
     #define NOTJMP()  \
       { L_operand_ignore(); goto next_byte; }
     jmp0:
-#ifdef MULTITHREAD
+     #ifdef MULTITHREAD
       mv_count=0;
-#endif
+     #endif
     CASE cod_jmp: jmp:          /* (JMP label) */
       JMP();
     CASE cod_jmpif:             /* (JMPIF label) */

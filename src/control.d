@@ -485,22 +485,22 @@ local /*maygc*/ void make_variable_frame
                 /* store special-declared symbol in stack: */
                 pushSTACK(specdecl); /* #<SPECDECL> as "value" */
                 pushSTACK_symbolwithflags(declsym,0); /* Symbol inactive */
-               #if defined(MULTITHREAD)
-                /* this is locally declared special variable. make it per thread
-                   if not already.*/
-                if (TheSymbol(declsym)->tls_index == SYMBOL_TLS_INDEX_NONE) {
-                  /* this call is may gc now */
-                  pushSTACK(value1); pushSTACK(value2);            /* save */
-                  pushSTACK(caller); pushSTACK(varspecs);          /* save */
-                  pushSTACK(declarations); pushSTACK(declspecs);   /* save */
-                  pushSTACK(decl_identifier); pushSTACK(declspec); /* save */
-                  add_per_thread_special_var(declsym);
-                  declspec = popSTACK(); decl_identifier = popSTACK(); /* restore */
-                  declspecs = popSTACK(); declarations = popSTACK();   /* restore */
-                  varspecs = popSTACK(); caller = popSTACK();          /* restore */
-                  value2 = popSTACK(); value1 = popSTACK();            /* restore */
-                }
-               #endif
+                #if defined(MULTITHREAD)
+                  /* this is locally declared special variable. make it per thread
+                     if not already.*/
+                  if (TheSymbol(declsym)->tls_index == SYMBOL_TLS_INDEX_NONE) {
+                    /* this call is may gc now */
+                    pushSTACK(value1); pushSTACK(value2);            /* save */
+                    pushSTACK(caller); pushSTACK(varspecs);          /* save */
+                    pushSTACK(declarations); pushSTACK(declspecs);   /* save */
+                    pushSTACK(decl_identifier); pushSTACK(declspec); /* save */
+                    add_per_thread_special_var(declsym);
+                    declspec = popSTACK(); decl_identifier = popSTACK(); /* restore */
+                    declspecs = popSTACK(); declarations = popSTACK();   /* restore */
+                    varspecs = popSTACK(); caller = popSTACK();          /* restore */
+                    value2 = popSTACK(); value1 = popSTACK();            /* restore */
+                  }
+                #endif
               } else if (eq(decl_identifier,S(implementation_dependent))) {
                 /* store impdependent-declared symbol in stack: */
                 pushSTACK(impdependent); /* #<IMPLEMENTATION-DEPENDENT> as "value" */
@@ -2135,9 +2135,9 @@ LISPFUNN(proclaim,1)
         clear_const_flag(TheSymbol(symbol));
       set_special_flag(TheSymbol(symbol));
       #if defined(MULTITHREAD)
-       /* MT: add to the threads (empty) if not already there */
-       if (TheSymbol(symbol)->tls_index == SYMBOL_TLS_INDEX_NONE)
-         add_per_thread_special_var(symbol);
+        /* MT: add to the threads (empty) if not already there */
+        if (TheSymbol(symbol)->tls_index == SYMBOL_TLS_INDEX_NONE)
+          add_per_thread_special_var(symbol);
       #endif
     }
   } else if (eq(decltyp,S(notspecial))) { /* NOTSPECIAL */

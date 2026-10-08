@@ -1036,13 +1036,13 @@ local bool weak_must_activate (object obj) {
  > obj: A fresh but filled object of type Rectype_Weak* */
 global void activate_weak (object obj) {
   if (weak_must_activate(obj)) {
-    #ifdef MULTITHREAD
-    /* this is the only place where all_weakpointers_lock is used.
-       we do not allow GC here (no GC safe region) !*/
+   #ifdef MULTITHREAD
+    /* This is the only place where all_weakpointers_lock is used.
+       We do not allow GC here (no GC safe region) !*/
      begin_system_call();
      xmutex_lock(&all_weakpointers_lock);
      end_system_call();
-    #endif
+   #endif
     /* Ensure that markwatchset has enough room for the next GC. */
     var uintL need = 1 + max_watchset_count(obj);
     var uintM new_markwatchset_size = markwatchset_size + need;
@@ -1064,10 +1064,10 @@ global void activate_weak (object obj) {
     /* Now that markwatchset is large enough, add obj to O(all_weakpointers). */
     ((Weakpointer)TheRecord(obj))->wp_cdr = O(all_weakpointers);
     O(all_weakpointers) = obj;
-    #ifdef MULTITHREAD
-     begin_system_call();
-     xmutex_unlock(&all_weakpointers_lock);
-     end_system_call();
-    #endif
+   #ifdef MULTITHREAD
+    begin_system_call();
+    xmutex_unlock(&all_weakpointers_lock);
+    end_system_call();
+   #endif
   }
 }

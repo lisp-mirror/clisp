@@ -2038,11 +2038,11 @@ local void initmem (void) {
    finish initialization of subr_tab: */
   init_subr_tab_2();
   /* initialize packages: */
-#ifdef MULTITHREAD
-  /* initialize O(all_mutexes) since every packages creates ones that
-     is added to it */
-  O(all_mutexes) = NIL;
-#endif
+  #ifdef MULTITHREAD
+    /* initialize O(all_mutexes) since every packages creates ones that
+       is added to it */
+    O(all_mutexes) = NIL;
+  #endif
   init_packages();
   init_encodings_1(); /* init some encodings (utf_8 for init_symbol_tab_2) */
   /* finish initialization of symbol_tab: */
@@ -3642,7 +3642,7 @@ local inline int init_memory (struct argv_initparams *p) {
   else if (!loadmem_from_executable())
     p->argv_memfile = get_executable_name();
   else initmem();               /* manual initialization */
-#if defined(MULTITHREAD)
+ #if defined(MULTITHREAD)
   /* clear the list of threads. the one that we have loaded contains
      single thread record which is invalid.*/
   O(all_threads) = NIL;
@@ -3650,7 +3650,7 @@ local inline int init_memory (struct argv_initparams *p) {
      calculated STACK size, since the memory image may change it */
   Symbol_value(S(default_value_stack_size)) =
     uint32_to_I(STACK_item_count(STACK_bound,STACK_start));
-#endif
+ #endif
   /* init O(current_language) */
   O(current_language) = current_language_o();
   /* set current evaluator-environments to the toplevel-value: */
@@ -4091,23 +4091,23 @@ global int main (argc_t argc, char* argv[]) {
    print banner.
    jump into the driver.
   This is also described in <doc/impext.xml#cradle-grave>! */
-#if defined(MULTITHREAD)
-/* if on 32 bit machine, no per_thread and asked by the user*/
-  #if USE_CUSTOM_TLS == 2
-  tse __tse_entry;
-  tse *__thread_tse_entry=&__tse_entry;
-  #endif
-  /* initialize main thread */
-  {
-    init_multithread();
-    init_heaps_mt();
-    set_current_thread(create_thread(0));
-    #ifdef DEBUG_GCSAFETY
-      use_dummy_alloccount=false; /* now we have threads */
-      current_thread()->_alloccount=1;
+  #if defined(MULTITHREAD)
+  /* if on 32 bit machine, no per_thread and asked by the user*/
+    #if USE_CUSTOM_TLS == 2
+    tse __tse_entry;
+    tse *__thread_tse_entry=&__tse_entry;
     #endif
-  }
-#endif
+    /* initialize main thread */
+    {
+      init_multithread();
+      init_heaps_mt();
+      set_current_thread(create_thread(0));
+      #ifdef DEBUG_GCSAFETY
+        use_dummy_alloccount=false; /* now we have threads */
+        current_thread()->_alloccount=1;
+      #endif
+    }
+  #endif
   init_lowest_level(argv);
   init_stream_osdeps();
   var struct argv_init_c argv0;
@@ -4157,32 +4157,32 @@ global int main (argc_t argc, char* argv[]) {
      default: ;
   }
   SP_anchor = (void*)SP(); /* VTZ: in MT current_thread() should be initialized */
-#if defined(MULTITHREAD)
-  /* after heap is initialized - allocate thread record for main thread.
-     no locking is needed here*/
-  {
-    /* VTZ:TODO when we are loaded from mem file - we should restore the
-     threads from there.
-     Currently we just register our main thread and do not care what we have in
-     mem file!!! Threads do not survive mem file save/restore - just create
-     garbage in it :( */
-    /* TODO: give better name :)*/
-    var object thr_name = coerce_imm_ss(ascii_to_string(GETTEXT("main thread")));
-    pushSTACK(thr_name);
-    pushSTACK(allocate_thread(&STACK_0));
-    var object new_cons=allocate_cons();
-    var object lthr;
-    /* add to all_threads global */
-    Car(new_cons) = lthr = popSTACK();
-    Cdr(new_cons) = O(all_threads);
-    O(all_threads) = new_cons;
-    /* initialize the thread references */
-    current_thread()->_lthread=lthr;
-    TheThread(lthr)->xth_globals=current_thread();
-    TheThread(lthr)->xth_system=xthread_self();
-    skipSTACK(1);
-  }
-#endif
+  #if defined(MULTITHREAD)
+    /* after heap is initialized - allocate thread record for main thread.
+       no locking is needed here*/
+    {
+      /* VTZ:TODO when we are loaded from mem file - we should restore the
+       threads from there.
+       Currently we just register our main thread and do not care what we have in
+       mem file!!! Threads do not survive mem file save/restore - just create
+       garbage in it :( */
+      /* TODO: give better name :)*/
+      var object thr_name = coerce_imm_ss(ascii_to_string(GETTEXT("main thread")));
+      pushSTACK(thr_name);
+      pushSTACK(allocate_thread(&STACK_0));
+      var object new_cons=allocate_cons();
+      var object lthr;
+      /* add to all_threads global */
+      Car(new_cons) = lthr = popSTACK();
+      Cdr(new_cons) = O(all_threads);
+      O(all_threads) = new_cons;
+      /* initialize the thread references */
+      current_thread()->_lthread=lthr;
+      TheThread(lthr)->xth_globals=current_thread();
+      TheThread(lthr)->xth_system=xthread_self();
+      skipSTACK(1);
+    }
+  #endif
   /* if the image was read from the executable, argv1.argv_memfile was
      set to exec name and now it has to be propagated to argv2.argv_memfile
      to avoid the beginner warning */
@@ -4219,22 +4219,22 @@ global int main (argc_t argc, char* argv[]) {
   update_linelength();
  #endif
   /* handling of async interrupts with single thread */
-#if !defined(MULTITHREAD)
-  /* establish interrupt-handler: */
- #if (defined(HAVE_SIGNALS) && defined(UNIX)) || defined(WIN32_NATIVE)
-  /* install Ctrl-C-Handler: */
-  install_sigint_handler();
+ #if !defined(MULTITHREAD)
+   /* establish interrupt-handler: */
+   #if (defined(HAVE_SIGNALS) && defined(UNIX)) || defined(WIN32_NATIVE)
+    /* install Ctrl-C-Handler: */
+    install_sigint_handler();
+   #endif
+   #ifdef HAVE_SIGNALS
+    install_sigcld_handler();
+    install_sigterm_handler();    /* install SIGTERM &c handlers */
+   #endif
+ #else
+   #ifdef HAVE_SIGNALS
+    install_sigcld_handler();
+   #endif
+    install_async_signal_handlers();
  #endif
- #ifdef HAVE_SIGNALS
-  install_sigcld_handler();
-  install_sigterm_handler();    /* install SIGTERM &c handlers */
- #endif
-#else
- #ifdef HAVE_SIGNALS
-  install_sigcld_handler();
- #endif
-  install_async_signal_handlers();
-#endif
  #if defined(HAVE_SIGNALS) && defined(SIGPIPE)
   install_sigpipe_handler();
  #endif
@@ -4285,40 +4285,40 @@ global int main (argc_t argc, char* argv[]) {
     }
   }
   /* Perform the desired actions (compilations, read-eval-print loop etc.): */
-#if defined(MULTITHREAD)
-  /* may be set it as command line  parameter  - it should be big enough */
-  #define MAIN_THREAD_C_STACK (1024*1024*16)
-  SP_anchor=(void *)&argv2;
-  {
-    var xthread_t thr;
-    var clisp_thread_t *param = current_thread();
-    /* Remove the current thread from threads map */
-  #if USE_CUSTOM_TLS == 3
-    /* Since initial thread stack is growable (at least on linux), the
-       stack range mapped when thread was registered is maximum possible one.
-       Now pthread_attr_getstack will return (most probably) different range
-       (smaller) and if we try to unmap it - there will be some mappings left.
-       This is not a problem in general but it helps for debugging to clear
-       the whole map.*/
-    memset(threads_map, 0, sizeof(threads_map));
-  #elif USE_CUSTOM_TLS == 2
-    /* we can use set_current_thread(NULL) as well but this will leave
-       a dummy bucket in the hash table and may slow down the lookups.
-       better - remove entirely */
-    tsd_remove_specific();
+  #if defined(MULTITHREAD)
+    /* may be set it as command line  parameter  - it should be big enough */
+    #define MAIN_THREAD_C_STACK (1024*1024*16)
+    SP_anchor=(void *)&argv2;
+    {
+      var xthread_t thr;
+      var clisp_thread_t *param = current_thread();
+      /* Remove the current thread from threads map */
+     #if USE_CUSTOM_TLS == 3
+      /* Since initial thread stack is growable (at least on linux), the
+         stack range mapped when thread was registered is maximum possible one.
+         Now pthread_attr_getstack will return (most probably) different range
+         (smaller) and if we try to unmap it - there will be some mappings left.
+         This is not a problem in general but it helps for debugging to clear
+         the whole map.*/
+      memset(threads_map, 0, sizeof(threads_map));
+     #elif USE_CUSTOM_TLS == 2
+      /* we can use set_current_thread(NULL) as well but this will leave
+         a dummy bucket in the hash table and may slow down the lookups.
+         better - remove entirely */
+      tsd_remove_specific();
+     #else
+      set_current_thread(NULL); /* no associated lisp thread */
+     #endif
+      xthread_create(&thr, mt_main_actions, param, MAIN_THREAD_C_STACK);
+    }
+    thr_signal_handler = xthread_self();
+    /* let's handle signals now :)*/
+    signal_handler_thread(0);
+    /* NOTREACHED */
   #else
-    set_current_thread(NULL); /* no associated lisp thread */
+    main_actions(&argv2);
+    quit();
   #endif
-    xthread_create(&thr, mt_main_actions, param, MAIN_THREAD_C_STACK);
-  }
-  thr_signal_handler = xthread_self();
-  /* let's handle signals now :)*/
-  signal_handler_thread(0);
-  /* NOTREACHED */
-#else
-  main_actions(&argv2);
-  quit();
-#endif
   /*NOTREACHED*/
  } /* end var bt */
   /* if the memory does not suffice: */

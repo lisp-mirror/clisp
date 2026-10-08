@@ -1411,7 +1411,7 @@ typedef signed int  signean;
   #define longjmpl(x,y)  longjmp(x,y)
 #else /* (int_bitsize < pointer_bitsize) */
   #ifndef MULTITHREAD
-   /* MT: following is per thread in MT builds */
+    /* MT: following is per thread in MT builds */
     extern intptr_t jmpl_value;
   #endif
   #define setjmpl(x)  (setjmp(x) ? jmpl_value : 0)
@@ -1926,15 +1926,15 @@ typedef enum {
    a continuable manner in that time. After this time has passed, the
    program will be interrupted and cannot be continued. */
   #if !defined(MULTITHREAD)
-   #define PENDING_INTERRUPTS
-   /* Flag telling whether a Ctrl-C has been seen and is waiting to be
-      handled. */
-   extern uintB interrupt_pending;
-   #define interruptp(statement)  if (interrupt_pending) { statement; }
+    #define PENDING_INTERRUPTS
+    /* Flag telling whether a Ctrl-C has been seen and is waiting to be
+       handled. */
+    extern uintB interrupt_pending;
+    #define interruptp(statement)  if (interrupt_pending) { statement; }
   #else
-   /* In MT interrupt_pending and interuptp are not used at all.
-      actually even tast_break() is obsolete.*/
-   #define interruptp(statement)
+    /* In MT interrupt_pending and interuptp are not used at all.
+       actually even tast_break() is obsolete.*/
+    #define interruptp(statement)
   #endif
 #endif
 /* used by EVAL, IO, SPVW, STREAM */
@@ -2065,6 +2065,14 @@ typedef enum {
   #define SOCKET_STREAMS
 #endif
 /* When changed: extend stream.d, socket.d */
+#if defined(MULTITHREAD) && !defined(SOCKET_STREAMS)
+  #error MULTITHREAD requires SOCKET_STREAMS
+/* Actually two things are needed: :TIMEOUT and sec_usec() function from
+   streams.d. The former can be easily defined. The latter - maybe it is
+   good to move it out of SOCKET_STREAMS?
+   Anyway SOCKET_STREAMS are quite important and probably will/are always
+   available. */
+#endif
 
 /* Whether there are generic streams: */
 #if 1
@@ -8517,9 +8525,9 @@ typedef struct {
   gcv_object_t pack_nicknames         _attribute_aligned_object_;
   gcv_object_t pack_docstring         _attribute_aligned_object_;
   gcv_object_t pack_shortest_name     _attribute_aligned_object_;
-#ifdef MULTITHREAD
+  #ifdef MULTITHREAD
   gcv_object_t pack_mutex             _attribute_aligned_object_;
-#endif
+  #endif
 } *  Package;
 #define package_length  ((sizeof(*(Package)0)-offsetofa(record_,recdata))/sizeof(gcv_object_t))
 /* Some packages are case-sensitive. */
@@ -9941,11 +9949,11 @@ typedef struct {
       |ratio_type|complex_type|bit(sign_bit_t),                         \
       obj                                                               \
     ))
- #ifdef MULTITHREAD
-  #define TheThread(obj)  ((Thread)(ngci_types_pointable(orecord_type,obj)))
-  #define TheMutex(obj)   ((Mutex)(ngci_types_pointable(orecord_type,obj)))
-  #define TheExemption(obj) ((Exemption)(ngci_types_pointable(orecord_type,obj)))
- #endif
+  #ifdef MULTITHREAD
+    #define TheThread(obj)  ((Thread)(ngci_types_pointable(orecord_type,obj)))
+    #define TheMutex(obj)   ((Mutex)(ngci_types_pointable(orecord_type,obj)))
+    #define TheExemption(obj) ((Exemption)(ngci_types_pointable(orecord_type,obj)))
+  #endif
 #else /* no TYPECODES */
   #define TheCons(obj)  ((Cons)(ngci_pointable(obj)-cons_bias))
   #define TheRatio(obj)  ((Ratio)(ngci_pointable(obj)-varobject_bias))
@@ -10032,11 +10040,11 @@ typedef struct {
   #define TheVarobject(obj)  ((Varobject)(ngci_pointable(obj)-varobject_bias))
   /* Object, represents a pointer into the memory: */
   #define ThePointer(obj)  ((void*)(pgci_pointable(obj) & ~(aint)nonimmediate_bias_mask))
- #ifdef MULTITHREAD
-  #define TheThread(obj)    ((Thread)(ngci_pointable(obj)-varobject_bias))
-  #define TheMutex(obj)     ((Mutex)(ngci_pointable(obj)-varobject_bias))
-  #define TheExemption(obj) ((Exemption)(ngci_pointable(obj)-varobject_bias))
- #endif
+  #ifdef MULTITHREAD
+    #define TheThread(obj)    ((Thread)(ngci_pointable(obj)-varobject_bias))
+    #define TheMutex(obj)     ((Mutex)(ngci_pointable(obj)-varobject_bias))
+    #define TheExemption(obj) ((Exemption)(ngci_pointable(obj)-varobject_bias))
+  #endif
 #endif
 /* TheMachineCode is the opposite of make_machine_code. */
 #if PSEUDODATA_ALIGNMENT <= C_CODE_ALIGNMENT
@@ -10735,7 +10743,6 @@ typedef struct {
     (orecordp(obj) && (Record_type(obj) == Rectype_Mutex))
   #define exemptionp(obj) \
     (orecordp(obj) && (Record_type(obj) == Rectype_Exemption))
-
 #endif
 
 #ifdef YET_ANOTHER_RECORD
@@ -12260,8 +12267,8 @@ extern gcv_object_t* top_of_back_trace_frame (const struct backtrace_t *bt);
         {GCTRIGGER();gc;} else {no_gc;}                                 \
     }while(0)
   #define GC_SAFE_POINT() GC_SAFE_POINT_IF(GC_SAFE_ACK_SUSPEND_REQUEST_(), ;)
-/* Giving up suspend ack while we are in system call.
-   So we can be considered suspended for GC. */
+  /* Giving up suspend ack while we are in system call.
+     So we can be considered suspended for GC. */
   #define GC_SAFE_REGION_BEGIN() \
     do {                                                    \
       GCTRIGGER();                                          \
@@ -12269,10 +12276,10 @@ extern gcv_object_t* top_of_back_trace_frame (const struct backtrace_t *bt);
       SET_SP_BEFORE_SUSPEND(thr);  /* debug only */         \
       spinlock_release(&thr->_gc_suspend_ack);              \
     }while(0)
-/* following two macroses are workarround for differences between WIN32 and
-   POSIX "signal" handling. With POSIX signals we really interrupt thread,
-   while with WIN32 threads we should deffer the handling after system call
-   returns */
+  /* The following two macros are workaround for differences between WIN32 and
+     POSIX "signal" handling. With POSIX signals we really interrupt thread,
+     while with WIN32 threads we should deffer the handling after system call
+     returns */
   #ifdef HAVE_SIGNALS /* POSIX_THREADS */
     #define _thr_ptb_(s) s
     #define _thr_pta_(s)
@@ -12280,8 +12287,8 @@ extern gcv_object_t* top_of_back_trace_frame (const struct backtrace_t *bt);
     #define _thr_ptb_(s)
     #define _thr_pta_(s) s
   #endif
-/* If we cannot get the suspend ack lock again - it means there is/was GC -
-   so try to wait for it's end if it is not already finished. */
+  /* If we cannot get the suspend ack lock again - it means there is/was GC -
+     so try to wait for it's end if it is not already finished. */
   #define GC_SAFE_REGION_END_i(statement)                 \
     do {                                                  \
       GCTRIGGER();                                        \
@@ -13366,22 +13373,22 @@ typedef union {uintB einzeln[8]; uintL gesamt[2]; } break_sems_;
    not of the runtime (and break_sems cannot prevent it as well).
  */
 #if defined(MULTITHREAD)
-   #define SEMA_(statement)
-   #define SEGV_SEMA_(statement)
-   #define break_sems_cleared()
-   #define clear_break_sems()
+  #define SEMA_(statement)
+  #define SEGV_SEMA_(statement)
+  #define break_sems_cleared()
+  #define clear_break_sems()
 #else /* !MULTITHREAD*/
-   extern break_sems_ break_sems;
-   #define SEMA_(statement) (statement)
-   #define SEGV_SEMA_(statement) SEMA_(statement)
-   /* Tests whether all break-semaphores have been cleared. */
-   #define break_sems_cleared()                                 \
-     (break_sems.gesamt[0] == 0 && break_sems.gesamt[1] == 0)
-   /* is used by SPVW, WIN32AUX */
-   /* clears all break-semaphores. Very dangerous! */
-   #define clear_break_sems()  \
-     (break_sems.gesamt[0] = 0, break_sems.gesamt[1] = 0)
-   /* is used by SPVW */
+  extern break_sems_ break_sems;
+  #define SEMA_(statement) (statement)
+  #define SEGV_SEMA_(statement) SEMA_(statement)
+  /* Tests whether all break-semaphores have been cleared. */
+  #define break_sems_cleared()                                 \
+    (break_sems.gesamt[0] == 0 && break_sems.gesamt[1] == 0)
+  /* is used by SPVW, WIN32AUX */
+  /* clears all break-semaphores. Very dangerous! */
+  #define clear_break_sems()  \
+    (break_sems.gesamt[0] = 0, break_sems.gesamt[1] = 0)
+  /* is used by SPVW */
 #endif
 
 /* sets break-semaphore 0 and thus protects against interrupts
@@ -17054,13 +17061,13 @@ extern maygc object hash_table_test (object ht);
  can trigger GC */
 extern maygc void init_reader (void);
 #if defined(MULTITHREAD)
-#define INIT_READER_LOW_ARGS  struct clisp_thread_t* thr
-#define INIT_READER_LOW_OTAB  thr->_object_tab
-#define INIT_READER_LOW()  init_reader_low(current_thread())
+  #define INIT_READER_LOW_ARGS  struct clisp_thread_t* thr
+  #define INIT_READER_LOW_OTAB  thr->_object_tab
+  #define INIT_READER_LOW()  init_reader_low(current_thread())
 #else
-#define INIT_READER_LOW_ARGS  void
-#define INIT_READER_LOW_OTAB  object_tab
-#define INIT_READER_LOW()  init_reader_low()
+  #define INIT_READER_LOW_ARGS  void
+  #define INIT_READER_LOW_OTAB  object_tab
+  #define INIT_READER_LOW()  init_reader_low()
 #endif
 extern maygc void init_reader_low (INIT_READER_LOW_ARGS);
 /* is used by SPVW */
