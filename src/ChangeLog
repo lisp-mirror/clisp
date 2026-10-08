@@ -1,5 +1,11 @@
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system: Remove deprecated configure options.
+	* configure: Remove options --with-mingw, --with-no-cygwin,
+	--without-cygwin, --with-cygwin=no.
+
+2026-10-08  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system: Remove advanced usage option of makemake.
 	* makemake.in: Ignore non-option arguments.
 	(TSYSOS): Remove variable. Use HSYSOS instead.

@@ -485,11 +485,6 @@ do
       --without-dynamic-modules | --with-dynamic-modules=no)
         makemake_args="--with-dynamic-modules=no ${makemake_args}" ;;
 
-      --with-mingw | --with-no-cygwin | --without-cygwin | --with-cygwin=no)
-        echo "$0: $arg is deprecated; use CC=... instead"
-        CC="${CC:-gcc} -mno-cygwin"; export CC;
-        makemake_args="$makemake_args --win32gcc" ;;
-
       --with-module=*) note_module `getarg $arg` ;;
 
       --with-module)
