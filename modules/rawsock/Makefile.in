@@ -14,7 +14,7 @@ MAKE = make
 
 SHELL = /bin/sh
 
-GENERATED = sock.fas rawsock.o preload.lisp
+GENERATED = sock.fas rawsock.@OBJEXT@ preload.lisp
 DISTRIBFILES = link.sh Makefile $(GENERATED) $(srcdir)/sock.lisp
 distribdir =
 
@@ -24,9 +24,9 @@ clisp-module : $(GENERATED)
 sock.fas: $(srcdir)/sock.lisp
 	$(CLISP) -c @BTHS@$(srcdir)/sock.lisp@BTHE@ -o ./
 
-rawsock.o : rawsock.m.c config.h
+rawsock.@OBJEXT@ : rawsock.m.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
-		-c rawsock.m.c -o rawsock.o
+		-c rawsock.m.c -o rawsock.@OBJEXT@
 
 rawsock.m.c : $(srcdir)/rawsock.c
 	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/rawsock.c@BTHE@ ./
@@ -41,7 +41,7 @@ clisp-module-distrib : clisp-module force
 	$(LN) $(srcdir)/demos/*.lisp $(srcdir)/demos/README $(distribdir)/demos/
 
 clean : force
-	rm -f core *.o *.a *.m.c *.fas *.lib
+	rm -f core *.@OBJEXT@ *.a *.m.c *.fas *.lib
 
 distclean : clean
 

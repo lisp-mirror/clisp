@@ -95,7 +95,7 @@ LISPRUN="lisp@LEXE@"
 # ensure that "$1" contains a CLISP linking set
 check_linkset () {
   test -r "$1"/lisp.a -a -x "$1"/${LISPRUN} -a -r "$1"/lispinit.mem \
-    -a -r "$1"/modules.h -a -r "$1"/modules.o -a -r "$1"/makevars ||
+    -a -r "$1"/modules.h -a -r "$1"/modules@TOBJ@ -a -r "$1"/makevars ||
   fail "directory $1 does not contain a CLISP linking set"
 }
 
@@ -119,12 +119,12 @@ verbose () {
 }
 
 make_lisprun () {
-  # Generate new modules.o, compiled from modules.c, includes modules.h
+  # Generate new modules@TOBJ@, compiled from modules.c, includes modules.h
   lnscp "$absolute_linkkitdir"/modules.c modules.c
   verbose ${CC} ${CPPFLAGS} ${CFLAGS} -I"$absolute_linkkitdir" -c modules.c
   rm -f modules.c
   # Generate new ${LISPRUN}
-  verbose ${CC} ${CFLAGS} ${LDFLAGS} modules.o ${LIBS} -o ${LISPRUN}
+  verbose ${CC} ${CFLAGS} ${LDFLAGS} modules@TOBJ@ ${LIBS} -o ${LISPRUN}
 }
 
 # func_tmpdir
@@ -307,13 +307,13 @@ case "$1" in
       esac
       ln -s "$relative_file" "$moduledir"/"$filename" || ln "$file" "$moduledir"/"$filename" || cp -p "$file" "$moduledir"/"$filename"
       files_c="$files_c"' '"$filename"
-      files_o="$files_o"' '`echo "$filename" | sed -e 's,\.c$,,'`.o
+      files_o="$files_o"' '`echo "$filename" | sed -e 's,\.c$,,'`@TOBJ@
     done
     if false; then
       # No Makefile
       (echo "file_list=''"
        for fc in $files_c; do
-         fo=`echo "$fc" | sed -e 's,\.c$,,'`.o
+         fo=`echo "$fc" | sed -e 's,\.c$,,'`@TOBJ@
          echo 'if test -r '"$fc"'; then'
          echo "  if test '"'!'"' -f $fo || test $fo -ot $fc; then"
          echo '    ${CC} ${CPPFLAGS} ${CFLAGS} -I"$absolute_linkkitdir" -c '"$fc"
@@ -343,7 +343,7 @@ case "$1" in
        echo "distribdir ="
        echo
        for fc in $files_c; do
-         fo=`echo "$fc" | sed -e 's,\.c$,,'`.o
+         fo=`echo "$fc" | sed -e 's,\.c$,,'`@TOBJ@
          echo "$fo : \$(srcdir)/$fc"
          echotab '$(CC) $(CPPFLAGS) $(CFLAGS) -I$(CLISP_LINKKIT) -c $<'
          echo
@@ -357,7 +357,7 @@ case "$1" in
       (echo "file_list=''"
        echo "mod_list=''"
        for fc in $files_c; do
-         fo=`echo "$fc" | sed -e 's,\.c$,,'`.o
+         fo=`echo "$fc" | sed -e 's,\.c$,,'`@TOBJ@
          mod=`echo "$fc" | sed -e 's,\.c$,,' | sed -e 's,[^A-Za-z0-9_],_,g'`
          # The last sed command must agree with foreign1.lisp:to-module-name.
          echo 'if test -r '"$fc"'; then'
@@ -410,7 +410,7 @@ case "$1" in
            lncp_some  "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem >/dev/null ;;
         *) lnscp_some "$sourcedir" "$destinationdir" ${LISPRUN} lispinit.mem >/dev/null ;;
       esac
-      lnscp_some "$sourcedir" "$destinationdir" modules.h modules.o makevars ${FILES} >/dev/null
+      lnscp_some "$sourcedir" "$destinationdir" modules.h modules@TOBJ@ makevars ${FILES} >/dev/null
     else
       cp "$sourcedir"/modules.h "$destinationdir"/modules.h
       FILES=`lnscp_some "$sourcedir" "$destinationdir" ${FILES}`

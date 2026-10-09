@@ -14,7 +14,7 @@ MAKE = make
 
 SHELL = /bin/sh
 
-GENERATED = dirkey.o dirkey1.fas preload.lisp
+GENERATED = dirkey.@OBJEXT@ dirkey1.fas preload.lisp
 DISTRIBFILES = link.sh Makefile $(GENERATED) $(srcdir)/dirkey1.lisp
 distribdir =
 
@@ -27,8 +27,8 @@ dirkey1.fas: $(srcdir)/dirkey1.lisp
 dirkey.m.c: $(srcdir)/dirkey.c
 	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/dirkey.c@BTHE@ ./
 
-dirkey.o : dirkey.m.c config.h
-	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) -c dirkey.m.c -o dirkey.o
+dirkey.@OBJEXT@ : dirkey.m.c config.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) -c dirkey.m.c -o dirkey.@OBJEXT@
 
 preload.lisp : $(srcdir)/preload.lisp
 	$(LN) $(srcdir)/preload.lisp .
@@ -38,7 +38,7 @@ clisp-module-distrib : clisp-module force
 	$(LN) $(DISTRIBFILES) $(distribdir)
 
 clean : force
-	rm -f core *.o *.a *.m.c *.fas *.lib
+	rm -f core *.@OBJEXT@ *.a *.m.c *.fas *.lib
 
 distclean : clean
 

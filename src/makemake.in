@@ -2745,28 +2745,28 @@ for f in $ARI_ASMS $SP_ASMS ; do
 done
 
 if [ $HOS = unix -o $HSYS = win32gcc ] ; then
-  # on w32 -g, using lisp.o leads to a crash on the first statement in main()
+  # on w32 -g, using lisp${TOBJ} leads to a crash on the first statement in main()
   test $HSYSOS = win32gcc -o $HSYSOS = cygwin; no_lisp_o=$?
   echol "lisp.a : \$(OBJECTS)"
   if [ $no_lisp_o = 1 ]; then
-    echotab "\$(LD) -r -o lisp.o \$(OBJECTS)"
-    echotab "chmod a-x lisp.o"
+    echotab "\$(LD) -r -o lisp${TOBJ} \$(OBJECTS)"
+    echotab "chmod a-x lisp${TOBJ}"
   fi
   if test -z "$LIBGCC"; then
     if [ $no_lisp_o = 1 ]; then
-      echotab "\$(AR) rcv lisp.a lisp.o"
+      echotab "\$(AR) rcv lisp.a lisp${TOBJ}"
     else
       echotab "\$(AR) rcv lisp.a \$(OBJECTS)"
     fi
   else
     # Test for libgcc.a because NeXT cc does not have it.
-    echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp.o libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp.o ; fi"
+    echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp${TOBJ} libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp${TOBJ} ; fi"
   fi
-  test $no_lisp_o = 1 && echotab "\$(RM) lisp.o"
+  test $no_lisp_o = 1 && echotab "\$(RM) lisp${TOBJ}"
   echotab "\$(RANLIB) lisp.a"
   echol
-  echol "libnoreadline.a : noreadline.o"
-  echotab "\$(AR) rcv libnoreadline.a noreadline.o"
+  echol "libnoreadline.a : noreadline${TOBJ}"
+  echotab "\$(AR) rcv libnoreadline.a noreadline${TOBJ}"
   echotab "\$(RANLIB) libnoreadline.a"
   echol
 fi
@@ -2776,7 +2776,7 @@ if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no ]; then
   # linker, and when creating lisp.dll, we must give $(LIBS) to it.
   # Some unixes (SHREXT=.so) need -fPIC when compiling clisp core for a DLL,
   # which loses performance; besides, we do not need lisp.so on unix anyway.
-  echol "lisp${SHREXT} : ${GLLIB_A} \$(OBJECTS) modules.o"
+  echol "lisp${SHREXT} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ}"
   CLISP_DEF=" lisp.def"
   XCC_CREATESHARED_=`echo ${XCC_CREATESHARED} | sed -e 's/\\${/\\\\$\\\\(/g' -e 's/}/\\\\)/g'`
   echotab "`eval \"lib=\$\@; libs=\$^\ \$\(LIBS\); echo ${XCC_CREATESHARED_}\"`"
@@ -3280,8 +3280,8 @@ if [ $CC_GCC = true ] ; then
   echol
 fi
 
-echol "clisp.h clisp-test.c${CLISP_DEF} : genclisph.o config.h ${PARAMS_H} ${GLLIB_A}"
-echotab_to_HEXE "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS)" "genclisph.o" "genclisph"
+echol "clisp.h clisp-test.c${CLISP_DEF} : genclisph${TOBJ} config.h ${PARAMS_H} ${GLLIB_A}"
+echotab_to_HEXE "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS)" "genclisph${TOBJ}" "genclisph"
 if test -z "${CLISP_DEF}"; then
   echotab "${HERE}genclisph clisp.h.tmp clisp-test.c"
 else
@@ -3342,7 +3342,7 @@ done
 test "${verbose}" = true -o "${verbose}" = yes && \
   echo "BUILD_AUX =${BUILD_AUX}" >&2
 
-echol "modular : ${FILES} clisp-link linkkit modules.h modules.o makevars build-aux"
+echol "modular : ${FILES} clisp-link linkkit modules.h modules${TOBJ} makevars build-aux"
 echodummyrule modular
 echol
 # while the top-level makevars can contain arbitrary paths in LIBS and FILES,
@@ -3366,6 +3366,7 @@ for f in clisp-link ; do
   echotab "    -e 's%@with_dynamic_modules@%${with_dynamic_modules}%' \\"
   echotab "    -e 's%@createsharedlib@%$XCC_CREATESHARED_%' \\"
   echotab "    -e 's%@LEXE@%${LEXE}%' -e 's%@SHREXT@%${SHREXT}%' \\"
+  echotab "    -e 's%@TOBJ@%${TOBJ}%' \\"
   # On Cygwin, "-L$sourcedir$" is not enough for the linker to find
   # lisp.def.  So just give the absolute path to lisp.def.
   if test -z "${CLISP_DEF}"; then
@@ -3380,7 +3381,7 @@ for f in clisp-link ; do
   echol
 done
 echol "boot : modular lispinit.mem"
-echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules.o lisp${LEXE} lispinit.mem; do \$(LN_S) ../\$\$f .; done && (\$(GREP) -v '^FILES=' ../makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
+echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules${TOBJ} lisp${LEXE} lispinit.mem; do \$(LN_S) ../\$\$f .; done && (\$(GREP) -v '^FILES=' ../makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
 echol
 make_modules() {
   MODULES_VAR=$1
@@ -3947,7 +3948,7 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
   # The linking sets: base and full.
   for dir in base full; do
     echotab "mkdir \$(TOPDIR)/${dir}"
-    echotab "${HLN} "'`'". ${dir}/makevars ; for f in \$\$FILES modules.h modules.o makevars lispinit.mem ; do echo ${dir}/\$\$f ; done"'`'" \$(TOPDIR)/${dir}/"
+    echotab "${HLN} "'`'". ${dir}/makevars ; for f in \$\$FILES modules.h modules${TOBJ} makevars lispinit.mem ; do echo ${dir}/\$\$f ; done"'`'" \$(TOPDIR)/${dir}/"
     # make sure base & full do not link to anything outside
     echotab ". ./makevars; for f in \$\$LIBS ; do case \$\$f in -*) ;; \\"
     echotab "   *) b=\`basename \$\$f\`; \\"
@@ -3976,11 +3977,11 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
     for dir in base full; do
       DIR=`echo "${dir}" | tr '[a-z]' '[A-Z]'`
       echotab "| { . ${dir}/makevars ; ${dir}_files='' ; \\"
-      echotab " for f in modules.o \$\$FILES ; do \\"
+      echotab " for f in modules${TOBJ} \$\$FILES ; do \\"
       echotab "   ${dir}_files=\"\$\$${dir}_files\"' ${dir}/'\"\$\$f\" ; \\"
       echotab " done ; \\"
       echotab " ${dir}_libs='' ; \\"
-      echotab " for f in modules.o \$\$LIBS ; do \\"
+      echotab " for f in modules${TOBJ} \$\$LIBS ; do \\"
       echotab "   case \$\$f in \\"
       echotab "     -*) ${dir}_libs=\"\$\$${dir}_libs \$\$f\";; \\"
       echotab "     *) ${dir}_libs=\"\$\$${dir}_libs\"' ${dir}/'\"\`basename \$\$f\`\";; \\"

@@ -17,7 +17,7 @@ MAKE = make
 
 SHELL = /bin/sh
 
-GENERATED = calls.o posix.fas preload.lisp datemsk
+GENERATED = calls.@OBJEXT@ posix.fas preload.lisp datemsk
 DISTRIBFILES = link.sh Makefile $(GENERATED) \
 	$(srcdir)/posix.lisp $(srcdir)/README
 distribdir =
@@ -33,9 +33,9 @@ posix.fas: $(srcdir)/posix.lisp
 calls.m.c: $(srcdir)/calls.c
 	$(CLISP) -m 2MW -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/calls.c@BTHE@ ./
 
-calls.o : calls.m.c config.h
+calls.@OBJEXT@ : calls.m.c config.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
-		-c calls.m.c -o calls.o
+		-c calls.m.c -o calls.@OBJEXT@
 
 config.h : $(srcdir)/config.h.in config.status
 	sh config.status --header=config.h
@@ -51,7 +51,7 @@ clisp-module-distrib : clisp-module force
 	$(LN) $(DISTRIBFILES) $(distribdir)
 
 clean : force
-	rm -f core *.o *.a *.m.c *.fas *.lib
+	rm -f core *.@OBJEXT@ *.a *.m.c *.fas *.lib
 
 distclean : clean
 

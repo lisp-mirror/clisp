@@ -13,7 +13,7 @@ MAKE = make
 
 SHELL = /bin/sh
 
-GENERATED = postgresql.o postgresql.fas sql.fas
+GENERATED = postgresql.@OBJEXT@ postgresql.fas sql.fas
 DISTRIBFILES = link.sh Makefile $(GENERATED) \
 	$(srcdir)/postgresql.lisp $(srcdir)/sql.lisp $(srcdir)/README
 distribdir =
@@ -24,7 +24,7 @@ clisp-module : $(GENERATED)
 postgresql.c postgresql.fas : $(srcdir)/postgresql.lisp
 	$(CLISP) -c @BTHS@$(srcdir)/postgresql.lisp@BTHE@ -o ./
 
-postgresql.o : postgresql.c config.h
+postgresql.@OBJEXT@ : postgresql.c config.h
 	$(CC) $(CPPFLAGS) $(PQCPPFLAGS) $(CFLAGS) -I$(CLISP_LINKKIT) \
 		-c postgresql.c
 
@@ -36,7 +36,7 @@ clisp-module-distrib : clisp-module force
 	$(LN) $(DISTRIBFILES) $(distribdir)
 
 clean : force
-	rm -f core *.o *.a *.fas *.lib
+	rm -f core *.@OBJEXT@ *.a *.fas *.lib
 
 distclean : clean
 

@@ -14,7 +14,7 @@ MAKE = make
 
 SHELL = /bin/sh
 
-GENERATED = pcre.fas cpcre.o preload.lisp
+GENERATED = pcre.fas cpcre.@OBJEXT@ preload.lisp
 DISTRIBFILES = link.sh Makefile $(GENERATED) $(srcdir)/pcre.lisp
 distribdir =
 
@@ -24,9 +24,9 @@ clisp-module : $(GENERATED)
 pcre.fas: $(srcdir)/pcre.lisp
 	$(CLISP) -c @BTHS@$(srcdir)/pcre.lisp@BTHE@ -o ./
 
-cpcre.o : cpcre.m.c config.h
+cpcre.@OBJEXT@ : cpcre.m.c config.h
 	$(CC) $(CPPFLAGS) $(PCRECPPFLAGS) $(CFLAGS) -I. -I$(CLISP_LINKKIT) \
-		-c cpcre.m.c -o cpcre.o
+		-c cpcre.m.c -o cpcre.@OBJEXT@
 
 cpcre.m.c : $(srcdir)/cpcre.c
 	$(CLISP) -C @BTHS@$(CLISP_LINKKIT)/modprep@BTHE@ @BTHS@$(srcdir)/cpcre.c@BTHE@ ./
@@ -39,7 +39,7 @@ clisp-module-distrib : clisp-module force
 	$(LN) $(DISTRIBFILES) $(distribdir)
 
 clean : force
-	rm -f core *.o *.a *.m.c *.fas *.lib
+	rm -f core *.@OBJEXT@ *.a *.m.c *.fas *.lib
 
 distclean : clean
 

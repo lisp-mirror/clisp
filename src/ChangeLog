@@ -1,5 +1,31 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Adapt to object file suffix '.obj'.
+	* makemake.in (lisp.a): Write lisp${TOBJ} instead of lisp.o.
+	(libnoreadline.a): Write noreadline${TOBJ} instead of noreadline.o.
+	Write modules${TOBJ} instead of modules.o.
+	Write genclisph${TOBJ} instead of genclisph.o.
+	* clisp-link.in: Write @TOBJ@ instead of '.o'.
+	* modules/berkeley-db/Makefile.in: Likewise.
+	* modules/dbus/Makefile.in: Likewise.
+	* modules/dirkey/Makefile.in: Likewise.
+	* modules/fastcgi/Makefile.in: Likewise.
+	* modules/gdbm/Makefile.in: Likewise.
+	* modules/gtk2/Makefile.in: Likewise.
+	* modules/i18n/Makefile.in: Likewise.
+	* modules/libsvm/Makefile.in: Likewise.
+	* modules/oracle/Makefile.in: Likewise.
+	* modules/pari/Makefile.in: Likewise.
+	* modules/pcre/Makefile.in: Likewise.
+	* modules/postgresql/Makefile.in: Likewise.
+	* modules/rawsock/Makefile.in: Likewise.
+	* modules/readline/Makefile.in: Likewise.
+	* modules/regexp/Makefile.in: Likewise.
+	* modules/syscalls/Makefile.in: Likewise.
+	* modules/zlib/Makefile.in: Likewise.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Restore removal of lisp.ilk.
 	* makemake.in (lisp${LEXE}): Add back command that deletes lisp.ilk.
 
