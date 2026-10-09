@@ -1,5 +1,10 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Other Makefile changes.
+	* makemake.in: Treat win32msvc like win32gcc in a number of places.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Adjust linker options.
 	* makemake.in (LIBS): Add -ladvapi32, for misc.d.
 	(DRIVER_LIBS): Add -lole32 -luuid, needed for w32shell, also on MSVC.

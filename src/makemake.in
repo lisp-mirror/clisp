@@ -1300,7 +1300,7 @@ fi
 if [ "${with_debug}" != no ] ; then
   if [ $HSYS = sun4 -a $CC_GCC = true ] ; then
     Z_CFLAGS=$Z_CFLAGS' -gstabs'
-  elif [ ${HSYS} != "win32msvc" ]; then
+  elif [ $HSYS != win32msvc ]; then
     Z_CFLAGS=$Z_CFLAGS' -ggdb -O0'
   fi
   Z_CFLAGS=$Z_CFLAGS' -DDEBUG_OS_ERROR -DDEBUG_SPVW -DDEBUG_BYTECODE -DSAFETY=3'
@@ -2047,7 +2047,7 @@ if [ "${with_dynamic_ffi}" != no ]; then
   echol   "# zlib                 ZLIB (http://www.zlib.org)"
   test "$cpu" = i386 -a "$HSYSOS" = linux && \
     echol "# bindings/glibc       Linux glibc bindings (GNU libc version 2)"
-  test "$cpu" = i386 -a \( "$HSYSOS" = win32gcc -o "$HSYSOS" = cygwin \) && \
+  test "$cpu" = i386 -a \( "$HOS" = win32 -o "$HSYSOS" = cygwin \) && \
     echol "# bindings/win32       win32 bindings"
   echol   "# gtk2                 GTK2 interface"
 fi
@@ -2284,9 +2284,10 @@ echol
 
 SUBDIRS=gllib
 needs="gllib/libgnu.a init allc allo lisp${LEXE} marc.out interpreted.mem halfcompiled.mem lispinit.mem manual"
-if [ $HOS = unix -o ${HSYS} = win32gcc ] ; then
-  needs=".gdbinit "$needs' modular $(BASE_MODULES) $(MODULES) '"clisp${TEXE} boot base full"
+if [ ${HSYS} != win32msvc ] ; then
+  needs=".gdbinit "$needs
 fi
+needs=$needs' modular $(BASE_MODULES) $(MODULES) '"clisp${TEXE} boot base full"
 echol "all : $needs"
 echodummyrule all
 echol
@@ -2395,8 +2396,8 @@ echotab "touch modules.h"
 echol
 
 if [ -n "${SRCDIR}" ] ; then
-  if [ ${HSYS} = win32gcc ] ; then
-    # install.lisp requires dirkey module which is built by mingw but not msvc
+  if [ ${HOS} = win32 ] ; then
+    # install.lisp requires dirkey module.
     for f in install.lisp install.bat ; do
       link_dep "${f}" "${SRCDIR}${f}"
     done
@@ -2721,32 +2722,30 @@ for f in $ARI_ASMS $SP_ASMS ; do
   fi
 done
 
-if [ $HOS = unix -o $HSYS = win32gcc ] ; then
-  # on w32 -g, using lisp${TOBJ} leads to a crash on the first statement in main()
-  test $HSYSOS = win32gcc -o $HSYSOS = cygwin; no_lisp_o=$?
-  echol "lisp.a : \$(OBJECTS)"
-  if [ $no_lisp_o = 1 ]; then
-    echotab "\$(LD) -r -o lisp${TOBJ} \$(OBJECTS)"
-    echotab "chmod a-x lisp${TOBJ}"
-  fi
-  if test -z "$LIBGCC"; then
-    if [ $no_lisp_o = 1 ]; then
-      echotab "\$(AR) rcv lisp.a lisp${TOBJ}"
-    else
-      echotab "\$(AR) rcv lisp.a \$(OBJECTS)"
-    fi
-  else
-    # Test for libgcc.a because NeXT cc does not have it.
-    echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp${TOBJ} libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp${TOBJ} ; fi"
-  fi
-  test $no_lisp_o = 1 && echotab "\$(RM) lisp${TOBJ}"
-  echotab "\$(RANLIB) lisp.a"
-  echol
-  echol "libnoreadline.a : noreadline${TOBJ}"
-  echotab "\$(AR) rcv libnoreadline.a noreadline${TOBJ}"
-  echotab "\$(RANLIB) libnoreadline.a"
-  echol
+# on win32 -g, using lisp${TOBJ} leads to a crash on the first statement in main()
+test $HOS = win32 -o $HSYSOS = cygwin; no_lisp_o=$?
+echol "lisp.a : \$(OBJECTS)"
+if [ $no_lisp_o = 1 ]; then
+  echotab "\$(LD) -r -o lisp${TOBJ} \$(OBJECTS)"
+  echotab "chmod a-x lisp${TOBJ}"
 fi
+if test -z "$LIBGCC"; then
+  if [ $no_lisp_o = 1 ]; then
+    echotab "\$(AR) rcv lisp.a lisp${TOBJ}"
+  else
+    echotab "\$(AR) rcv lisp.a \$(OBJECTS)"
+  fi
+else
+  # Test for libgcc.a because NeXT cc does not have it.
+  echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp${TOBJ} libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp${TOBJ} ; fi"
+fi
+test $no_lisp_o = 1 && echotab "\$(RM) lisp${TOBJ}"
+echotab "\$(RANLIB) lisp.a"
+echol
+echol "libnoreadline.a : noreadline${TOBJ}"
+echotab "\$(AR) rcv libnoreadline.a noreadline${TOBJ}"
+echotab "\$(RANLIB) libnoreadline.a"
+echol
 if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no ]; then
   # win32 (SHREXT=.dll) requires all accessed libraries when linking a DLL.
   # i.e. when creating a dynamic module dll, we must give lisp.dll to the
@@ -2994,7 +2993,7 @@ echol
 echol "check-fresh-line : lisp${LEXE} lispinit.mem"
 OBSOLETE="$OBSOLETE fresh-line.out"
 echotab "-\$(RM) fresh-line.out"
-if [ "$HOS" = win32 -o "$HSYS" = win32gcc ] ; then
+if [ "$HOS" = win32 ] ; then
   echotab "\$(RUN) -q -M lispinit.mem -x '(progn (dolist (s (quote (*terminal-io* *standard-output* *error-output* *query-io* *debug-io* *trace-output*))) (format t \"~S = ~S~%\" s (symbol-value s))) (values))' 2>&1 > fresh-line.out"
   for stream1 in '*terminal-io*' '*standard-output*' '*error-output*' '*query-io*' '*debug-io*' '*trace-output*'; do
     for stream2 in '*terminal-io*' '*standard-output*' '*error-output*' '*query-io*' '*debug-io*' '*trace-output*'; do
