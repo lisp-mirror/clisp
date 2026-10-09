@@ -1,5 +1,13 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	Mark Windows/x86_64 with MSVC as a supported platform.
+	* INSTALL.windows: Mark MSVC (64-bit) as supported with restrictions.
+	* NEWS: Add Windows/x86_64 with MSVC to the supported platforms list.
+	* version.sh: Bump RELEASE_DATE.
+	* src/configure: Regenerated.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Fix test failures in number.tst and number2.tst.
 	* makemake.in: With MSVC, disable compiler optimizations for lisparit.
 

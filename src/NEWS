@@ -56,8 +56,10 @@ of platforms:
   Haiku            | i386           | i386
   Minix 3          | i386           | i386
   Windows 10       | x86_64         | Linux/x86_64 (WSL)
-  Windows          | x86_64         | Cygwin 64-bit,32-bit, mingw 64-bit,32-bit
-  Windows          | i386           | Cygwin 32-bit, mingw 32-bit
+  Windows          | x86_64         | Cygwin 64-bit,32-bit,
+                   |                | mingw 64-bit,32-bit, MSVC 64-bit
+  Windows          | i386           | Cygwin 32-bit,
+                   |                | mingw 32-bit
   Windows 11       | ARM64          | 64-bit
 
 The Foreign Function Interface (FFI) is now supported as well, on all of these
