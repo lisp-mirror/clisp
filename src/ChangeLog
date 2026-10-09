@@ -1,3 +1,8 @@
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
+	Adapt types, macros, and variables for 64-bit mingw, part 3.
+	* lispbibl.d (char_int): Use wbitm instead of bitm.
+
 2026-10-08  Bruno Haible  <bruno@clisp.org>
 
 	MSVC port: Assume an autoconf-generated config.h file.

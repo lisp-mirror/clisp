@@ -7801,7 +7801,7 @@ typedef unsigned_int_with_n_bits(char_int_len)  cint;
         ((cint)(as_oint(char_from_char_int)>>oint_data_shift))
     #else
       #define char_int(char_from_char_int)  \
-        ((cint)((as_oint(char_from_char_int)>>oint_data_shift)&(bitm(oint_data_len)-1)))
+        ((cint)((as_oint(char_from_char_int)>>oint_data_shift)&(wbitm(oint_data_len)-1)))
     #endif
   #endif
 #else
