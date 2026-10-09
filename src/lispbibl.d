@@ -971,13 +971,6 @@
   #define return_void
 #endif
 
-#if !defined(GNU) && !defined(inline)
-  #define inline      /* inline foo() {...} --> foo() {...} */
-#endif
-%% puts("#if !defined(__GNUC__) && !defined(inline)");
-%% puts("#define inline");
-%% puts("#endif");
-
 /* Definitions for C++-Compilers: */
 #ifdef __cplusplus
   #define BEGIN_DECLS  extern "C" {

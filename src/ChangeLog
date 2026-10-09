@@ -1,5 +1,11 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	Modernize: Use the 'inline' macro/override from autoconf.
+	The override in lispbibl.d conflicts with gnulib's extern-inline module.
+	* lispbibl.d (inline): Remove macro.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Allow building lispbibl.h with MSVC.
 	* makemake.in (lispbibl.h): Enable target also with MSVC.
 
