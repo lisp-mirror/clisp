@@ -402,6 +402,7 @@
 #endif
 #if defined(__STDC__) || defined(__cplusplus)
   /* ANSI C compilers define __STDC__ (but some define __STDC__=0 !).
+   MSVC 14.35 defines __STDC_VERSION__ but not __STDC__.
    HP aCC is an example of a C++ compiler which defines __cplusplus but
    not __STDC__. */
   #define ANSI
@@ -459,8 +460,10 @@
   #endif
 #endif
 
-/* We don't support pre-ANSI-C compilers any more. */
-#if !defined(ANSI)
+/* We don't support pre-ANSI-C compilers any more.
+ MSVC 14 or newer is supported too, although its preprocessor
+ is not ISO C compliant. */
+#if !(defined(ANSI) || (defined(_MSC_VER) && _MSC_VER >= 1900))
   #error An ANSI C or C++ compiler is required to compile CLISP!
 #endif
 
