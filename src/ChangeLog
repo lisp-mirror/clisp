@@ -1,5 +1,11 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Recognize the CPU.
+	* lispbibl.d (AMD64, ARM64): Test the Microsoft-specific predefined
+	macros.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Allow the MSVC compiler.
 	* lispbibl.d: Don't err out when using MSVC that does not define
 	__STDC__.

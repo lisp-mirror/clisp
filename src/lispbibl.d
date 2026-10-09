@@ -217,13 +217,15 @@
       || defined(_M_IX86) || defined(_X86_) /* native Windows */
     #define I80386
   #endif
-  #if defined(__x86_64__) || defined(__amd64__)
+  #if defined(__x86_64__) || defined(__amd64__) \
+      || defined(_M_X64) /* native Windows */
     #define AMD64
   #endif
   #if defined(arm) || defined(__arm) || defined(__arm__)
     #define ARM
   #endif
-  #ifdef __aarch64__
+  #if defined(__aarch64__) \
+      || defined(_M_ARM64) /* native Windows */
     #define ARM64
   #endif
   #if defined(sparc) || defined(__sparc__)
