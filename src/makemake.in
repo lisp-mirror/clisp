@@ -619,22 +619,6 @@ elif [ "${with_dynamic_modules}" = yes -a "${CC_CPLUSPLUS}" = true ]; then
   fail "dynamic modules do not work with C++ because of symbol mangling"
 fi
 
-# now set appropriate MSVC cflags
-if [ $HSYS = win32msvc ] ; then
-  # -G5 means to optimize for i586.
-  # "-Od -Z7" means to compile for debugging.
-  # "-O1" means to optimize on msvc4,
-  # "-Os -Oy -Ob1 -Gs -Gf -Gy" means to optimize on msvc5+
-  # ("-O1" and "-O2" are buggy in msvc5 ... msvc7).
-  # -Zi - include debug info (-ZI for debug-and-continue)
-  # -GZ - runtime debug checks
-  if [ "${with_debug}" = no ] ; then
-    Z_CFLAGS="${Z_CFLAGS} -G5 -Os -Oy -Ob1 -Gs -Gf -Gy"
-  else
-    Z_CFLAGS="${Z_CFLAGS} -Zi -Od -GZ"
-  fi
-fi
-
 if [ "$srcdir" = . ] ; then
   SRCDIR=''
 else
@@ -1196,9 +1180,6 @@ if [ $CC_GCC = true ] ; then
   if [ "$cpu" = arm64 ] ; then
     Z_CFLAGS=$Z_CFLAGS' -fPIC'
   fi
-  if [ $HSYS = win32gcc ] ; then
-    Z_CFLAGS=$Z_CFLAGS' -D_WIN32'
-  fi
   if [ $HSYS = sun4 ] ; then
     Z_LDFLAGS=$Z_LDFLAGS' -static'
   fi
@@ -1210,10 +1191,7 @@ if [ $CC_GCC = true ] ; then
 
 else
 
-  if [ $HSYS = win32msvc ] ; then
-    CPP="cl -E"
-    Z_CFLAGS="$Z_CFLAGS -U__GNUC__ -DANSI -D_M_IX86=500 -D_WIN32 -I\$(MSVCDIR)/include"
-  elif "$CC_SUNPRO" ; then
+  if "$CC_SUNPRO" ; then
     # SUNWspro cc flags:
     Z_CFLAGS=${Z_CFLAGS}' -xO3 -xstrconst'
   elif [ $HSYS = sun4 ] ; then
@@ -1221,7 +1199,7 @@ else
     # we do not reset CFLAGS so that the user can pass -xarch=v8 et al
     # CFLAGS=''
     :
-  else
+  elif [ $HSYS != win32msvc ] ; then
     Z_CFLAGS=${Z_CFLAGS}' -O'
   fi
   case "$host_os" in
@@ -2105,13 +2083,6 @@ else
   echol 'MODULE_CFLAGS = $(A_CFLAGS) $(CFLAGS) $(Z_CFLAGS)'
   echol 'MODULE_LDFLAGS = $(A_LDFLAGS) $(LDFLAGS) $(Z_LDFLAGS)'
 fi
-if [ $HSYS = win32msvc ] ; then
-  echol "#MSVCDIR = d:/msdev"
-  echol "#MSVCDIR = d:/devstudio/vc"
-  echol "#MSVCDIR = c:/msvs/vc98"
-  echol "#MSVCDIR = \"C:/Program Files/Microsoft Visual Studio/VC98\""
-  echol '#MSVCDIR = "C:\Programme\Microsoft Visual Studio\VC98"'
-fi
 # echotab_to_HEXE command source target
 # outputs a `make' statement that executes "command source" and creates
 # target${HEXE}.
@@ -2677,12 +2648,17 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
   if [ $f = encoding -o $f = stream -o $f = hashtabl -o $f = predtype -o $f = funarg -o $f = socket ] ; then
     flags2=$flags2" \$(FALIGNFLAGS)"
   fi
-  if [ $f = genclisph -a $CC_GCC = true ] ; then
-    # When using -O2 or higher, the compilation of genclisph.c takes several
-    # minutes, which is unnecessary since it gets run only once.
-    # When using -O0, the compilation of genclisph.c fails on AIX:
-    # "1252-171 The displacement must be greater than or equal to -32768 and less than or equal to 32767."
-    flags2=$flags2' -O1'
+  if [ $f = genclisph ] ; then
+    if [ $CC_GCC = true ] ; then
+      # When using -O2 or higher, the compilation of genclisph.c takes several
+      # minutes, which is unnecessary since it gets run only once.
+      # When using -O0, the compilation of genclisph.c fails on AIX:
+      # "1252-171 The displacement must be greater than or equal to -32768 and less than or equal to 32767."
+      flags2=$flags2' -O1'
+    elif [ $HSYS = win32msvc ] ; then
+      # Similarly for MSVC.
+      flags2=$flags2' -Od'
+    fi
   fi
   echol "${f}.i : ${c}${dependsc}"
   echotab "\$(CPP) ${flags} ${c} > ${f}.i"

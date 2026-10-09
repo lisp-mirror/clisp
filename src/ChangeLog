@@ -1,5 +1,15 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Adjust compiler options.
+	* makemake.in (Z_CFLAGS): Don't set general optimization options;
+	that needs to be done by the user: setting CFLAGS before invoking
+	'configure'. Don't add -I options; that needs to be done by the user:
+	setting CPPFLAGS before invoking 'configure. Don't define _WIN32 or
+	_M_IX86 (already predefined by the compiler).
+	Disable compiler optimizations for genclisph.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Adapt to object file suffix '.obj'.
 	* makemake.in (lisp.a): Write lisp${TOBJ} instead of lisp.o.
 	(libnoreadline.a): Write noreadline${TOBJ} instead of noreadline.o.
