@@ -53,12 +53,6 @@
 #define HAVE_STRERROR 1
 /* used by errunix.d */
 
-/* Getting memory. */
-#include <malloc.h>
-extern void* malloc (size_t size);
-extern void free (void* memblock);
-/* used by spvw.d */
-
 /* Type of a file handle */
 #define Handle  HANDLE
 #define INVALID_HANDLE  INVALID_HANDLE_VALUE
