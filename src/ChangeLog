@@ -1,5 +1,10 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Restore removal of lisp.ilk.
+	* makemake.in (lisp${LEXE}): Add back command that deletes lisp.ilk.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	Update memory mapping on mingw/x86_64.
 	* lispbibl.d [WIN32_NATIVE && AMD64]: Increase
 	MAPPABLE_ADDRESS_RANGE_START.

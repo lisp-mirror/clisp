@@ -2848,6 +2848,10 @@ finish_runtime () {
 fi
 
 echol "lisp${LEXE} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ} ${XCL_GETTEXTLIB} data"
+if [ $HSYS = win32msvc ] ; then
+  # MSVC's incremental linking is or was buggy. Avoid it.
+  echotab "\$(RM) lisp.ilk"
+fi
 if [ $HOS != win32 -a $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
   # Dynamically linking on Solaris 2.[23] is a pain.
   LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
