@@ -1,5 +1,15 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Don't include obscure Windows header files.
+	* win32.d: Don't include <winternl.h>, <ntstatus.h>.
+	(IO_STATUS_BLOCK, PIO_STATUS_BLOCK): New types.
+	(FILE_INFORMATION_CLASS, PFILE_INFORMATION_CLASS): New types.
+	(FILE_ACCESS_INFORMATION, PFILE_ACCESS_INFORMATION): New types.
+	(FILE_NAME_INFORMATION, PFILE_NAME_INFORMATION): New types.
+	(STATUS_SUCCESS): New macro.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Assume that <locale.h> declares setlocale.
 	* win32.d: Don't declare setlocale.
 

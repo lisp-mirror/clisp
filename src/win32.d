@@ -37,8 +37,33 @@
 /* NtQueryInformationFile https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryinformationfile
    It uses IO_STATUS_BLOCK https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/ns-wdm-_io_status_block
    which uses NTSTATUS https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/using-ntstatus-values */
-#include <winternl.h>
-#include <ntstatus.h>
+/* It's more trouble to include the right Microsoft header files
+   than to just declare the types that we actually need. */
+/* https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/ns-wdm-_io_status_block */
+typedef struct _IO_STATUS_BLOCK
+{
+  union {
+    NTSTATUS Status;
+    PVOID Pointer;
+  } u;
+  ULONG_PTR Information;
+} IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
+/* https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryinformationfile */
+typedef enum _FILE_INFORMATION_CLASS {
+  FileAccessInformation = 8,
+  FileNameInformation = 9
+} FILE_INFORMATION_CLASS, *PFILE_INFORMATION_CLASS;
+/* https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_access_information */
+typedef struct _FILE_ACCESS_INFORMATION {
+  ACCESS_MASK AccessFlags;
+} FILE_ACCESS_INFORMATION, *PFILE_ACCESS_INFORMATION;
+/* https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_file_name_information */
+typedef struct _FILE_NAME_INFORMATION {
+  ULONG FileNameLength;
+  WCHAR FileName[1];
+} FILE_NAME_INFORMATION, *PFILE_NAME_INFORMATION;
+/* https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55 */
+#define STATUS_SUCCESS ((NTSTATUS) 0)
 
 /* Table of system error messages */
 #include <winerror.h>
