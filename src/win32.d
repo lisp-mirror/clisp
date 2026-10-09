@@ -91,10 +91,6 @@ extern void interrupt_handler (void);
 extern void install_sigint_handler (void);
 /* used by spvw.d */
 
-/* Locale definition function */
-extern_C char *setlocale (int category, const char *locale);
-/* used by spvw_ctype.d */
-
 /* Character set conversion
    extern BOOL CharToOem (LPCTSTR Str, LPSTR Dst);
    extern BOOL OemToChar (LPCTSTR Str, LPSTR Dst);
