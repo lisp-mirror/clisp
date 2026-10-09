@@ -911,10 +911,11 @@ if [ $HOS = win32 ] ; then
     LIBS=$LIBS" -lole32 -luuid $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
   else
     if [ $HSYS = win32msvc ] ; then
-      LIBS=$LIBS" user32.lib ws2_32.lib advapi32.lib $LIBSIGSEGV $LIBUNISTRING"
+      LIBS=$LIBS" user32.lib ws2_32.lib $LIBSIGSEGV $LIBUNISTRING"
     fi
     LIBS=$LIBS' ole32.lib shell32.lib'
   fi
+  LIBS=$LIBS" -ladvapi32" # for RegOpenKeyEx etc.
 fi
 OS_INCLUDES=$OS_INCLUDES' xthread'
 
@@ -3569,9 +3570,7 @@ DRIVER_DEP=''; DRIVER_RES=''; DRIVER_LIBS=''
 if [ $HOS = win32 ]; then
   DRIVER_RES=" clispres${TOBJ}"
   DRIVER_DEP=${DRIVER_RES}" ${SRCDIR}w32shell.c ${SRCDIR}execname.c"
-  if [ $HSYS = win32gcc ] ; then
-    DRIVER_LIBS=" -lole32 -luuid"
-  fi
+  DRIVER_LIBS=" -lole32 -luuid"
   echol "clispres${TOBJ} : clisp.rc clisp.ico"
   if [ ${HSYS} = win32gcc ]; then
     echotab "${WINDRES} -i clisp.rc -o clispres.o"
