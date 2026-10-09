@@ -212,9 +212,6 @@ extern int file_id_eq (struct file_id *fi1, struct file_id *fi2);
 extern BOOL ReadConsoleInput1 (HANDLE ConsoleInput, PINPUT_RECORD Buffer, LPDWORD NumberOfEventsRead);
 /* The following functions deal with all kinds of file/pipe/console handles */
 extern int fd_read_wont_hang_p (HANDLE fd);
-#ifdef MICROSOFT
-typedef long ssize_t;
-#endif
 extern ssize_t fd_read (HANDLE fd, void* buf, size_t nbyte, perseverance_t persev);
 extern ssize_t fd_write (HANDLE fd, const void* buf, size_t nbyte, perseverance_t persev);
 #define safe_read(fd,buf,nbyte)  fd_read(fd,buf,nbyte,persev_partial)
@@ -222,15 +219,13 @@ extern ssize_t fd_write (HANDLE fd, const void* buf, size_t nbyte, perseverance_
 #define safe_write(fd,buf,nbyte)  fd_write(fd,buf,nbyte,persev_partial)
 #define full_write(fd,buf,nbyte)  fd_write(fd,buf,nbyte,persev_full)
 /* Changing the position within a file. */
-/* _off_t is sint32, but the Win32 APIs support 64-bit file offsets. */
-#define off_t  sint64
+/* _off_t is sint32, but the Win32 APIs support 64-bit file offsets
+   and therefore gnulib's <sys/types.h> override define off_t to sint64. */
 #undef SIZEOF_OFF_T  /* it was defined in config.h */
 #define SIZEOF_OFF_T  8
-#ifdef __MINGW32__
-  #include <io.h>
-  #undef lseek
-  #define lseek clisp_lseek /* avoid collision with prototype in <mingw/io.h> */
-#endif
+#include <io.h>
+#undef lseek
+#define lseek clisp_lseek /* avoid collision with prototype in <mingw/io.h> */
 extern off_t lseek (HANDLE fd, off_t offset, DWORD mode);
 #undef SEEK_SET
 #undef SEEK_CUR
@@ -398,3 +393,6 @@ extern void DumpProcessMemoryMap (FILE* out); /* see win32aux.d */
       if (ioctl(handle,FIONBIO,&non_blocking_io)) { on_fail; } \
     } while (0)
 #endif
+
+/* Disable '#define complex _complex' from ucrt/corecrt_math.h. */
+#undef complex

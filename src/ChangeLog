@@ -1,5 +1,14 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix various compilation errors.
+	* win32.d (ssize_t, off_t): Don't define. Instead, rely on gnulib's
+	<sys/types.h> override.
+	Include <io.h>.
+	(lseek): Define on MSVC like on mingw.
+	(complex): Undefine macro.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Don't include obscure Windows header files.
 	* win32.d: Don't include <winternl.h>, <ntstatus.h>.
 	(IO_STATUS_BLOCK, PIO_STATUS_BLOCK): New types.
