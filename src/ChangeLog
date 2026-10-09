@@ -1,5 +1,11 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix a crash during generation of compiler.fas.
+	* makemake.in (STACKSIZE_LDFLAGS): New variable.
+	(lisp${LEXE}): Use it.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Fix a crash during initialization.
 	* spvw_ctype.d (init_ctype): Don't call the original setlocale function
 	with gnulib's LC_MESSAGES.

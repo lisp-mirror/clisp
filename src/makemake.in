@@ -2821,6 +2821,14 @@ finish_runtime () {
 }
 fi
 
+# Compiling compiler.lisp needs a lot of C stack.
+if [ $HSYS = win32msvc ] ; then
+  # https://learn.microsoft.com/en-us/cpp/build/reference/f-set-stack-size
+  STACKSIZE_LDFLAGS='-F2000000'
+else
+  STACKSIZE_LDFLAGS=''
+fi
+
 echol "lisp${LEXE} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ} ${XCL_GETTEXTLIB} data"
 if [ $HSYS = win32msvc ] ; then
   # MSVC's incremental linking is or was buggy. Avoid it.
@@ -2829,9 +2837,9 @@ fi
 if [ $HOS != win32 -a $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
   # Dynamically linking on Solaris 2.[23] is a pain.
   LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
-  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
 else
-  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE}"
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE}"
 fi
 finish_runtime lisp${LEXE}
 
