@@ -1,5 +1,11 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix a crash during initialization.
+	* spvw_ctype.d (init_ctype): Don't call the original setlocale function
+	with gnulib's LC_MESSAGES.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Fix C_CODE_ALIGNMENT, PSEUDOCODE_ALIGNMENT.
 	* lispbibl.d (C_CODE_ALIGNMENT): With MSVC/x86_64, set to 1, not 4.
 	This is needed when building with debug options (-Zi -Yd).
