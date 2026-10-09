@@ -1,5 +1,13 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix link error due to gnulib's select() implementation.
+	* makemake.in (SELECT_LIB): New variable.
+	(LIBS): Use it. Don't add user32.lib and ws2_32.lib explicitly, since
+	it's in SELECT_LIB. Don't add advapi32.lib, since it's linked in by
+	default.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	Modernize: Use the 'inline' macro/override from autoconf.
 	The override in lispbibl.d conflicts with gnulib's extern-inline module.
 	* lispbibl.d (inline): Remove macro.

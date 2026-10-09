@@ -517,6 +517,7 @@ INSTALL_DATA='@INSTALL_DATA@'       # either 'install -c -m 644' or 'cp'
 GROFF='@GROFF@'                     # either 'groff' or ''
 PS2PDF='@PS2PDF@'                   # either 'ps2pdf' or ''
 LIBS='@LIBS@'                       # list of system libraries
+SELECT_LIB='@SELECT_LIB@'           # '-lws2_32 -luser32' or ''
 LIBTERMCAP='@LIBTERMCAP@'           # '-L/usr/??/lib' or 'broken' or ''
 INCTERMCAP='@INCTERMCAP@'           # '-I/usr/??/include' or ''
 LIBICONV='@LIBICONV@'               # either '-liconv' or ''
@@ -907,14 +908,11 @@ if [ $HOS = unix ] ; then
 fi
 if [ $HOS = win32 ] ; then
   OS_INCLUDES=$OS_INCLUDES' win32'
-  if [ $HSYS = win32gcc ] ; then
-    LIBS=$LIBS" -lole32 -luuid $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
-  else
-    if [ $HSYS = win32msvc ] ; then
-      LIBS=$LIBS" user32.lib ws2_32.lib $LIBSIGSEGV $LIBUNISTRING"
-    fi
-    LIBS=$LIBS' ole32.lib shell32.lib'
+  LIBS=$LIBS" -lole32 -luuid $SELECT_LIB"
+  if [ $HSYSOS = win32msvc ] ; then
+    LIBS=$LIBS" -lshell32" # for ShellExecute
   fi
+  LIBS=$LIBS" $LIBICONV $LIBSIGSEGV $LIBUNISTRING"
   LIBS=$LIBS" -ladvapi32" # for RegOpenKeyEx etc.
 fi
 OS_INCLUDES=$OS_INCLUDES' xthread'
