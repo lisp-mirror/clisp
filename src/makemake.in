@@ -2629,6 +2629,13 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
           flags2=$flags2' -O0'
         fi
         ;;
+      mingw* | windows*)
+        if [ $f = lisparit ] ; then
+          # MSVC 18.10 miscompiles lisparit.obj with -O1 or -O2, leading to test
+          # failures in number.erg and number2.erg.
+          flags2=$flags2' -Od'
+        fi
+        ;;
     esac
   fi
   if [ $f = eval -a "${with_jitc}" = lightning ]; then

@@ -1,5 +1,10 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix test failures in number.tst and number2.tst.
+	* makemake.in: With MSVC, disable compiler optimizations for lisparit.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Fix a crash during generation of compiler.fas.
 	* makemake.in (STACKSIZE_LDFLAGS): New variable.
 	(lisp${LEXE}): Use it.
