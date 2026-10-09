@@ -1,5 +1,10 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Allow building lispbibl.h with MSVC.
+	* makemake.in (lispbibl.h): Enable target also with MSVC.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Compile the resources using 'windres' instead of 'rc'.
 	* makemake.in (clispres${TOBJ}): Always use WINDRES. Use option
 	--output-format=coff, like GNU gettext does.

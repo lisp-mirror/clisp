@@ -3246,9 +3246,15 @@ echodummyrule extracheck
 echol
 echol
 
-if [ $CC_GCC = true ] ; then
+if [ $CC_GCC = true -o $HSYS = win32msvc ] ; then
   echol "lispbibl.h :${EVERY_INCLUDES_C}${EVERY_INCLUDES_H}"
-  echotab "( (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -P lispbibl.c | \$(GREP) -v \"^ *\$\$\") ; (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -P -dM lispbibl.c | sort) ) > lispbibl.h"
+  if [ $CC_GCC = true ] ; then
+    echotab "( (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -P lispbibl.c | \$(GREP) -v \"^ *\$\$\") ; (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -P -dM lispbibl.c | sort) ) > lispbibl.h"
+  elif [ $HSYS = win32msvc ] ; then
+    # The option -d1PP is undocumented, but mentioned in
+    # https://stackoverflow.com/questions/28554362/how-to-print-macros-in-msvc-preprocessor
+    echotab "( (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) lispbibl.c | tr -d '\\r' | \$(GREP) -v \"^ *\$\$\") ; (\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -d1PP lispbibl.c | tr -d '\\r' | sort) ) > lispbibl.h"
+  fi
   echol
   echol "gc : lispbibl.h # show GC-related definitions"
   echotab "egrep '[^[:alpha:]](MEMORY|SPVW|GC|SIGSEGV|SAFETY|ASM|FAST|DEBUG)[^[:alpha:]]' lispbibl.h | grep -v 'define _' | egrep '^#define'"
