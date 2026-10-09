@@ -557,7 +557,7 @@
   #define C_CODE_ALIGNMENT  8
   #define log2_C_CODE_ALIGNMENT  3
 #endif
-#if (defined(I80386) && defined(GNU)) || defined(DECALPHA) || defined(SPARC) || defined(MIPS) || defined(POWERPC) || defined(ARM64) || defined(AMD64) || defined(LOONGARCH64) || defined(__arc__) || defined(__bfin__) || defined(__TMS320C6X__) || defined(__epiphany__) || defined(__fr30__) || defined(__FT32__) || defined(__iq2000__) || defined(__lm32__) || defined(__M32R__) || defined(__m88k__) || defined(__MICROBLAZE__) || defined(__mmix__) || defined(__nds32__) || defined(__NIOS2__) || defined(__nvptx__) || defined(__VISIUM__) || defined(__xtensa__)
+#if (defined(I80386) && defined(GNU)) || defined(DECALPHA) || defined(SPARC) || defined(MIPS) || defined(POWERPC) || defined(ARM64) || (defined(AMD64) && defined(GNU)) || defined(LOONGARCH64) || defined(__arc__) || defined(__bfin__) || defined(__TMS320C6X__) || defined(__epiphany__) || defined(__fr30__) || defined(__FT32__) || defined(__iq2000__) || defined(__lm32__) || defined(__M32R__) || defined(__m88k__) || defined(__MICROBLAZE__) || defined(__mmix__) || defined(__nds32__) || defined(__NIOS2__) || defined(__nvptx__) || defined(__VISIUM__) || defined(__xtensa__)
   /* When using gcc on i386, this assumes that -malign-functions has not been
    used to specify an alignment smaller than 4 bytes. */
   #define C_CODE_ALIGNMENT  4
@@ -600,7 +600,7 @@
   #define C_CODE_ALIGNMENT  1
   #define log2_C_CODE_ALIGNMENT  0
 #endif
-#if !defined(C_CODE_ALIGNMENT) /* e.g. (defined(I80386) && defined(MICROSOFT)) */
+#if !defined(C_CODE_ALIGNMENT) /* e.g. (defined(I80386) || defined(AMD64)) && defined(MICROSOFT) */
   #define C_CODE_ALIGNMENT  1
   #define log2_C_CODE_ALIGNMENT  0
 #endif
