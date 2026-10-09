@@ -3571,13 +3571,7 @@ if [ $HOS = win32 ]; then
   DRIVER_DEP=${DRIVER_RES}" ${SRCDIR}w32shell.c ${SRCDIR}execname.c"
   DRIVER_LIBS=" -lole32 -luuid"
   echol "clispres${TOBJ} : clisp.rc clisp.ico"
-  if [ ${HSYS} = win32gcc ]; then
-    echotab "${WINDRES} -i clisp.rc -o clispres.o"
-  else
-    echotab "rc /v /foclisp.res clisp.rc"
-    echotab "cvtres /verbose /out:clispres.obj clisp.res"
-    echotab "-\$(RM) clisp.res"
-  fi
+  echotab "${WINDRES} -i clisp.rc -o clispres${TOBJ} --output-format=coff"
   echol
   # NB: we link clisp.rc into the driver clisp.exe but _not_ into the
   #     run-time lisp.exe because then the latter does not have an icon

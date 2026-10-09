@@ -1,5 +1,12 @@
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Compile the resources using 'windres' instead of 'rc'.
+	* makemake.in (clispres${TOBJ}): Always use WINDRES. Use option
+	--output-format=coff, like GNU gettext does.
+	* INSTALL.windows: Mention the tools needed for 'windres'.
+
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Other Makefile changes.
 	* makemake.in: Treat win32msvc like win32gcc in a number of places.
 
