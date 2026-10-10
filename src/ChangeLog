@@ -1,5 +1,13 @@
 2026-10-10  Bruno Haible  <bruno@clisp.org>
 
+	Simplify build system: Use OBJEXT from autoconf instead of TOBJ.
+	* makemake.in (OBJEXT): New variable.
+	(TOBJ): Remove variable. Use ".${OBJEXT}" instead.
+	(clisp-link): Substitute OBJEXT, not TOBJ.
+	* clisp-link.in: Use OBJEXT, not TOBJ.
+
+2026-10-10  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Adapt to object file suffix '.obj', part 2.
 	* m4/clisp.m4 (CL_CLISP): If a file 'modules.o' does not exist, test for
 	a file 'modules.obj'.

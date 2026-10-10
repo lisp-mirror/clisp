@@ -533,6 +533,7 @@ host_cpu_c_abi='@HOST_CPU_C_ABI@'   # ditto
 host_vendor='@host_vendor@'         # something like 'unknown'
 host_os='@host_os@'                 # something like 'mingw32'
 build_os='@build_os@'               # something like 'cygwin'
+OBJEXT='@OBJEXT@'                   # either 'o' or 'obj'
 GNU_MAKE='@GNU_MAKE_FALSE@'         # '#' if non-gnu; '' if gnu
 
 # These variables are our additions to $(CPPFLAGS).
@@ -956,13 +957,6 @@ if [ -n "${SRCDIR}" ] ; then
   GNULIB_INCLUDE="${GNULIB_INCLUDE} -I$x/gllib"
 fi
 Z_CPPFLAGS="${Z_CPPFLAGS} ${GNULIB_INCLUDE}"
-
-# TOBJ = extension for compiled modules on target
-if [ $HSYS = win32msvc ] ; then
-  TOBJ='.obj'
-else
-  TOBJ='.o'
-fi
 
 # Main cpu dependencies:
 cpu="${host_cpu_c_abi}"
@@ -2263,7 +2257,7 @@ echol
 echolist "CFILES =" "$DFILES $ARI_ASMD $ARI_ASMC $SP_ASMD gen.lispbibl" ".c"
 echol
 
-echolist "OBJECTS =" "$CPARTS $ARI_ASMS $SP_ASMS $GMALLOC" "${TOBJ}"
+echolist "OBJECTS =" "$CPARTS $ARI_ASMS $SP_ASMS $GMALLOC" ".${OBJEXT}"
 echol
 
 echolist "LISPFILES =" "$LPARTS" ".lisp" "${SRCDIR}"
@@ -2503,7 +2497,7 @@ done
 
 line="allo : allc"
 for f in $CPARTS ; do
-  line=$line" ${f}${TOBJ}"
+  line=$line" ${f}.${OBJEXT}"
 done
 echol $line
 echodummyrule allo
@@ -2673,16 +2667,16 @@ for f in $CPARTS genclisph modules $EXTRA_CPARTS ; do
   echol "${f}.s : ${c}${dependsc}"
   echotab "\$(CC) ${flags2} -S ${c}"
   echol
-  echol "${f}${TOBJ} : ${c}${dependsc}"
+  echol "${f}.${OBJEXT} : ${c}${dependsc}"
   echotab "\$(CC) ${flags2} -c ${c}"
   echol
 done
 
 if [ "${with_gmalloc}" = yes ]; then
   for f in $GMALLOC ; do
-    echol "${f}${TOBJ} : ${SRCDIR}${f}.c"
+    echol "${f}.${OBJEXT} : ${SRCDIR}${f}.c"
     # gmalloc.c needs -DUSG on Solaris.
-    echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) $\(Z_CFLAGS) -DUSG -c ${SRCDIR}${f}.c -o ${f}${TOBJ}"
+    echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) $\(Z_CFLAGS) -DUSG -c ${SRCDIR}${f}.c -o ${f}.${OBJEXT}"
     echol
   done
 fi
@@ -2696,28 +2690,28 @@ for f in $ARI_ASMS $SP_ASMS ; do
     if false; then # old
       echotab "\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) ${SRCDIR}${f}-macro.c > ${f}.i.c"
       echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_XFLAGS) -c ${f}.i.c /FAs /Fa${f}.s"
-      echotab "\$(RM) ${f}.i${TOBJ}"
+      echotab "\$(RM) ${f}.i.${OBJEXT}"
       echotab "\$(RM) ${f}.i.c"
     else
       echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${SRCDIR}${f}-macro.c /FAs /Fa${f}.s"
-      echotab "\$(RM) ${f}-macro${TOBJ}"
+      echotab "\$(RM) ${f}-macro.${OBJEXT}"
     fi
     echol
-    echol "${f}${TOBJ} : ${SRCDIR}${f}-macro.c"
+    echol "${f}.${OBJEXT} : ${SRCDIR}${f}-macro.c"
     if false; then # old
       echotab "\$(CPP) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) ${SRCDIR}${f}-macro.c > ${f}.i.c"
-      echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.i.c -o ${f}${TOBJ}"
+      echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.i.c -o ${f}.${OBJEXT}"
       echotab "\$(RM) ${f}.i.c"
     else
-      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${SRCDIR}${f}-macro.c -o ${f}${TOBJ}"
+      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${SRCDIR}${f}-macro.c -o ${f}.${OBJEXT}"
     fi
     echol
   else
-    echol "${f}${TOBJ} : ${f}.s"
+    echol "${f}.${OBJEXT} : ${f}.s"
     # Call the assembler, preferrably through the C compiler:
     if [ $f = ari_asm_hppa ] ; then
       # Only the native as groks the .SHORTDATA statements in ari_asm_hppa.d
-      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.s || /usr/ccs/bin/as ${f}.s -o ${f}${TOBJ} || /bin/as ${f}.s -o ${f}${TOBJ}"
+      echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -c ${f}.s || /usr/ccs/bin/as ${f}.s -o ${f}.${OBJEXT} || /bin/as ${f}.s -o ${f}.${OBJEXT}"
     elif [ $CC_GCC = true ] ; then
       echotab "\$(CC) \$(A_CPPFLAGS) \$(CPPFLAGS) \$(Z_CPPFLAGS) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) -x assembler -c ${f}.s"
     else
@@ -2727,28 +2721,28 @@ for f in $ARI_ASMS $SP_ASMS ; do
   fi
 done
 
-# on win32 -g, using lisp${TOBJ} leads to a crash on the first statement in main()
+# on win32 -g, using lisp.${OBJEXT} leads to a crash on the first statement in main()
 test $HOS = win32 -o $HSYSOS = cygwin; no_lisp_o=$?
 echol "lisp.a : \$(OBJECTS)"
 if [ $no_lisp_o = 1 ]; then
-  echotab "\$(LD) -r -o lisp${TOBJ} \$(OBJECTS)"
-  echotab "chmod a-x lisp${TOBJ}"
+  echotab "\$(LD) -r -o lisp.${OBJEXT} \$(OBJECTS)"
+  echotab "chmod a-x lisp.${OBJEXT}"
 fi
 if test -z "$LIBGCC"; then
   if [ $no_lisp_o = 1 ]; then
-    echotab "\$(AR) rcv lisp.a lisp${TOBJ}"
+    echotab "\$(AR) rcv lisp.a lisp.${OBJEXT}"
   else
     echotab "\$(AR) rcv lisp.a \$(OBJECTS)"
   fi
 else
   # Test for libgcc.a because NeXT cc does not have it.
-  echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp${TOBJ} libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp${TOBJ} ; fi"
+  echotab "if test -f \$(LIBGCC) ; then mkdir libgcc ; (cd libgcc ; \$(AR) xv \$(LIBGCC)) ; \$(AR) rcv lisp.a lisp.${OBJEXT} libgcc/*.o* ; \$(RM) -r libgcc ; else \$(AR) rcv lisp.a lisp.${OBJEXT} ; fi"
 fi
-test $no_lisp_o = 1 && echotab "\$(RM) lisp${TOBJ}"
+test $no_lisp_o = 1 && echotab "\$(RM) lisp.${OBJEXT}"
 echotab "\$(RANLIB) lisp.a"
 echol
-echol "libnoreadline.a : noreadline${TOBJ}"
-echotab "\$(AR) rcv libnoreadline.a noreadline${TOBJ}"
+echol "libnoreadline.a : noreadline.${OBJEXT}"
+echotab "\$(AR) rcv libnoreadline.a noreadline.${OBJEXT}"
 echotab "\$(RANLIB) libnoreadline.a"
 echol
 if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no ]; then
@@ -2757,7 +2751,7 @@ if [ ${SHREXT} = .dll -a "${with_dynamic_modules}" != no ]; then
   # linker, and when creating lisp.dll, we must give $(LIBS) to it.
   # Some unixes (SHREXT=.so) need -fPIC when compiling clisp core for a DLL,
   # which loses performance; besides, we do not need lisp.so on unix anyway.
-  echol "lisp${SHREXT} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ}"
+  echol "lisp${SHREXT} : ${GLLIB_A} \$(OBJECTS) modules.${OBJEXT}"
   CLISP_DEF=" lisp.def"
   XCC_CREATESHARED_=`echo ${XCC_CREATESHARED} | sed -e 's/\\${/\\\\$\\\\(/g' -e 's/}/\\\\)/g'`
   echotab "`eval \"lib=\$\@; libs=\$^\ \$\(LIBS\); echo ${XCC_CREATESHARED_}\"`"
@@ -2836,7 +2830,7 @@ else
   STACKSIZE_LDFLAGS=''
 fi
 
-echol "lisp${LEXE} : ${GLLIB_A} \$(OBJECTS) modules${TOBJ} ${XCL_GETTEXTLIB} data"
+echol "lisp${LEXE} : ${GLLIB_A} \$(OBJECTS) modules.${OBJEXT} ${XCL_GETTEXTLIB} data"
 if [ $HSYS = win32msvc ] ; then
   # MSVC's incremental linking is or was buggy. Avoid it.
   echotab "\$(RM) lisp.ilk"
@@ -2844,9 +2838,9 @@ fi
 if [ $HOS != win32 -a $CC_GCC = true -a -n "$SOLARIS_LINKING" ] ; then
   # Dynamically linking on Solaris 2.[23] is a pain.
   LIBGCC_DIR='`'"\$(CC) -print-libgcc-file-name"' | sed -e '"'"'s,[^/]*$$,,'"'"'`'
-  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules${TOBJ} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules.${OBJEXT} \$(LIBS) -o lisp${LEXE} || /usr/ccs/bin/ld -V -dy -Bdynamic -Y P,/usr/ccs/lib:/usr/lib -Qy -o lisp${LEXE} ${LIBGCC_DIR}crt1.o ${LIBGCC_DIR}crti.o /usr/ccs/lib/values-Xa.o ${LIBGCC_DIR}crtbegin.o \$(OBJECTS) modules.${OBJEXT} -L${LIBGCC_DIR} -L/usr/ccs/bin \$(LIBS) -lgcc -lc ${LIBGCC_DIR}crtend.o ${LIBGCC_DIR}crtn.o -lgcc"
 else
-  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules${TOBJ} \$(LIBS) -o lisp${LEXE}"
+  echotab "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS) ${STACKSIZE_LDFLAGS} \$(OBJECTS) modules.${OBJEXT} \$(LIBS) -o lisp${LEXE}"
 fi
 finish_runtime lisp${LEXE}
 
@@ -3275,8 +3269,8 @@ if [ $CC_GCC = true -o $HSYS = win32msvc ] ; then
   echol
 fi
 
-echol "clisp.h clisp-test.c${CLISP_DEF} : genclisph${TOBJ} config.h ${PARAMS_H} ${GLLIB_A}"
-echotab_to_HEXE "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS)" "genclisph${TOBJ}" "genclisph"
+echol "clisp.h clisp-test.c${CLISP_DEF} : genclisph.${OBJEXT} config.h ${PARAMS_H} ${GLLIB_A}"
+echotab_to_HEXE "\$(CC) \$(A_CFLAGS) \$(CFLAGS) \$(Z_CFLAGS) \$(A_LDFLAGS) \$(LDFLAGS) \$(Z_LDFLAGS)" "genclisph.${OBJEXT}" "genclisph"
 if test -z "${CLISP_DEF}"; then
   echotab "${HERE}genclisph clisp.h.tmp clisp-test.c"
 else
@@ -3337,7 +3331,7 @@ done
 test "${verbose}" = true -o "${verbose}" = yes && \
   echo "BUILD_AUX =${BUILD_AUX}" >&2
 
-echol "modular : ${FILES} clisp-link linkkit modules.h modules${TOBJ} makevars build-aux"
+echol "modular : ${FILES} clisp-link linkkit modules.h modules.${OBJEXT} makevars build-aux"
 echodummyrule modular
 echol
 # while the top-level makevars can contain arbitrary paths in LIBS and FILES,
@@ -3358,10 +3352,10 @@ for f in clisp-link ; do
   echotab "sed -e 's%@''SHELL''@%/bin/sh%' \\"
   echotab "    -e 's%@''host_os''@%${host_os}%' \\"
   echotab "    -e 's%@''build_os''@%${build_os}%' \\"
+  echotab "    -e 's%@''OBJEXT''@%${OBJEXT}%' \\"
   echotab "    -e 's%@with_dynamic_modules@%${with_dynamic_modules}%' \\"
   echotab "    -e 's%@createsharedlib@%$XCC_CREATESHARED_%' \\"
   echotab "    -e 's%@LEXE@%${LEXE}%' -e 's%@SHREXT@%${SHREXT}%' \\"
-  echotab "    -e 's%@TOBJ@%${TOBJ}%' \\"
   # On Cygwin, "-L$sourcedir$" is not enough for the linker to find
   # lisp.def.  So just give the absolute path to lisp.def.
   if test -z "${CLISP_DEF}"; then
@@ -3376,7 +3370,7 @@ for f in clisp-link ; do
   echol
 done
 echol "boot : modular lispinit.mem"
-echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules${TOBJ} lisp${LEXE} lispinit.mem; do \$(LN_S) ../\$\$f .; done && (\$(GREP) -v '^FILES=' ../makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
+echotab "test -d boot || (mkdir boot && cd boot && for f in ${FILES} modules.h modules.${OBJEXT} lisp${LEXE} lispinit.mem; do \$(LN_S) ../\$\$f .; done && (\$(GREP) -v '^FILES=' ../makevars; fl=''; for f in ${FILES}; do fl=\$\$fl' '\`basename \$\$f\`; done; echo 'FILES='\"'\"\$\$fl\"'\") > makevars) || (\$(RMRF) boot ; exit 1)"
 echol
 make_modules() {
   MODULES_VAR=$1
@@ -3586,11 +3580,11 @@ done
 
 DRIVER_DEP=''; DRIVER_RES=''; DRIVER_LIBS=''
 if [ $HOS = win32 ]; then
-  DRIVER_RES=" clispres${TOBJ}"
+  DRIVER_RES=" clispres.${OBJEXT}"
   DRIVER_DEP=${DRIVER_RES}" ${SRCDIR}w32shell.c ${SRCDIR}execname.c"
   DRIVER_LIBS=" -lole32 -luuid"
-  echol "clispres${TOBJ} : clisp.rc clisp.ico"
-  echotab "${WINDRES} -i clisp.rc -o clispres${TOBJ} --output-format=coff"
+  echol "clispres.${OBJEXT} : clisp.rc clisp.ico"
+  echotab "${WINDRES} -i clisp.rc -o clispres.${OBJEXT} --output-format=coff"
   echol
   # NB: we link clisp.rc into the driver clisp.exe but _not_ into the
   #     run-time lisp.exe because then the latter does not have an icon
@@ -3935,7 +3929,7 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
   # The linking sets: base and full.
   for dir in base full; do
     echotab "mkdir \$(TOPDIR)/${dir}"
-    echotab "${HLN} "'`'". ${dir}/makevars ; for f in \$\$FILES modules.h modules${TOBJ} makevars lispinit.mem ; do echo ${dir}/\$\$f ; done"'`'" \$(TOPDIR)/${dir}/"
+    echotab "${HLN} "'`'". ${dir}/makevars ; for f in \$\$FILES modules.h modules.${OBJEXT} makevars lispinit.mem ; do echo ${dir}/\$\$f ; done"'`'" \$(TOPDIR)/${dir}/"
     # make sure base & full do not link to anything outside
     echotab ". ./makevars; for f in \$\$LIBS ; do case \$\$f in -*) ;; \\"
     echotab "   *) b=\`basename \$\$f\`; \\"
@@ -3964,11 +3958,11 @@ elif [ ${HOS} = unix ] ; then   # but not cygwin!
     for dir in base full; do
       DIR=`echo "${dir}" | tr '[a-z]' '[A-Z]'`
       echotab "| { . ${dir}/makevars ; ${dir}_files='' ; \\"
-      echotab " for f in modules${TOBJ} \$\$FILES ; do \\"
+      echotab " for f in modules.${OBJEXT} \$\$FILES ; do \\"
       echotab "   ${dir}_files=\"\$\$${dir}_files\"' ${dir}/'\"\$\$f\" ; \\"
       echotab " done ; \\"
       echotab " ${dir}_libs='' ; \\"
-      echotab " for f in modules${TOBJ} \$\$LIBS ; do \\"
+      echotab " for f in modules.${OBJEXT} \$\$LIBS ; do \\"
       echotab "   case \$\$f in \\"
       echotab "     -*) ${dir}_libs=\"\$\$${dir}_libs \$\$f\";; \\"
       echotab "     *) ${dir}_libs=\"\$\$${dir}_libs\"' ${dir}/'\"\`basename \$\$f\`\";; \\"
@@ -4105,8 +4099,8 @@ clean0 : force
 # without changing the bytecode format and the tables in
 # constobj.d, constpack.d, constsym.d, subr.d, fsubr.d, pseudofun.d.
 clean1 : clean0
-	-\$(RM) lispbibl.h clisp.h *.i *.s *${TOBJ} *.a lisp${LEXE} marc.out clisp-link makevars ansi-tests-log ${CLISP_DEF}
-	for m in "" \$(BASE_MODULES) \$(MODULES); do test -n "\$\$m" && \$(RM) \$\$m/*${TOBJ}; done
+	-\$(RM) lispbibl.h clisp.h *.i *.s *.${OBJEXT} *.a lisp${LEXE} marc.out clisp-link makevars ansi-tests-log ${CLISP_DEF}
+	for m in "" \$(BASE_MODULES) \$(MODULES); do test -n "\$\$m" && \$(RM) \$\$m/*.${OBJEXT}; done
 	-\$(RMRF) ${RECOMPILEDIR}
 	-\$(RMRF) ${TESTSDIR}
 	-\$(RMRF) ${ANSITESTSDIR}
