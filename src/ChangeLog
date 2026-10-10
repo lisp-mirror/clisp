@@ -1,5 +1,12 @@
 2026-10-10  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Make modules work on MSVC.
+	* modules/*/link.sh.in: Use OBJEXT.
+	* clisp-link.in (lncp_some): On native Windows, don't use 'ln -s' for
+	*.h, *.obj, *.a files.
+
+2026-10-10  Bruno Haible  <bruno@clisp.org>
+
 	Simplify build system: Use OBJEXT from autoconf instead of TOBJ.
 	* makemake.in (OBJEXT): New variable.
 	(TOBJ): Remove variable. Use ".${OBJEXT}" instead.

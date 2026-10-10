@@ -36,7 +36,8 @@ lncp_some () {
   ret=''
   for f in $*; do
     b=`basename $f`
-    lncp "`normalize "${src_dir}" "$f"`" "${destdir}"/$b
+    g=`normalize "${src_dir}" "$f"`
+    lncp "$g" "${destdir}"/$b
     ret=${ret}" "$b
   done
   echo ${ret}
@@ -56,7 +57,17 @@ lnscp_some () {
   ret=''
   for f in $*; do
     b=`basename $f`
-    lnscp "`normalize "${src_dir}" "$f"`" "${destdir}"/$b
+    g=`normalize "${src_dir}" "$f"`
+    case '@build_os@,@host_os@' in
+      cygwin*,mingw*)
+        # Native Windows tools do not understand the Cygwin symlinks.
+        case "$b" in
+          *.h | *.@OBJEXT@ | *.a) lncp  "$g" "${destdir}/$b" ;;
+          *)                      lnscp "$g" "${destdir}/$b" ;;
+        esac
+        ;;
+      *) lnscp "$g" "${destdir}/$b" ;;
+    esac
     ret=${ret}" "$b
   done
   echo ${ret}
