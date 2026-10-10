@@ -114,9 +114,13 @@ AC_DEFUN([CL_CLISP],[
            missing=''
            # cf. src/clisp-link.in:check_linkset (we do not need to check for
            # lisp.run because cl_cv_clisp_linkset comes from SYS::PROGRAM-NAME)
-           for f in lisp.a lispinit.mem modules.h modules.o makevars; do
+           for f in lisp.a lispinit.mem modules.h makevars; do
              test -r "${cl_cv_clisp_linkset}/$f" || missing=${missing}' '$f
            done
+           # Test for the presence of modules.o or modules.obj.
+           test -r "${cl_cv_clisp_linkset}/modules.o" \
+             || test -r "${cl_cv_clisp_linkset}/modules.obj" \
+             || missing=${missing}' 'modules.o
            test -n "${missing}" \
              && AC_MSG_ERROR([missing ${missing} in '${cl_cv_clisp_linkset}'])
           ])

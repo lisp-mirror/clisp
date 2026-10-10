@@ -1,3 +1,10 @@
+2026-10-10  Bruno Haible  <bruno@clisp.org>
+
+	MSVC port: Adapt to object file suffix '.obj', part 2.
+	* m4/clisp.m4 (CL_CLISP): If a file 'modules.o' does not exist, test for
+	a file 'modules.obj'.
+	* modules/*/configure: Regenerated.
+
 2026-10-09  Bruno Haible  <bruno@clisp.org>
 
 	Mark Windows/x86_64 with MSVC as a supported platform.
