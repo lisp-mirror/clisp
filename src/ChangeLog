@@ -1,3 +1,9 @@
+2026-10-09  Bruno Haible  <bruno@clisp.org>
+
+	Mark Windows/i386 with MSVC as a supported platform.
+	* INSTALL.windows: Mark MSVC (32-bit) as supported with restrictions.
+	* NEWS: Add Windows/i386 with MSVC to the supported platforms list.
+
 2026-10-10  Bruno Haible  <bruno@clisp.org>
 
 	MSVC port: Fix compilation errors in the syscalls module.
