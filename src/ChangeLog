@@ -1,5 +1,16 @@
 2026-10-10  Bruno Haible  <bruno@clisp.org>
 
+	MSVC port: Fix compilation errors in the syscalls module.
+	* lispbibl.d: In clisp.h, on MSVC, use alternative code instead of
+	including <alloca.h>.
+	* modules/syscalls/calls.c: Include <sys/utime.h> as alternative to
+	<utime.h>.
+	(stream_truncate): Don't use compound initializer syntax for
+	LARGE_INTEGER.
+	(DecodeHRESULT): Use __HRESULT_FROM_WIN32 instead of HRESULT_FROM_WIN32.
+
+2026-10-10  Bruno Haible  <bruno@clisp.org>
+
 	MSVC port: Make modules work on MSVC.
 	* modules/*/link.sh.in: Use OBJEXT.
 	* clisp-link.in (lncp_some): On native Windows, don't use 'ln -s' for

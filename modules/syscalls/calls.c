@@ -40,6 +40,8 @@
 #endif
 #if defined(HAVE_UTIME_H)
 # include <utime.h>
+#elif defined(_WIN32)
+# include <sys/utime.h>
 #endif
 #include <wchar.h>
 #include <limits.h>
@@ -403,9 +405,10 @@ static void* path_truncate (const char *path, file_offset_t *length) {
 static void stream_truncate (Handle fd, file_offset_t *length) {
   begin_blocking_system_call();
 #if defined(WIN32_NATIVE)
-  { LARGE_INTEGER cur_pos;
-    if (!(SetFilePointerEx(fd,(LARGE_INTEGER){QuadPart:0},
-                           &cur_pos,FILE_CURRENT)
+  { LARGE_INTEGER zero;
+    LARGE_INTEGER cur_pos;
+    zero.QuadPart = 0;
+    if (!(SetFilePointerEx(fd,zero,&cur_pos,FILE_CURRENT)
           && SetFilePointerEx(fd,*length,NULL,FILE_BEGIN)
           && SetEndOfFile(fd)
           && SetFilePointerEx(fd,cur_pos,NULL,FILE_BEGIN)))
@@ -4029,8 +4032,8 @@ static const char * DecodeHRESULT (HRESULT hres) {
   msgcase(STG_E_INVALIDNAME)
   msgcase(S_FALSE)
   msgcase(STG_E_INVALIDPOINTER)
-  msgcase(HRESULT_FROM_WIN32(ERROR_NO_UNICODE_TRANSLATION))
-  msgcase(HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED))
+  msgcase(__HRESULT_FROM_WIN32(ERROR_NO_UNICODE_TRANSLATION))
+  msgcase(__HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED))
   msgcase(STG_E_WRITEFAULT)
   msgcase(STG_E_MEDIUMFULL)
   msgcase(STG_E_PROPSETMISMATCHED)

@@ -1096,7 +1096,12 @@
 %%  puts("#define ASSERT(expr)  do { if (!(expr)) NOTREACHED; } while(0)");
 
 #include <alloca.h>
-%% include_file("alloca.h");
+%% puts("#if defined(_MSC_VER)");
+%% puts("#include <malloc.h>");
+%% puts("#define alloca _alloca");
+%% puts("#else");
+%% puts("#include <alloca.h>");
+%% puts("#endif");
 #include <stdint.h>
 %% puts("#include <stdint.h>");
 #include <stdlib.h>
